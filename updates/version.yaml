@@ -1,0 +1,5 @@
+1.0.0:
+    - "JumpLink Vouchers – Erstinstallation: Bestellungen, Gutscheine, Einlösungen."
+    - create_voucher_orders_table.php
+    - create_vouchers_table.php
+    - create_redemptions_table.php

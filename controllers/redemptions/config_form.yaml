@@ -1,0 +1,9 @@
+name: jumplink.vouchers::lang.redemptions.label
+form: $/jumplink/vouchers/models/redemption/fields.yaml
+modelClass: JumpLink\Vouchers\Models\Redemption
+defaultRedirect: jumplink/vouchers/redemptions
+
+update:
+    title: Einlösung
+    redirect: jumplink/vouchers/redemptions
+    redirectClose: jumplink/vouchers/redemptions

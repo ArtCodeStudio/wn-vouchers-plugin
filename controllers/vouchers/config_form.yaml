@@ -1,0 +1,14 @@
+name: jumplink.vouchers::lang.vouchers.label
+form: $/jumplink/vouchers/models/voucher/fields.yaml
+modelClass: JumpLink\Vouchers\Models\Voucher
+defaultRedirect: jumplink/vouchers/vouchers
+
+create:
+    title: Gutschein anlegen
+    redirect: jumplink/vouchers/vouchers/update/:id
+    redirectClose: jumplink/vouchers/vouchers
+
+update:
+    title: Gutschein
+    redirect: jumplink/vouchers/vouchers
+    redirectClose: jumplink/vouchers/vouchers

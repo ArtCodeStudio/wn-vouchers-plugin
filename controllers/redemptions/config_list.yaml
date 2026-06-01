@@ -1,0 +1,14 @@
+title: jumplink.vouchers::lang.redemptions.menu_label
+list: $/jumplink/vouchers/models/redemption/columns.yaml
+modelClass: JumpLink\Vouchers\Models\Redemption
+recordUrl: jumplink/vouchers/redemptions/update/:id
+noRecordsMessage: backend::lang.list.no_records
+showSetup: true
+recordsPerPage: 50
+defaultSort:
+    column: created_at
+    direction: desc
+toolbar:
+    search:
+        prompt: backend::lang.list.search_prompt
+        mode: all

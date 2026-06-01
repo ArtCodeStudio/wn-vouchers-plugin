@@ -1,0 +1,21 @@
+columns:
+    created_at:
+        label: Datum
+        type: datetime
+    voucher:
+        label: Gutschein
+        relation: voucher
+        select: code
+        searchable: true
+    amount_euro:
+        label: Betrag
+        type: text
+    kind:
+        label: Art
+        type: text
+    source:
+        label: Quelle
+        type: text
+    note:
+        label: Notiz
+        type: text

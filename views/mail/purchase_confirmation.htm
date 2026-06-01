@@ -1,0 +1,22 @@
+subject = "Ihr Gutschein für Mahlzeit am Meer"
+==
+
+Hallo {{ order.firstname }},
+
+vielen Dank für Ihren Gutschein-Kauf bei **Mahlzeit am Meer**.
+
+{% if voucher %}
+- **Gutschein-Code:** {{ voucher.code }}
+- **Wert:** {{ voucher.initial_value_euro }}
+{% if voucher.valid_until %}- **Gültig bis:** {{ voucher.valid_until|date('d.m.Y') }}{% endif %}
+{% endif %}
+
+{% if order.delivery_type == 'digital' %}
+Ihr Gutschein liegt als PDF bei und kann ausgedruckt oder am Smartphone vorgezeigt
+werden. An der Kasse wird der QR-Code gescannt; ein Restguthaben bleibt erhalten.
+{% else %}
+Ihre Gutscheinkarte wird per Post an die angegebene Adresse versendet.
+{% endif %}
+
+Herzliche Grüße
+Ihr Team von Mahlzeit am Meer

@@ -1,0 +1,14 @@
+subject = "Ihr Gutschein ist unterwegs"
+==
+
+Hallo {{ order.firstname }},
+
+Ihre Gutscheinkarte von **Mahlzeit am Meer** wurde heute per Post an folgende
+Adresse versendet:
+
+{{ order.firstname }} {{ order.lastname }}
+{{ order.street }}
+{{ order.zip }} {{ order.city }}
+
+Herzliche Grüße
+Ihr Team von Mahlzeit am Meer

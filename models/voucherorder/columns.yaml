@@ -1,0 +1,25 @@
+columns:
+    created_at:
+        label: Datum
+        type: datetime
+    status:
+        label: Status
+        type: text
+    delivery_type:
+        label: Versand
+        type: text
+    total_euro:
+        label: Summe
+        type: text
+    firstname:
+        label: Vorname
+        searchable: true
+    lastname:
+        label: Nachname
+        searchable: true
+    email:
+        label: 'E-Mail'
+        searchable: true
+    payment_status:
+        label: Zahlung
+        type: text

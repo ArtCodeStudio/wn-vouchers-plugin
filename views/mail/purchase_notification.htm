@@ -1,0 +1,14 @@
+subject = "Neuer Gutschein-Kauf: {{ order.total_euro }} ({{ order.delivery_type }})"
+==
+
+Ein Gutschein wurde gekauft und bezahlt.
+
+- **Wert:** {{ order.face_value_euro }}
+- **Versand:** {{ order.delivery_type }}{% if order.delivery_type == 'physical' %} (Karte per Post – bitte ausstellen & versenden){% endif %}
+- **Summe:** {{ order.total_euro }}
+- **Käufer:** {{ order.firstname }} {{ order.lastname }} <{{ order.email }}>
+{% if order.delivery_type == 'physical' %}
+- **Adresse:** {{ order.street }}, {{ order.zip }} {{ order.city }}
+{% endif %}
+{% if order.recipient_name %}- **Empfänger:** {{ order.recipient_name }}{% endif %}
+{% if order.message %}- **Nachricht:** {{ order.message }}{% endif %}

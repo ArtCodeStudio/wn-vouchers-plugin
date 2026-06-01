@@ -1,0 +1,146 @@
+tabs:
+    fields:
+        #
+        # Tab: Gutscheine
+        #
+        voucher_start_number:
+            label: Startnummer (automatisch)
+            tab: Gutscheine
+            type: number
+            span: left
+            default: 100000
+            comment: 'Ab dieser Nummer werden digitale Gutscheine automatisch nummeriert. Muss über dem handschriftlichen Ordner-Bereich liegen.'
+        default_validity_months:
+            label: Gültigkeit (Monate)
+            tab: Gutscheine
+            type: number
+            span: right
+            default: 36
+            comment: 'Standard-Gültigkeit ab Ausstellung (DE-Norm: ~3 Jahre).'
+        min_value_cents:
+            label: Mindestbetrag (Cent)
+            tab: Gutscheine
+            type: number
+            span: left
+            default: 1000
+        max_value_cents:
+            label: Höchstbetrag (Cent)
+            tab: Gutscheine
+            type: number
+            span: right
+            default: 50000
+        service_fee_cents:
+            label: Servicepauschale Versand (Cent)
+            tab: Gutscheine
+            type: number
+            span: left
+            default: 250
+            comment: 'Wird nur bei physischem Versand berechnet (2,50 €).'
+        denominations:
+            label: Vorgeschlagene Beträge
+            tab: Gutscheine
+            type: repeater
+            span: full
+            prompt: Betrag hinzufügen
+            form:
+                fields:
+                    value_cents:
+                        label: Betrag (Cent)
+                        type: number
+
+        #
+        # Tab: MwSt
+        #
+        vat_mode:
+            label: MwSt-Modell
+            tab: MwSt
+            type: dropdown
+            span: left
+            default: multi_purpose
+            options:
+                multi_purpose: 'Mehrzweckgutschein (MwSt bei Einlösung)'
+                single_purpose: 'Einzweckgutschein (MwSt beim Verkauf)'
+            comment: 'Mehrzweck = empfohlen für ein Restaurant mit 7%/19%-Einlösungen. Final mit dem Steuerberater abstimmen.'
+        vat_rate:
+            label: MwSt-Satz Verkauf (%)
+            tab: MwSt
+            type: number
+            span: right
+            default: 19
+            trigger:
+                action: show
+                field: vat_mode
+                condition: value[single_purpose]
+            comment: 'Nur für Einzweckgutschein relevant.'
+        vat_rates:
+            label: Wählbare Sätze bei Einlösung (%)
+            tab: MwSt
+            type: repeater
+            span: full
+            prompt: Satz hinzufügen
+            form:
+                fields:
+                    rate:
+                        label: Satz (%)
+                        type: number
+
+        #
+        # Tab: Zahlung
+        #
+        mollie_mode:
+            label: Mollie-Modus
+            tab: Zahlung
+            type: dropdown
+            span: left
+            default: test
+            options:
+                test: Test
+                live: Live
+            comment: 'Der API-Key wird aus der .env (MOLLIE_API_KEY) gelesen, nie hier gespeichert.'
+
+        #
+        # Tab: Benachrichtigung
+        #
+        notify_name:
+            label: Standard-Empfänger Name
+            tab: Benachrichtigung
+            type: text
+            span: left
+        notify_email:
+            label: Standard-Empfänger E-Mail
+            tab: Benachrichtigung
+            type: text
+            span: right
+            comment: 'Empfänger für Bestell-/Versandbenachrichtigungen.'
+        send_customer_copy:
+            label: Bestätigung an Käufer senden
+            tab: Benachrichtigung
+            type: switch
+            default: true
+        sender_name:
+            label: Absender-Name
+            tab: Benachrichtigung
+            type: text
+            span: left
+        sender_email:
+            label: Absender-E-Mail
+            tab: Benachrichtigung
+            type: text
+            span: right
+            comment: 'Leer lassen, um den globalen Mail-Absender zu verwenden.'
+
+        #
+        # Tab: PDF
+        #
+        pdf_accent_color:
+            label: Akzentfarbe
+            tab: PDF
+            type: colorpicker
+            span: left
+            default: '#1a3a5a'
+        pdf_footer_text:
+            label: Fußzeile / rechtlicher Hinweis
+            tab: PDF
+            type: textarea
+            span: full
+            size: small

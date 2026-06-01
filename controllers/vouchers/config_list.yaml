@@ -1,0 +1,16 @@
+title: jumplink.vouchers::lang.vouchers.menu_label
+list: $/jumplink/vouchers/models/voucher/columns.yaml
+modelClass: JumpLink\Vouchers\Models\Voucher
+recordUrl: jumplink/vouchers/vouchers/update/:id
+noRecordsMessage: backend::lang.list.no_records
+showCheckboxes: true
+showSetup: true
+recordsPerPage: 50
+defaultSort:
+    column: created_at
+    direction: desc
+toolbar:
+    buttons: list_toolbar
+    search:
+        prompt: backend::lang.list.search_prompt
+        mode: all

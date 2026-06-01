@@ -1,0 +1,60 @@
+fields:
+    code:
+        label: Code
+        span: left
+        comment: 'z. B. MAM-100042-K'
+    status:
+        label: Status
+        type: dropdown
+        span: right
+
+tabs:
+    fields:
+        number:
+            label: Nummer
+            tab: Gutschein
+            type: number
+            span: left
+        number_source:
+            label: Nummernquelle
+            tab: Gutschein
+            type: dropdown
+            span: right
+            options:
+                auto: Automatisch
+                manual: 'Manuell (Ordner)'
+        type:
+            label: Typ
+            tab: Gutschein
+            type: dropdown
+            span: left
+        initial_value_cents:
+            label: Wert (Cent)
+            tab: Gutschein
+            type: number
+            span: right
+        balance_cents:
+            label: Restguthaben (Cent)
+            tab: Gutschein
+            type: number
+            span: left
+            disabled: true
+            comment: 'Wird aus dem Einlöse-Ledger berechnet.'
+        valid_until:
+            label: 'Gültig bis'
+            tab: Gutschein
+            type: datepicker
+            mode: date
+            span: right
+        recipient_name:
+            label: Empfänger
+            tab: Gutschein
+            type: text
+            span: left
+        issued_at:
+            label: Ausgestellt am
+            tab: Gutschein
+            type: datepicker
+            mode: datetime
+            span: right
+            disabled: true

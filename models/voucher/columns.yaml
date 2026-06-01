@@ -1,0 +1,25 @@
+columns:
+    code:
+        label: Code
+        searchable: true
+    number:
+        label: 'Nr.'
+        searchable: true
+    type:
+        label: Typ
+        type: text
+    initial_value_euro:
+        label: Wert
+        type: text
+    balance_euro:
+        label: Restguthaben
+        type: text
+    status:
+        label: Status
+        type: text
+    valid_until:
+        label: 'Gültig bis'
+        type: date
+    created_at:
+        label: Erstellt
+        type: datetime

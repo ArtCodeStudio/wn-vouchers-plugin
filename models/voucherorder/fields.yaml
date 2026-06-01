@@ -1,0 +1,110 @@
+fields:
+    status:
+        label: Status
+        type: dropdown
+        span: left
+    delivery_type:
+        label: Versandart
+        type: dropdown
+        span: right
+        disabled: true
+
+tabs:
+    fields:
+        face_value_cents:
+            label: Gutscheinwert (Cent)
+            tab: Bestellung
+            type: number
+            span: left
+            disabled: true
+        service_fee_cents:
+            label: Servicepauschale (Cent)
+            tab: Bestellung
+            type: number
+            span: right
+            disabled: true
+        total_cents:
+            label: Gesamt (Cent)
+            tab: Bestellung
+            type: number
+            span: left
+            disabled: true
+        vat_mode:
+            label: MwSt-Modell
+            tab: Bestellung
+            type: text
+            span: right
+            disabled: true
+        recipient_name:
+            label: Empfänger
+            tab: Bestellung
+            type: text
+            span: left
+        message:
+            label: Nachricht
+            tab: Bestellung
+            type: textarea
+            size: small
+            span: full
+
+        firstname:
+            label: Vorname
+            tab: Kontakt
+            type: text
+            span: left
+        lastname:
+            label: Nachname
+            tab: Kontakt
+            type: text
+            span: right
+        email:
+            label: 'E-Mail'
+            tab: Kontakt
+            type: text
+            span: left
+        phone:
+            label: Telefon
+            tab: Kontakt
+            type: text
+            span: right
+        street:
+            label: 'Straße & Nr.'
+            tab: Kontakt
+            type: text
+            span: left
+        zip:
+            label: PLZ
+            tab: Kontakt
+            type: text
+            span: right
+        city:
+            label: Ort
+            tab: Kontakt
+            type: text
+            span: left
+
+        provider:
+            label: Anbieter
+            tab: Zahlung
+            type: text
+            span: left
+            disabled: true
+        payment_id:
+            label: 'Payment-ID'
+            tab: Zahlung
+            type: text
+            span: right
+            disabled: true
+        payment_status:
+            label: Zahlungsstatus
+            tab: Zahlung
+            type: text
+            span: left
+            disabled: true
+        paid_at:
+            label: Bezahlt am
+            tab: Zahlung
+            type: datepicker
+            mode: datetime
+            span: right
+            disabled: true
