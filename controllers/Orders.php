@@ -1,10 +1,14 @@
 <?php namespace JumpLink\Vouchers\Controllers;
 
+use Flash;
+use BackendAuth;
 use BackendMenu;
 use Backend\Classes\Controller;
+use JumpLink\Vouchers\Models\VoucherOrder;
+use JumpLink\Vouchers\Classes\NotificationService;
 
 /**
- * Orders Backend Controller – purchase/payment records and (M2) fulfillment.
+ * Orders Backend Controller – purchase/payment records and physical fulfillment.
  */
 class Orders extends Controller
 {
@@ -22,5 +26,28 @@ class Orders extends Controller
     {
         parent::__construct();
         BackendMenu::setContext('JumpLink.Vouchers', 'vouchers', 'orders');
+    }
+
+    /**
+     * Mark a physical order as posted: stamps the shipping date and emails the
+     * buyer the "on its way" notification. Idempotent (a second click does
+     * nothing and sends no duplicate mail).
+     */
+    public function onMarkShipped()
+    {
+        $order = VoucherOrder::find((int) post('order_id'));
+        if (!$order) {
+            throw new \ApplicationException('Bestellung nicht gefunden.');
+        }
+
+        $user = BackendAuth::getUser();
+        if (!$order->markShipped($user ? $user->id : null)) {
+            throw new \ApplicationException('Bestellung kann nicht als versendet markiert werden (kein Versand oder bereits versendet).');
+        }
+
+        NotificationService::sendShippingMail($order);
+        Flash::success('Als versendet markiert. Versandbenachrichtigung an den Käufer gesendet.');
+
+        return ['#voucherShippingPanel' => $this->makePartial('shipping', ['formModel' => $order->fresh()])];
     }
 }

@@ -1,6 +1,7 @@
 <?php namespace JumpLink\Vouchers\Models;
 
 use Model;
+use Carbon\Carbon;
 
 /**
  * VoucherOrder – the purchase/payment record. Created `pending`, becomes
@@ -29,10 +30,10 @@ class VoucherOrder extends Model
         'firstname', 'lastname', 'email', 'phone', 'street', 'zip', 'city', 'country',
         'recipient_name', 'message',
         'provider', 'payment_id', 'payment_status', 'paid_at',
-        'accounting_ref', 'ip',
+        'accounting_ref', 'ip', 'shipped_at', 'shipped_by',
     ];
 
-    protected $dates = ['paid_at', 'accounting_synced_at'];
+    protected $dates = ['paid_at', 'accounting_synced_at', 'shipped_at'];
 
     /**
      * Mint the per-order access token. The return page is reached with an
@@ -108,12 +109,36 @@ class VoucherOrder extends Model
 
     /**
      * Counter for the backend menu: physical orders that are paid/issued and
-     * still need to be posted. (Shipping status is modelled in M2.)
+     * not yet posted.
      */
     public static function openFulfillmentCount()
     {
         return (int) self::where('delivery_type', 'physical')
             ->whereIn('status', ['paid', 'issued'])
+            ->whereNull('shipped_at')
             ->count();
+    }
+
+    /** A physical order that is paid/issued and not yet posted. */
+    public function needsShipping(): bool
+    {
+        return $this->delivery_type === 'physical'
+            && in_array($this->status, ['paid', 'issued'], true)
+            && !$this->shipped_at;
+    }
+
+    /**
+     * Mark a physical order as posted. Idempotent: returns false if it is not a
+     * shippable physical order or was already shipped (so no duplicate mail).
+     */
+    public function markShipped(?int $userId = null): bool
+    {
+        if ($this->delivery_type !== 'physical' || $this->shipped_at) {
+            return false;
+        }
+        $this->shipped_at = Carbon::now();
+        $this->shipped_by = $userId;
+        $this->save();
+        return true;
     }
 }

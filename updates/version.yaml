@@ -6,3 +6,6 @@
 1.0.1:
     - "Sicherheit: pro-Bestellung Access-Token für die Rückkehrseite (verhindert IDOR)."
     - add_access_token_to_voucher_orders.php
+1.0.2:
+    - "Versand: Versanddatum für physische Gutscheine + Versandbenachrichtigung."
+    - add_shipping_to_voucher_orders.php

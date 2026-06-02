@@ -108,3 +108,10 @@ tabs:
             mode: datetime
             span: right
             disabled: true
+
+        shipping:
+            type: partial
+            path: shipping
+            tab: Versand
+            span: full
+            context: [update]

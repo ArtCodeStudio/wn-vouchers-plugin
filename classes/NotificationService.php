@@ -65,6 +65,25 @@ class NotificationService
         }
     }
 
+    /** Tell the buyer their physical voucher card is on its way. */
+    public static function sendShippingMail(VoucherOrder $order): void
+    {
+        $brandName   = Settings::get('brand_name') ?: config('app.name');
+        $senderEmail = Settings::get('sender_email');
+        $senderName  = Settings::get('sender_name');
+
+        try {
+            Mail::send('jumplink.vouchers::mail.shipping_notification', ['order' => $order, 'brand_name' => $brandName], function ($message) use ($order, $senderEmail, $senderName) {
+                $message->to($order->email, trim($order->firstname . ' ' . $order->lastname));
+                if ($senderEmail) {
+                    $message->from($senderEmail, $senderName ?: null);
+                }
+            });
+        } catch (\Throwable $e) {
+            Log::error('[vouchers] shipping mail failed: ' . $e->getMessage());
+        }
+    }
+
     /** A signed, time-limited PDF download URL for a digital voucher. */
     protected static function downloadUrl(VoucherOrder $order, ?Voucher $voucher): ?string
     {
