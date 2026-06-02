@@ -49,45 +49,45 @@ numbering, ledger, payment, PDF/QR and fulfillment are all generic.
 
 ## Status & roadmap
 
-This plugin is built in milestones. **M0 is complete and installable.**
+This plugin is built in milestones. **The digital MVP (M0 + M1) is complete and
+tested.**
 
 | Milestone | Scope | Status |
 |-----------|-------|--------|
 | **M0** | Data model + migrations, backend UI, deterministic core (numbering, ledger-safe redemption, code + signed QR token), test suite | ✅ Done |
-| **M1** | Frontend purchase component, Mollie flow, PDF/QR rendering, confirmation email, backend partial redemption | 🛠️ In progress |
+| **M1** | Purchase + return components, Mollie payment flow (webhook issuance), PDF/QR rendering, confirmation email, backend partial redemption | ✅ Done |
 | **M2** | Physical fulfillment + service fee + shipping notification + manual numbering | ⏳ Planned |
 | **M3** | Tablet POS page (backend-auth gated, QR camera scan, on-site sale) | ⏳ Planned |
 | **M4** | Accounting reconciliation, retention/anonymization | ⏳ Planned |
 
-In M0, Mollie payment, PDF/QR rendering and the frontend components are present
-as clearly marked stubs; the deterministic core they build on is fully
-implemented and tested.
+The end-to-end digital flow works: a buyer picks an amount, pays via Mollie, the
+webhook issues exactly one numbered voucher, the PDF (with signed QR) is rendered
+and emailed, and staff can book ledger-safe (partial) redemptions from the
+backend. The physical-card service fee + shipping and the tablet POS scan page
+follow in M2/M3.
 
 ## Requirements
 
 - WinterCMS **1.2+** (Laravel 9 era), PHP **8.1+**
 - A [Mollie](https://www.mollie.com) account (test key works for development)
-- For PDF/QR (M1), three app-level Composer packages — see below.
+- Payment/PDF/QR rely on `mollie/mollie-api-php`, `barryvdh/laravel-dompdf` and
+  `endroid/qr-code` — declared as dependencies of this plugin.
 
 ## Installation
 
-Until this is published on Packagist, install it as a plugin directory:
+Until this is published on Packagist, install it as a plugin directory and pull
+its runtime dependencies into the app:
 
 ```bash
 # from your WinterCMS project root
 git clone https://github.com/ArtCodeStudio/wn-vouchers-plugin.git \
   plugins/jumplink/vouchers
 
-php artisan winter:up    # runs the 3 migrations
-```
-
-### Runtime dependencies (M1)
-
-Payment, PDF and QR rendering need three packages, installed at the **app**
-level (not vendored in the plugin):
-
-```bash
+# Install the plugin's third-party dependencies into the app (Winter does not
+# run Laravel package auto-discovery, so the plugin registers dompdf itself).
 composer require mollie/mollie-api-php barryvdh/laravel-dompdf endroid/qr-code
+
+php artisan winter:up    # runs the 3 migrations
 ```
 
 ## Configuration
@@ -203,9 +203,11 @@ php artisan winter:test -p JumpLink.Vouchers
 ```
 
 The suite covers partial redemption, over-redemption rejection, the
-full-redemption status transition, idempotency, the balance invariant, and
-code/token validity plus tamper rejection. Mollie is mocked at the
-`PaymentService` seam, so the tests never touch the network.
+full-redemption status transition, idempotency and the balance invariant;
+voucher issuance (atomic numbering, digital/physical type, webhook idempotency);
+the `paid`/`failed` webhook paths; PDF + QR rendering; and code/token validity
+plus tamper rejection. Mollie is mocked at the `PaymentService` seam, so the
+tests never touch the network.
 
 ## Security
 
