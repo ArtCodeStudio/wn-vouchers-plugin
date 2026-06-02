@@ -54,6 +54,10 @@ class Settings extends Model
         // Payment.
         $this->mollie_mode = 'test';
 
+        // Till: the CMS page hosting the VoucherPos component (the QR scan
+        // redirects here so a phone-camera scan lands on the staff till page).
+        $this->pos_page_url = '/kasse/gutschein';
+
         // Mail (mirrors JumpLink.Events).
         $this->notify_name = null;
         $this->notify_email = null;

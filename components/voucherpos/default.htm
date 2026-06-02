@@ -1,0 +1,70 @@
+<div class="voucher-pos">
+    {% if not __SELF__.authorized %}
+        <div class="pos-denied">
+            <p>Diese Seite ist dem Personal vorbehalten. Bitte zuerst im <a href="/backend">Backend</a> anmelden.</p>
+        </div>
+    {% else %}
+        <form class="pos-search" data-request="{{ __SELF__ }}::onLookup" autocomplete="off">
+            <input type="text" name="q" id="posQuery" value="{{ __SELF__.initialQuery }}" placeholder="Code z. B. MAM-100042-K" autofocus>
+            <button type="submit">Suchen</button>
+            <button type="button" id="posScanBtn">QR scannen</button>
+        </form>
+        <div id="posReader" style="max-width:320px;display:none;"></div>
+
+        <div id="posResult"></div>
+
+        <details class="pos-sell-wrap">
+            <summary>Vor-Ort-Verkauf</summary>
+            <form class="pos-sell" data-request="{{ __SELF__ }}::onSell" data-request-flash>
+                <input type="number" name="value_euro" step="0.01" min="0.01" inputmode="decimal" placeholder="Wert €" required>
+                <select name="type">
+                    <option value="digital">Digital (PDF/QR)</option>
+                    <option value="physical">Physische Karte</option>
+                </select>
+                <select name="payment_method">
+                    {% for key, label in __SELF__.paymentMethods %}<option value="{{ key }}">{{ label }}</option>{% endfor %}
+                </select>
+                <input type="number" name="number" placeholder="Karten-Nr. (nur physisch, optional)">
+                <input type="text" name="recipient_name" placeholder="Empfänger (optional)">
+                <button type="submit">Verkaufen</button>
+            </form>
+            <div id="posSold"></div>
+        </details>
+
+        <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"
+            integrity="sha384-c9d8RFSL+u3exBOJ4Yp3HUJXS4znl9f+z66d1y54ig+ea249SpqR+w1wyvXz/lk+"
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"></script>
+        <script>
+        (function () {
+            var root = document.currentScript.closest('.voucher-pos');
+            var input = root.querySelector('#posQuery');
+            var scanBtn = root.querySelector('#posScanBtn');
+            var reader = root.querySelector('#posReader');
+            var scanner = null;
+
+            function lookup() {
+                var submit = root.querySelector('.pos-search [type="submit"]');
+                if (submit) submit.click();
+            }
+            function stopScan() {
+                if (scanner) { try { scanner.clear(); } catch (e) {} scanner = null; }
+                reader.style.display = 'none';
+            }
+            if (scanBtn) scanBtn.addEventListener('click', function () {
+                if (scanner) { stopScan(); return; }
+                if (!window.Html5QrcodeScanner) { alert('QR-Scanner lädt noch – bitte erneut tippen.'); return; }
+                reader.style.display = 'block';
+                scanner = new Html5QrcodeScanner('posReader', { fps: 10, qrbox: 240 }, false);
+                scanner.render(function (decoded) {
+                    input.value = decoded;
+                    stopScan();
+                    lookup();
+                });
+            });
+
+            if (input.value) { lookup(); } // arrived from a scanned QR (?t=…)
+        })();
+        </script>
+    {% endif %}
+</div>

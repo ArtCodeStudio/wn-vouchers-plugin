@@ -1,0 +1,22 @@
+{% if error %}
+    <div class="pos-error">{{ error }}</div>
+{% elseif voucher %}
+    <div class="pos-voucher">
+        <div class="pos-code">{{ voucher.code }}</div>
+        <div class="pos-balance">{{ voucher.balance_euro }}</div>
+        <div class="pos-meta">
+            Status: {{ voucher.status }}{% if voucher.recipient_name %} · für {{ voucher.recipient_name }}{% endif %}{% if voucher.valid_until %} · gültig bis {{ voucher.valid_until|date('d.m.Y') }}{% endif %}
+        </div>
+
+        {% if voucher.status == 'active' and voucher.balance_cents > 0 %}
+            <form class="pos-redeem" data-request="{{ __SELF__ }}::onRedeem" data-request-flash>
+                <input type="hidden" name="voucher_id" value="{{ voucher.id }}">
+                <input type="hidden" name="nonce" value="{{ nonce }}">
+                <input type="number" name="amount" step="0.01" min="0.01" inputmode="decimal" placeholder="Betrag €" required autofocus>
+                <button type="submit">Einlösen</button>
+            </form>
+        {% else %}
+            <p class="pos-note">Keine Einlösung möglich (Status: {{ voucher.status }}).</p>
+        {% endif %}
+    </div>
+{% endif %}

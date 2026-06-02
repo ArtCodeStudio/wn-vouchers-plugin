@@ -1,0 +1,8 @@
+{% if voucher %}
+    <div class="pos-sold">
+        <p>Neuer Gutschein <strong>{{ voucher.code }}</strong> über {{ voucher.initial_value_euro }} angelegt.</p>
+        {% if voucher.type == 'physical' %}
+            <p>Bitte die Nummer <strong>{{ voucher.number }}</strong> auf die Karte schreiben.</p>
+        {% endif %}
+    </div>
+{% endif %}

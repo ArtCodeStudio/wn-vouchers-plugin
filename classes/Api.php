@@ -2,7 +2,9 @@
 
 use Request;
 use Response;
+use Redirect;
 use JumpLink\Vouchers\Models\Voucher;
+use JumpLink\Vouchers\Models\Settings;
 
 /**
  * Public HTTP endpoints for the voucher system (wired in routes.php).
@@ -43,5 +45,21 @@ class Api
             'Content-Type'        => 'application/pdf',
             'Content-Disposition' => 'inline; filename="gutschein-' . $voucher->code . '.pdf"',
         ]);
+    }
+
+    /**
+     * Target of the QR code. Redirects the (staff) browser to the configured
+     * till page with the token, where VoucherPos resolves and shows the voucher.
+     * No voucher data is exposed here — the till page enforces the login.
+     */
+    public function scan()
+    {
+        $token = (string) Request::get('t');
+        $base = (string) Settings::get('pos_page_url', '/kasse/gutschein');
+        if ($token === '') {
+            return Redirect::to($base);
+        }
+        $separator = strpos($base, '?') !== false ? '&' : '?';
+        return Redirect::to($base . $separator . 't=' . urlencode($token));
     }
 }

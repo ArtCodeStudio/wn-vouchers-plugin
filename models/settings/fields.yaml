@@ -97,6 +97,13 @@ tabs:
                 test: Test
                 live: Live
             comment: 'Der API-Key wird aus der .env (MOLLIE_API_KEY) gelesen, nie hier gespeichert.'
+        pos_page_url:
+            label: Kassen-Seite (URL-Pfad)
+            tab: Zahlung
+            type: text
+            span: right
+            default: /kasse/gutschein
+            comment: 'CMS-Seite mit der Komponente „Gutschein-Kasse". Der QR-Code-Scan leitet hierher.'
 
         #
         # Tab: Benachrichtigung
