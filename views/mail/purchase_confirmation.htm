@@ -1,9 +1,9 @@
-subject = "Ihr Gutschein für Mahlzeit am Meer"
+subject = "Ihr Gutschein für {{ brand_name|default('uns') }}"
 ==
 
 Hallo {{ order.firstname }},
 
-vielen Dank für Ihren Gutschein-Kauf bei **Mahlzeit am Meer**.
+vielen Dank für Ihren Gutschein-Kauf bei **{{ brand_name|default('uns') }}**.
 
 {% if voucher %}
 - **Gutschein-Code:** {{ voucher.code }}
@@ -19,4 +19,4 @@ Ihre Gutscheinkarte wird per Post an die angegebene Adresse versendet.
 {% endif %}
 
 Herzliche Grüße
-Ihr Team von Mahlzeit am Meer
+{% if brand_name %}Ihr Team von {{ brand_name }}{% else %}Ihr Team{% endif %}

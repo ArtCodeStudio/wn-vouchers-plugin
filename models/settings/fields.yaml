@@ -132,11 +132,17 @@ tabs:
         #
         # Tab: PDF
         #
+        brand_name:
+            label: Markenname
+            tab: PDF
+            type: text
+            span: left
+            comment: 'Erscheint auf dem Gutschein-PDF und in den E-Mails.'
         pdf_accent_color:
             label: Akzentfarbe
             tab: PDF
             type: colorpicker
-            span: left
+            span: right
             default: '#1a3a5a'
         pdf_footer_text:
             label: Fußzeile / rechtlicher Hinweis

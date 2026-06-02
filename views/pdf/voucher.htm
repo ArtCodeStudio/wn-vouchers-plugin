@@ -20,7 +20,7 @@
 <body>
     <div class="card">
         {% if qr %}<img class="qr" src="{{ qr }}" width="120" height="120" alt="QR">{% endif %}
-        <div class="brand">Mahlzeit am Meer</div>
+        <div class="brand">{{ brand_name|default('') }}</div>
         <div class="value">Gutschein über {{ voucher.initial_value_euro }}</div>
         <div class="code">{{ voucher.code }}</div>
         {% if voucher.recipient_name %}<p>Für: {{ voucher.recipient_name }}</p>{% endif %}

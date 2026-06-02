@@ -53,7 +53,8 @@ class Settings extends Model
         $this->sender_email = null;
         $this->send_customer_copy = true;
 
-        // PDF branding.
+        // Branding (used on the PDF and in emails).
+        $this->brand_name = null;
         $this->pdf_accent_color = '#1a3a5a';
         $this->pdf_footer_text = null;
     }
