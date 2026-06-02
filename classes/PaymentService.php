@@ -1,24 +1,35 @@
 <?php namespace JumpLink\Vouchers\Classes;
 
+use Log;
+use JumpLink\Vouchers\Models\VoucherOrder;
+
 /**
- * Mollie payment wrapper (M1). Implemented behind this seam so the rest of the
- * plugin depends on our interface, not Mollie types (keeps a later Stripe/PayPal
- * swap or a shared commerce-core extraction cheap).
+ * Mollie payment wrapper. Implemented behind this seam so the rest of the plugin
+ * depends on our interface, not Mollie types (keeps a later Stripe/PayPal swap
+ * or a shared commerce-core extraction cheap), and so tests can inject a fake
+ * client via setClientResolver() and never touch the network.
  *
- * Design:
- *   startPayment(order)  -> Mollie createPayment(amount=total, EUR,
- *                           redirectUrl=Return?order=ID, webhookUrl=.../webhook,
- *                           metadata={order_id}); store payment_id; return checkout URL.
- *   handleWebhook(id)    -> RE-FETCH the payment (never trust the POST body);
- *                           on `paid` and not yet issued: issue voucher(s) in a
- *                           transaction (VoucherNumberService::allocate), generate
- *                           PDF, queue mail; idempotent.
+ * Flow:
+ *   startPayment(order, returnUrl) -> Mollie createPayment(amount=total, EUR,
+ *       redirectUrl=returnUrl, webhookUrl=.../webhook, metadata={order_id});
+ *       store payment_id; return the checkout URL to redirect the buyer to.
+ *   handleWebhook(id) -> RE-FETCH the payment by id (never trust the POST body);
+ *       on `paid` and not yet issued, issue the voucher(s) in a transaction and
+ *       send the confirmation mail exactly once; idempotent on retries.
  *
- * Requires composer dep `mollie/mollie-api-php` and env MOLLIE_API_KEY
- * (test_… / live_…). To be added at the app level in M1.
+ * Requires composer dep `mollie/mollie-api-php` (v3) and env MOLLIE_API_KEY
+ * (test_… / live_…) at the app level.
  */
 class PaymentService
 {
+    /** Test seam: when set, client() returns this instead of a real client. */
+    protected static $clientResolver = null;
+
+    public static function setClientResolver(?callable $resolver): void
+    {
+        self::$clientResolver = $resolver;
+    }
+
     public static function apiKey(): string
     {
         return (string) env('MOLLIE_API_KEY', '');
@@ -29,6 +40,83 @@ class PaymentService
         return self::apiKey() !== '';
     }
 
-    // public static function startPayment(VoucherOrder $order): string { /* M1 */ }
-    // public static function handleWebhook(string $paymentId): void     { /* M1 */ }
+    /** A configured Mollie client, or the injected test double. */
+    public static function client()
+    {
+        if (self::$clientResolver) {
+            return (self::$clientResolver)();
+        }
+        $client = new \Mollie\Api\MollieApiClient();
+        $client->setApiKey(self::apiKey());
+        return $client;
+    }
+
+    /**
+     * Create a Mollie payment for the order and return the checkout URL the
+     * buyer must be redirected to. Persists the payment id on the order.
+     */
+    public static function startPayment(VoucherOrder $order, string $returnUrl): string
+    {
+        $payment = self::client()->payments->create([
+            'amount' => [
+                'currency' => $order->currency ?: 'EUR',
+                'value'    => self::formatAmount((int) $order->total_cents),
+            ],
+            'description' => 'Gutschein #' . $order->id,
+            'redirectUrl' => $returnUrl,
+            'webhookUrl'  => url('/api/jumplink/vouchers/webhook'),
+            'metadata'    => ['order_id' => $order->id],
+        ]);
+
+        $order->provider       = 'mollie';
+        $order->payment_id     = $payment->id;
+        $order->payment_status = $payment->status;
+        $order->save();
+
+        return (string) $payment->getCheckoutUrl();
+    }
+
+    /**
+     * Handle a Mollie webhook. Re-fetches the payment by id; on `paid` it issues
+     * the voucher(s) (idempotent) and sends the confirmation mail exactly once.
+     * Other terminal states update the order status. Unexpected exceptions are
+     * left to bubble so the caller can answer 5xx and Mollie retries later.
+     */
+    public static function handleWebhook(string $paymentId): void
+    {
+        $payment = self::client()->payments->get($paymentId);
+
+        $order = VoucherOrder::where('payment_id', $paymentId)->first();
+        if (!$order && isset($payment->metadata->order_id)) {
+            $order = VoucherOrder::find($payment->metadata->order_id);
+        }
+        if (!$order) {
+            Log::warning('[vouchers] webhook: no order for payment ' . $paymentId);
+            return;
+        }
+
+        if ($payment->isPaid()) {
+            $result = IssuanceService::issueForOrder($order);
+            if ($result['created']) {
+                NotificationService::sendPurchaseMails($order->fresh(), $result['voucher']);
+            }
+            return;
+        }
+
+        $order->payment_status = $payment->status;
+        if ($payment->isCanceled()) {
+            $order->status = 'cancelled';
+        } elseif ($payment->isExpired()) {
+            $order->status = 'expired';
+        } elseif ($payment->isFailed()) {
+            $order->status = 'failed';
+        }
+        $order->save();
+    }
+
+    /** cents -> Mollie "12.50" amount string (dot decimal, two places). */
+    public static function formatAmount(int $cents): string
+    {
+        return number_format($cents / 100, 2, '.', '');
+    }
 }

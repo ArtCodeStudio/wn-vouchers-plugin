@@ -117,5 +117,16 @@ class Plugin extends PluginBase
             'jumplink.vouchers.verify',
             \JumpLink\Vouchers\Console\VerifyBalances::class
         );
+
+        // Winter does not run Laravel package auto-discovery, so the dompdf
+        // service provider (binds `dompdf.wrapper`, used by PdfService) must be
+        // registered explicitly. Guarded so the plugin still boots before the
+        // optional runtime dependency is installed.
+        if (class_exists(\Barryvdh\DomPDF\ServiceProvider::class)) {
+            $this->app->register(\Barryvdh\DomPDF\ServiceProvider::class);
+            // Winter has no `public/` web root, so dompdf's default chroot
+            // (base_path('public')) does not resolve. Point it at the app root.
+            \Config::set('dompdf.public_path', base_path());
+        }
     }
 }
