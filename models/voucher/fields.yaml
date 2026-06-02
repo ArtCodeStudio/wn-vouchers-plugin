@@ -58,3 +58,10 @@ tabs:
             mode: datetime
             span: right
             disabled: true
+
+        redeem:
+            type: partial
+            path: redeem
+            tab: Einlösung
+            span: full
+            context: [update]
