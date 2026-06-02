@@ -1,0 +1,19 @@
+<?php
+    // Native browser autocomplete for the recipient field: a <datalist> of names
+    // already used, linked to the recipient input by JS so it keeps saving normally.
+    $recipients = \JumpLink\Vouchers\Models\Voucher::distinctRecipients();
+?>
+<datalist id="voucher-recipient-list">
+    <?php foreach ($recipients as $name): ?>
+        <option value="<?= e($name) ?>"></option>
+    <?php endforeach; ?>
+</datalist>
+<script>
+(function () {
+    var input = document.querySelector('[name="Voucher[recipient_name]"]');
+    if (input && !input.getAttribute('list')) {
+        input.setAttribute('list', 'voucher-recipient-list');
+        input.setAttribute('autocomplete', 'off');
+    }
+})();
+</script>

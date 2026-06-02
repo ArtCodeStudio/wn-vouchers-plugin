@@ -2,7 +2,8 @@ fields:
     code:
         label: Code
         span: left
-        comment: 'z. B. MAM-100042-K'
+        disabled: true
+        comment: 'Wird automatisch aus der Nummer erzeugt.'
     status:
         label: Status
         type: dropdown
@@ -10,47 +11,58 @@ fields:
 
 tabs:
     fields:
-        number:
-            label: Nummer
-            tab: Gutschein
-            type: number
-            span: left
         number_source:
             label: Nummernquelle
             tab: Gutschein
             type: dropdown
-            span: right
+            span: left
+            default: manual
             options:
-                auto: Automatisch
-                manual: 'Manuell (Ordner)'
+                manual: 'Manuell (Ordner-Nummer)'
+                auto: 'Automatisch (fortlaufend)'
+            comment: 'Manuell = Nummer aus dem Aktenordner eintragen. Automatisch = nächste freie Nummer wird vergeben.'
+        number:
+            label: Nummer
+            tab: Gutschein
+            type: number
+            span: right
+            comment: 'Bei „Manuell“ eintragen, bei „Automatisch“ leer lassen.'
         type:
             label: Typ
             tab: Gutschein
             type: dropdown
             span: left
-        initial_value_cents:
-            label: Wert (Cent)
+        value_euro:
+            label: Wert (€)
             tab: Gutschein
-            type: number
+            type: text
             span: right
-        balance_cents:
-            label: Restguthaben (Cent)
+            comment: 'z. B. 50,00'
+        balance_euro:
+            label: Restguthaben
             tab: Gutschein
-            type: number
+            type: text
             span: left
             disabled: true
             comment: 'Wird aus dem Einlöse-Ledger berechnet.'
-        valid_until:
-            label: 'Gültig bis'
-            tab: Gutschein
-            type: datepicker
-            mode: date
-            span: right
         recipient_name:
             label: Empfänger
             tab: Gutschein
             type: text
+            span: right
+            comment: 'Vorschläge erscheinen, wenn der Name bereits vergeben wurde.'
+        recipient_suggest:
+            type: partial
+            path: recipient_datalist
+            tab: Gutschein
+            span: full
+        valid_until:
+            label: 'Gültig bis (optional)'
+            tab: Gutschein
+            type: datepicker
+            mode: date
             span: left
+            comment: 'Optional. Leer = kein Ablaufdatum (in DE gilt ohnehin die gesetzliche 3-Jahres-Frist zum Jahresende).'
         issued_at:
             label: Ausgestellt am
             tab: Gutschein

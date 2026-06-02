@@ -10,19 +10,25 @@ use Model;
 class Voucher extends Model
 {
     use \Winter\Storm\Database\Traits\Validation;
+    use \Winter\Storm\Database\Traits\Purgeable;
 
     public $table = 'jumplink_vouchers_vouchers';
 
     public $rules = [
-        'code'                => 'required',
         'initial_value_cents' => 'required|integer|min:0',
         'number_source'       => 'required|in:auto,manual',
         'type'                => 'required|in:digital,physical',
+        // The code is derived from the number, so only the number is required —
+        // and only for manual (binder) vouchers; auto numbers are allocated.
+        'number'              => 'required_if:number_source,manual',
     ];
+
+    /** Backend-only form field (euro value); never persisted as a column. */
+    protected $purgeable = ['value_euro'];
 
     public $fillable = [
         'order_id', 'code', 'number', 'number_source', 'type',
-        'initial_value_cents', 'balance_cents', 'currency', 'vat_mode',
+        'initial_value_cents', 'value_euro', 'balance_cents', 'currency', 'vat_mode',
         'status', 'token_secret', 'recipient_name', 'valid_until',
         'issued_at', 'pdf_generated_at', 'created_by',
     ];
@@ -50,6 +56,71 @@ class Voucher extends Model
     public function getTypeOptions()
     {
         return ['digital' => 'Digital (PDF/QR)', 'physical' => 'Physisch (Karte)'];
+    }
+
+    //
+    // Creation conveniences (so staff never type a code by hand)
+    //
+
+    public function beforeValidate()
+    {
+        // Auto numbers are allocated; manual (binder) numbers are typed by staff.
+        if ($this->number_source === 'auto' && empty($this->number)) {
+            $this->number = \JumpLink\Vouchers\Classes\VoucherNumberService::allocate();
+        }
+        // The human-readable code is always derived from the number.
+        if (empty($this->code) && !empty($this->number)) {
+            $this->code = \JumpLink\Vouchers\Classes\VoucherCode::format((int) $this->number);
+        }
+        // Every voucher needs a secret for its signed QR token.
+        if (empty($this->token_secret)) {
+            $this->token_secret = bin2hex(random_bytes(16));
+        }
+    }
+
+    public function beforeCreate()
+    {
+        if (empty($this->status)) {
+            $this->status = 'active';
+        }
+        // A fresh voucher starts with its full value available.
+        if ((int) $this->balance_cents === 0 && (int) $this->initial_value_cents > 0) {
+            $this->balance_cents = (int) $this->initial_value_cents;
+        }
+    }
+
+    /** Distinct recipient names seen so far (for backend autocomplete). */
+    public static function distinctRecipients(): array
+    {
+        $fromVouchers = static::whereNotNull('recipient_name')
+            ->where('recipient_name', '!=', '')
+            ->distinct()
+            ->pluck('recipient_name');
+
+        $fromOrders = VoucherOrder::whereNotNull('recipient_name')
+            ->where('recipient_name', '!=', '')
+            ->distinct()
+            ->pluck('recipient_name');
+
+        return $fromVouchers->merge($fromOrders)->unique()->sort()->values()->all();
+    }
+
+    //
+    // Euro <-> cents bridge for the backend form (value typed as "50,00")
+    //
+
+    public function getValueEuroAttribute()
+    {
+        return number_format(((int) $this->initial_value_cents) / 100, 2, ',', '');
+    }
+
+    public function setValueEuroAttribute($value)
+    {
+        if ($value === null || $value === '') {
+            return;
+        }
+        $normalized = str_replace(',', '.', trim((string) $value));
+        $this->initial_value_cents = (int) round(((float) $normalized) * 100);
     }
 
     //
