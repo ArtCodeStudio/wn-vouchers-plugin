@@ -26,11 +26,14 @@ class VoucherReturn extends ComponentBase
         return (int) (input('order') ?: post('order'));
     }
 
-    /** The order referenced by ?order=<id>, if any. */
+    /**
+     * The order referenced by ?order=<id>&t=<token>, if the token matches.
+     * The token (not the enumerable id) is what authorizes access — see
+     * VoucherOrder::findForReturn.
+     */
     public function order()
     {
-        $id = $this->orderId();
-        return $id ? VoucherOrder::find($id) : null;
+        return VoucherOrder::findForReturn($this->orderId(), input('t') ?: post('t'));
     }
 
     public function isIssued()

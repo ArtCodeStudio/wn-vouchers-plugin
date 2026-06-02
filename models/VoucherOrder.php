@@ -34,6 +34,38 @@ class VoucherOrder extends Model
 
     protected $dates = ['paid_at', 'accounting_synced_at'];
 
+    /**
+     * Mint the per-order access token. The return page is reached with an
+     * enumerable id, so it must additionally present this token (see
+     * findForReturn) before exposing order state or a signed PDF link.
+     */
+    public function beforeCreate()
+    {
+        if (empty($this->access_token)) {
+            $this->access_token = bin2hex(random_bytes(16));
+        }
+    }
+
+    /**
+     * Look up an order for the post-payment return page: the integer id alone is
+     * not enough — the request must also present the matching access token
+     * (constant-time compared), otherwise order ids could be enumerated to reach
+     * other buyers' vouchers (IDOR).
+     */
+    public static function findForReturn($id, ?string $token): ?self
+    {
+        $id = (int) $id;
+        $token = (string) $token;
+        if ($id <= 0 || $token === '') {
+            return null;
+        }
+        $order = static::find($id);
+        if (!$order || !$order->access_token || !hash_equals($order->access_token, $token)) {
+            return null;
+        }
+        return $order;
+    }
+
     public $hasMany = [
         'vouchers' => [\JumpLink\Vouchers\Models\Voucher::class, 'key' => 'order_id'],
     ];

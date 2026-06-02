@@ -74,7 +74,8 @@ class VoucherPurchase extends ComponentBase
         }
 
         $order = $result['order'];
-        $returnUrl = url()->current() . '?order=' . $order->id;
+        // The return page authorizes by the unguessable token, not the id.
+        $returnUrl = url()->current() . '?order=' . $order->id . '&t=' . $order->access_token;
 
         try {
             $checkoutUrl = PaymentService::startPayment($order, $returnUrl);
