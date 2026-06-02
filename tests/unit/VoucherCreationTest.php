@@ -46,6 +46,30 @@ class VoucherCreationTest extends PluginTestCase
         $this->assertSame(2500, (int) $v->initial_value_cents);
     }
 
+    public function testManualVoucherRecordsPayment()
+    {
+        $v = Voucher::create([
+            'number_source'  => 'manual',
+            'number'         => 100200,
+            'type'           => 'physical',
+            'value_euro'     => '40,00',
+            'payment_method' => 'pos', // already paid at the normal till
+        ]);
+
+        // Defaults to "paid" unless staff mark it unpaid.
+        $this->assertSame('paid', $v->payment_status);
+        $this->assertSame('pos', $v->payment_method);
+
+        $unpaid = Voucher::create([
+            'number_source'  => 'manual',
+            'number'         => 100201,
+            'type'           => 'physical',
+            'value_euro'     => '40,00',
+            'payment_status' => 'unpaid',
+        ]);
+        $this->assertSame('unpaid', $unpaid->payment_status);
+    }
+
     public function testManualVoucherRequiresNumber()
     {
         $this->expectException(\Winter\Storm\Exception\ValidationException::class);

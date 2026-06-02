@@ -9,3 +9,6 @@
 1.0.2:
     - "Versand: Versanddatum für physische Gutscheine + Versandbenachrichtigung."
     - add_shipping_to_voucher_orders.php
+1.0.3:
+    - "Zahlung: Zahlungsstatus/-art für manuell angelegte Gutscheine (z. B. an der Kasse bezahlt)."
+    - add_payment_to_vouchers.php

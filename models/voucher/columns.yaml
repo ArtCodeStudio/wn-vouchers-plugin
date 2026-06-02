@@ -17,6 +17,9 @@ columns:
     status:
         label: Status
         type: text
+    payment_status_label:
+        label: Zahlung
+        type: text
     valid_until:
         label: 'Gültig bis'
         type: date

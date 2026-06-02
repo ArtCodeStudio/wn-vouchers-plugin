@@ -29,8 +29,8 @@ class Voucher extends Model
     public $fillable = [
         'order_id', 'code', 'number', 'number_source', 'type',
         'initial_value_cents', 'value_euro', 'balance_cents', 'currency', 'vat_mode',
-        'status', 'token_secret', 'recipient_name', 'valid_until',
-        'issued_at', 'pdf_generated_at', 'created_by',
+        'status', 'payment_status', 'payment_method', 'token_secret',
+        'recipient_name', 'valid_until', 'issued_at', 'pdf_generated_at', 'created_by',
     ];
 
     protected $dates = ['valid_until', 'issued_at', 'pdf_generated_at'];
@@ -58,6 +58,29 @@ class Voucher extends Model
         return ['digital' => 'Digital (PDF/QR)', 'physical' => 'Physisch (Karte)'];
     }
 
+    public function getPaymentStatusOptions()
+    {
+        return ['paid' => 'Bezahlt', 'unpaid' => 'Offen / unbezahlt'];
+    }
+
+    public function getPaymentMethodOptions()
+    {
+        return [
+            'pos'     => 'An der Kasse bezahlt (extern)',
+            'cash'    => 'Bar',
+            'card'    => 'Karte / EC',
+            'invoice' => 'Auf Rechnung',
+            'online'  => 'Online (Mollie)',
+            'other'   => 'Sonstiges',
+        ];
+    }
+
+    public function getPaymentStatusLabelAttribute()
+    {
+        $options = $this->getPaymentStatusOptions();
+        return $options[$this->payment_status] ?? $this->payment_status;
+    }
+
     //
     // Creation conveniences (so staff never type a code by hand)
     //
@@ -82,6 +105,9 @@ class Voucher extends Model
     {
         if (empty($this->status)) {
             $this->status = 'active';
+        }
+        if (empty($this->payment_status)) {
+            $this->payment_status = 'paid';
         }
         // A fresh voucher starts with its full value available.
         if ((int) $this->balance_cents === 0 && (int) $this->initial_value_cents > 0) {

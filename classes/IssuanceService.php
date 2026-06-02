@@ -45,6 +45,8 @@ class IssuanceService
             $voucher->currency            = $order->currency ?: 'EUR';
             $voucher->vat_mode            = $order->vat_mode;
             $voucher->status              = 'active';
+            $voucher->payment_status      = 'paid';   // paid online before issuance
+            $voucher->payment_method      = 'online';
             $voucher->token_secret        = bin2hex(random_bytes(16));
             $voucher->recipient_name      = $order->recipient_name;
             $voucher->valid_until         = self::defaultValidUntil();

@@ -46,6 +46,24 @@ tabs:
             span: left
             disabled: true
             comment: 'Wird aus dem Einlöse-Ledger berechnet.'
+        payment_section:
+            type: section
+            label: Zahlung
+            tab: Gutschein
+            comment: 'Bei manueller Anlage: ob und wie der Kunde bezahlt hat (z. B. bereits an der normalen Kasse).'
+        payment_status:
+            label: Zahlungsstatus
+            tab: Gutschein
+            type: dropdown
+            span: left
+            default: paid
+        payment_method:
+            label: Zahlungsart
+            tab: Gutschein
+            type: dropdown
+            span: right
+            default: pos
+            emptyOption: '— bitte wählen —'
         recipient_name:
             label: Empfänger
             tab: Gutschein
