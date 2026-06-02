@@ -16,6 +16,12 @@ class Settings extends Model
 
     public $settingsFields = 'fields.yaml';
 
+    /** PDF customization: an optional logo and a full-page "Briefpapier" background. */
+    public $attachOne = [
+        'pdf_logo'       => \System\Models\File::class,
+        'pdf_background' => \System\Models\File::class,
+    ];
+
     public function initSettingsData()
     {
         // Numbering: auto numbers start here; must stay above the binder's
@@ -32,8 +38,10 @@ class Settings extends Model
             ['value_cents' => 10000],
         ];
 
-        // Validity (German gift-voucher norm ~3 years).
-        $this->default_validity_months = 36;
+        // Validity: off by default (no expiry). German gift vouchers carry the
+        // statutory 3-year limitation anyway; shorter expiry dates are often
+        // ineffective. Set a positive number of months only if deliberately wanted.
+        $this->default_validity_months = 0;
 
         // VAT: Mehrzweckgutschein by default (no VAT at sale; due on redemption).
         $this->vat_mode = 'multi_purpose';

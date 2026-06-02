@@ -62,10 +62,17 @@ class IssuanceService
         });
     }
 
-    /** Default expiry: now + configured months (German gift-voucher norm ~3y). */
-    protected static function defaultValidUntil(): Carbon
+    /**
+     * Optional expiry. Off by default (returns null): German gift vouchers carry
+     * the statutory 3-year limitation anyway (§195 BGB, counted from year-end),
+     * and shorter expiry dates are often legally ineffective — so we don't stamp
+     * one unless the shop deliberately configures a positive validity period.
+     */
+    protected static function defaultValidUntil(): ?Carbon
     {
-        $months = (int) Settings::get('default_validity_months', 36);
-        return Carbon::now()->addMonths(max(1, $months))->endOfDay();
+        $months = (int) Settings::get('default_validity_months', 0);
+        return $months > 0
+            ? Carbon::now()->addMonths($months)->endOfDay()
+            : null;
     }
 }

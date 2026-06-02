@@ -1,29 +1,42 @@
 {{-- Voucher PDF, rendered by PdfService via barryvdh/laravel-dompdf.
-     Variables: voucher (Voucher), qr (PNG data-URI), brand_name, accent, footer. --}}
+     Variables: voucher (Voucher), qr (PNG data-URI), brand_name, accent, footer,
+     logo (data-URI|null), background (full-page "Briefpapier" data-URI|null). --}}
 <!DOCTYPE html>
 <html lang="de">
 <head>
     <meta charset="utf-8">
     <style>
-        body { font-family: DejaVu Sans, sans-serif; color: #222; }
-        .card { border: 2px solid {{ $accent ?? '#1a3a5a' }}; border-radius: 8px; padding: 24px; }
-        .brand { color: {{ $accent ?? '#1a3a5a' }}; font-size: 22px; font-weight: bold; }
-        .value { font-size: 40px; font-weight: bold; margin: 12px 0; }
-        .code { font-size: 20px; letter-spacing: 2px; }
-        .qr { float: right; }
-        .muted { color: #666; font-size: 12px; }
+        @page { margin: 0; }
+        * { box-sizing: border-box; }
+        body { margin: 0; font-family: 'DejaVu Sans', sans-serif; color: #222; }
+        .sheet { position: relative; width: 210mm; height: 297mm; }
+        .bg { position: absolute; top: 0; left: 0; width: 210mm; height: 297mm; }
+        .content { position: absolute; top: 0; left: 0; width: 210mm; padding: 24mm; }
+        .qr { position: absolute; top: 24mm; right: 24mm; }
+        .logo { max-height: 24mm; margin-bottom: 8mm; }
+        .brand { color: {{ $accent ?? '#1a3a5a' }}; font-size: 22pt; font-weight: bold; }
+        .value { font-size: 32pt; font-weight: bold; margin: 6mm 0 2mm; }
+        .code { font-size: 16pt; letter-spacing: 2px; }
+        .muted { color: #555; font-size: 9pt; margin-top: 2mm; }
+        .framed { border: 2px solid {{ $accent ?? '#1a3a5a' }}; border-radius: 6px; padding: 14mm; }
     </style>
 </head>
 <body>
-    <div class="card">
-        @if(!empty($qr))<img class="qr" src="{{ $qr }}" width="120" height="120" alt="QR">@endif
-        <div class="brand">{{ $brand_name ?? '' }}</div>
-        <div class="value">Gutschein über {{ $voucher->initial_value_euro }}</div>
-        <div class="code">{{ $voucher->code }}</div>
-        @if($voucher->recipient_name)<p>Für: {{ $voucher->recipient_name }}</p>@endif
-        @if($voucher->valid_until)<p class="muted">Gültig bis {{ $voucher->valid_until->format('d.m.Y') }}</p>@endif
-        <p class="muted">An der Kasse vorzeigen – ein Restguthaben bleibt erhalten.</p>
-        @if(!empty($footer))<p class="muted">{{ $footer }}</p>@endif
+    <div class="sheet">
+        @if(!empty($background))<img class="bg" src="{{ $background }}" alt="">@endif
+        <div class="content">
+            @if(!empty($qr))<img class="qr" src="{{ $qr }}" width="110" height="110" alt="QR">@endif
+            <div class="{{ empty($background) ? 'framed' : '' }}">
+                @if(!empty($logo))<img class="logo" src="{{ $logo }}" alt="">@endif
+                @if(!empty($brand_name))<div class="brand">{{ $brand_name }}</div>@endif
+                <div class="value">Gutschein über {{ $voucher->initial_value_euro }}</div>
+                <div class="code">{{ $voucher->code }}</div>
+                @if($voucher->recipient_name)<p class="muted">Für: {{ $voucher->recipient_name }}</p>@endif
+                @if($voucher->valid_until)<p class="muted">Gültig bis {{ $voucher->valid_until->format('d.m.Y') }}</p>@endif
+                <p class="muted">An der Kasse vorzeigen – ein Restguthaben bleibt erhalten.</p>
+                @if(!empty($footer))<p class="muted">{{ $footer }}</p>@endif
+            </div>
+        </div>
     </div>
 </body>
 </html>

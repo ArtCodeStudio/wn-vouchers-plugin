@@ -11,12 +11,12 @@ tabs:
             default: 100000
             comment: 'Ab dieser Nummer werden digitale Gutscheine automatisch nummeriert. Muss über dem handschriftlichen Ordner-Bereich liegen.'
         default_validity_months:
-            label: Gültigkeit (Monate)
+            label: Gültigkeit (Monate, optional)
             tab: Gutscheine
             type: number
             span: right
-            default: 36
-            comment: 'Standard-Gültigkeit ab Ausstellung (DE-Norm: ~3 Jahre).'
+            default: 0
+            comment: '0 = kein Ablaufdatum (empfohlen). In DE gilt ohnehin die gesetzliche Verjährung von 3 Jahren zum Jahresende; kürzere Fristen sind oft unwirksam.'
         min_value_cents:
             label: Mindestbetrag (Cent)
             tab: Gutscheine
@@ -144,6 +144,21 @@ tabs:
             type: colorpicker
             span: right
             default: '#1a3a5a'
+        pdf_logo:
+            label: Logo (optional)
+            tab: PDF
+            type: fileupload
+            mode: image
+            imageHeight: 60
+            span: left
+            comment: 'Wird oben auf dem Gutschein-PDF angezeigt.'
+        pdf_background:
+            label: Briefpapier / Hintergrund (optional)
+            tab: PDF
+            type: fileupload
+            mode: image
+            span: right
+            comment: 'Vollflächiges Hintergrundbild (A4 hochkant, 210×297 mm) für ein individuelles Gutschein-Design. Die Gutschein-Daten werden darübergelegt.'
         pdf_footer_text:
             label: Fußzeile / rechtlicher Hinweis
             tab: PDF
