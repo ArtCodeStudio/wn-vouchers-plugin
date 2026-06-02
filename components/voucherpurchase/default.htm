@@ -1,0 +1,72 @@
+<div class="voucher-purchase">
+    <div id="voucherPurchaseResult"></div>
+
+    <form
+        data-request="{{ __SELF__ }}::onPurchase"
+        data-request-validate
+        accept-charset="utf-8"
+        autocomplete="on">
+
+        <div class="voucher-amounts">
+            {% for cents in __SELF__.denominations %}
+                <button type="button" class="voucher-quick" data-amount="{{ (cents / 100)|number_format(2, '.', '') }}">
+                    {{ (cents / 100)|number_format(2, ',', '.') }} €
+                </button>
+            {% endfor %}
+        </div>
+
+        <label>Betrag (€)
+            <input type="number" name="face_value" id="voucher-face-value" step="0.01" required
+                min="{{ (__SELF__.minValueCents / 100)|number_format(2, '.', '') }}"
+                max="{{ (__SELF__.maxValueCents / 100)|number_format(2, '.', '') }}">
+        </label>
+        <span data-validate-for="face_value" class="form-error"></span>
+
+        <fieldset class="voucher-delivery">
+            <legend>Zustellung</legend>
+            <label><input type="radio" name="delivery_type" value="digital" checked> Digital (PDF mit QR-Code, sofort per E-Mail)</label>
+            <label><input type="radio" name="delivery_type" value="physical"> Karte per Post (zzgl. {{ (__SELF__.serviceFeeCents / 100)|number_format(2, ',', '.') }} € Versand)</label>
+        </fieldset>
+
+        <label>Vorname <input type="text" name="firstname" required></label>
+        <label>Nachname <input type="text" name="lastname"></label>
+        <label>E-Mail <input type="email" name="email" required></label>
+        <span data-validate-for="email" class="form-error"></span>
+
+        <div class="voucher-address" hidden>
+            <label>Straße &amp; Nr. <input type="text" name="street"></label>
+            <label>PLZ <input type="text" name="zip"></label>
+            <label>Ort <input type="text" name="city"></label>
+        </div>
+
+        <label>Empfänger (optional) <input type="text" name="recipient_name"></label>
+        <label>Persönliche Nachricht (optional) <textarea name="message" rows="3"></textarea></label>
+
+        {# Honeypot: hidden from humans; bots fill it and get a benign success. #}
+        <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true"
+            style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;">
+
+        <button type="submit" class="voucher-submit">Weiter zur Zahlung</button>
+    </form>
+
+    <script>
+    (function () {
+        var root = document.currentScript.closest('.voucher-purchase');
+        var amount = root.querySelector('#voucher-face-value');
+
+        root.querySelectorAll('.voucher-quick').forEach(function (btn) {
+            btn.addEventListener('click', function () { amount.value = btn.dataset.amount; });
+        });
+
+        var address = root.querySelector('.voucher-address');
+        function syncAddress() {
+            var sel = root.querySelector('input[name="delivery_type"]:checked');
+            address.hidden = !sel || sel.value !== 'physical';
+        }
+        root.querySelectorAll('input[name="delivery_type"]').forEach(function (r) {
+            r.addEventListener('change', syncAddress);
+        });
+        syncAddress();
+    })();
+    </script>
+</div>

@@ -1,12 +1,15 @@
 <?php namespace JumpLink\Vouchers\Components;
 
+use URL;
 use Cms\Classes\ComponentBase;
+use JumpLink\Vouchers\Models\VoucherOrder;
 
 /**
- * VoucherReturn – the post-payment landing component. Reads ?order=<id>, polls
- * the order status, and once the webhook has issued the voucher shows the PDF
- * download link ("also sent by email"). It NEVER issues a voucher itself — the
- * Mollie webhook is the only issuing authority. Implemented in M1.
+ * VoucherReturn – the post-payment landing component. Reads ?order=<id> and
+ * shows the status. While the webhook is still issuing the voucher it shows a
+ * "payment processing" notice and polls; once issued it shows the PDF download
+ * link ("also sent by email"). It NEVER issues a voucher itself — the Mollie
+ * webhook is the only issuing authority.
  */
 class VoucherReturn extends ComponentBase
 {
@@ -14,7 +17,39 @@ class VoucherReturn extends ComponentBase
     {
         return [
             'name'        => 'Gutschein-Rückkehr (nach Zahlung)',
-            'description' => 'Landeseite nach der Mollie-Zahlung: Status-Poll + PDF-Download. M1.',
+            'description' => 'Landeseite nach der Mollie-Zahlung: Status + PDF-Download.',
         ];
+    }
+
+    public function orderId()
+    {
+        return (int) (input('order') ?: post('order'));
+    }
+
+    /** The order referenced by ?order=<id>, if any. */
+    public function order()
+    {
+        $id = $this->orderId();
+        return $id ? VoucherOrder::find($id) : null;
+    }
+
+    public function isIssued()
+    {
+        $order = $this->order();
+        return $order && $order->status === 'issued';
+    }
+
+    /** Signed, time-limited PDF download URL once the voucher is issued. */
+    public function downloadUrl()
+    {
+        $order = $this->order();
+        if (!$order || $order->status !== 'issued') {
+            return null;
+        }
+        $voucher = $order->vouchers()->first();
+        if (!$voucher || $voucher->type !== 'digital') {
+            return null;
+        }
+        return URL::temporarySignedRoute('jumplink.vouchers.pdf', now()->addDays(30), ['voucher' => $voucher->id]);
     }
 }

@@ -1,0 +1,16 @@
+<div class="voucher-return">
+    {% if __SELF__.isIssued %}
+        <div class="voucher-issued">
+            <p>Vielen Dank! Ihr Gutschein wurde erstellt und an Ihre E-Mail-Adresse gesendet.</p>
+            {% if __SELF__.downloadUrl %}
+                <p><a class="voucher-download" href="{{ __SELF__.downloadUrl }}">Gutschein als PDF herunterladen</a></p>
+            {% endif %}
+        </div>
+    {% elseif __SELF__.order %}
+        <div class="voucher-pending">
+            <p>Ihre Zahlung wird verarbeitet … einen Moment bitte. Diese Seite aktualisiert sich automatisch.</p>
+        </div>
+        {# Framework-agnostic poll: reload until the webhook has issued the voucher. #}
+        <script>setTimeout(function () { window.location.reload(); }, 4000);</script>
+    {% endif %}
+</div>

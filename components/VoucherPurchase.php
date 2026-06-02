@@ -1,16 +1,21 @@
 <?php namespace JumpLink\Vouchers\Components;
 
+use Log;
+use Redirect;
+use Request;
 use Cms\Classes\ComponentBase;
 use JumpLink\Vouchers\Models\Settings;
+use JumpLink\Vouchers\Classes\PurchaseService;
+use JumpLink\Vouchers\Classes\PaymentService;
 
 /**
  * VoucherPurchase – the customer-facing buy form that replaces the static
  * `jumplink-contact` snippet on the gutschein-kaufen page.
  *
- * M1: server-rendered form + AJAX onPurchase handler (mirroring
- * EventList::onBook) that calls PurchaseService + PaymentService and redirects
- * to the Mollie checkout. For now it exposes the configured amount bounds and
- * denominations so the markup can be built and reviewed.
+ * onPurchase validates + creates the pending order, starts the Mollie payment
+ * and redirects the buyer to the checkout. The Mollie webhook (not this handler)
+ * is what later issues the voucher, so a closed browser tab can never leave a
+ * paid order without a voucher.
  */
 class VoucherPurchase extends ComponentBase
 {
@@ -18,7 +23,7 @@ class VoucherPurchase extends ComponentBase
     {
         return [
             'name'        => 'Gutschein-Kauf',
-            'description' => 'Kaufformular für Gutscheine (Mollie-Zahlung). Implementierung in M1.',
+            'description' => 'Kaufformular für Gutscheine mit Mollie-Zahlung.',
         ];
     }
 
@@ -32,10 +37,52 @@ class VoucherPurchase extends ComponentBase
         return (int) Settings::get('max_value_cents', 50000);
     }
 
-    public function denominations()
+    public function serviceFeeCents()
     {
-        return Settings::get('denominations', []);
+        return (int) Settings::get('service_fee_cents', 250);
     }
 
-    // public function onPurchase() { /* M1: PurchaseService + PaymentService */ }
+    /** Quick-pick amounts in cents, e.g. [2500, 5000, 10000]. */
+    public function denominations()
+    {
+        return collect(Settings::get('denominations', []))
+            ->pluck('value_cents')
+            ->filter()
+            ->map(fn ($c) => (int) $c)
+            ->values()
+            ->all();
+    }
+
+    public function onPurchase()
+    {
+        $input = post();
+        $input['ip'] = Request::ip();
+
+        $result = PurchaseService::createPendingOrder($input);
+
+        // Honeypot tripped: look successful, do nothing.
+        if (!empty($result['spam'])) {
+            return ['#voucherPurchaseResult' => '<p class="voucher-ok">Vielen Dank.</p>'];
+        }
+
+        if (empty($result['success'])) {
+            throw new \ValidationException($result['errors'] ?? ['face_value' => 'Bitte prüfen Sie Ihre Eingaben.']);
+        }
+
+        if (!PaymentService::isConfigured()) {
+            throw new \ApplicationException('Die Online-Zahlung ist derzeit nicht verfügbar. Bitte versuchen Sie es später erneut.');
+        }
+
+        $order = $result['order'];
+        $returnUrl = url()->current() . '?order=' . $order->id;
+
+        try {
+            $checkoutUrl = PaymentService::startPayment($order, $returnUrl);
+        } catch (\Throwable $e) {
+            Log::error('[vouchers] startPayment failed: ' . $e->getMessage());
+            throw new \ApplicationException('Die Zahlung konnte nicht gestartet werden. Bitte versuchen Sie es erneut.');
+        }
+
+        return Redirect::to($checkoutUrl);
+    }
 }
