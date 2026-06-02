@@ -16,22 +16,23 @@ tabs:
             tab: Gutschein
             type: dropdown
             span: left
-            default: manual
+            default: auto
             options:
-                manual: 'Manuell (Ordner-Nummer)'
                 auto: 'Automatisch (fortlaufend)'
-            comment: 'Manuell = Nummer aus dem Aktenordner eintragen. Automatisch = nächste freie Nummer wird vergeben.'
+                manual: 'Manuell (Ordner-Nummer)'
+            comment: 'Automatisch = nächste freie Nummer wird vergeben. Manuell = Nummer aus dem Aktenordner eintragen.'
         number:
             label: Nummer
             tab: Gutschein
             type: number
             span: right
-            comment: 'Bei „Manuell“ eintragen, bei „Automatisch“ leer lassen.'
+            comment: 'Bei „Automatisch“ leer lassen, bei „Manuell“ eintragen.'
         type:
             label: Typ
             tab: Gutschein
             type: dropdown
             span: left
+            default: physical
         value_euro:
             label: Wert (€)
             tab: Gutschein
