@@ -1,6 +1,7 @@
 <?php namespace JumpLink\Vouchers\Models;
 
 use Model;
+use Carbon\Carbon;
 
 /**
  * Voucher – a gift voucher with an initial value and a running balance. The
@@ -65,8 +66,9 @@ class Voucher extends Model
 
     public function getPaymentMethodOptions()
     {
+        // Bar / Karte already imply payment at the till, so there is no separate
+        // "paid externally at the POS" option.
         return [
-            'pos'     => 'An der Kasse bezahlt (extern)',
             'cash'    => 'Bar',
             'card'    => 'Karte / EC',
             'invoice' => 'Auf Rechnung',
@@ -113,6 +115,25 @@ class Voucher extends Model
         if ((int) $this->balance_cents === 0 && (int) $this->initial_value_cents > 0) {
             $this->balance_cents = (int) $this->initial_value_cents;
         }
+        // Apply the configured default expiry when none was entered (applies to
+        // both online-issued and manually-created vouchers).
+        if (empty($this->valid_until)) {
+            $this->valid_until = static::configuredValidUntil();
+        }
+    }
+
+    /**
+     * The default expiry for a new voucher: the configured number of years,
+     * rounded up to year-end so it matches the German statutory limitation
+     * (§§195/199 BGB — the 3-year period is counted from the end of the issue
+     * year). Returns null when the shop configured 0 years (print no expiry).
+     */
+    public static function configuredValidUntil(): ?Carbon
+    {
+        $years = (int) Settings::get('default_validity_years', 3);
+        return $years > 0
+            ? Carbon::now()->addYears($years)->endOfYear()
+            : null;
     }
 
     /** Distinct recipient names seen so far (for backend autocomplete). */

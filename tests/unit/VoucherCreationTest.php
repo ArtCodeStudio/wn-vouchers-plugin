@@ -53,12 +53,12 @@ class VoucherCreationTest extends PluginTestCase
             'number'         => 100200,
             'type'           => 'physical',
             'value_euro'     => '40,00',
-            'payment_method' => 'pos', // already paid at the normal till
+            'payment_method' => 'cash', // paid at the till
         ]);
 
         // Defaults to "paid" unless staff mark it unpaid.
         $this->assertSame('paid', $v->payment_status);
-        $this->assertSame('pos', $v->payment_method);
+        $this->assertSame('cash', $v->payment_method);
 
         $unpaid = Voucher::create([
             'number_source'  => 'manual',
@@ -79,6 +79,51 @@ class VoucherCreationTest extends PluginTestCase
             'type'          => 'digital',
             'value_euro'    => '10,00',
         ]);
+    }
+
+    public function testDefaultExpiryIsTheConfiguredYearsToYearEnd()
+    {
+        Settings::set('default_validity_years', 3);
+
+        $v = Voucher::create([
+            'number_source' => 'manual',
+            'number'        => 100300,
+            'type'          => 'digital',
+            'value_euro'    => '10,00',
+        ]);
+
+        $expectedYear = ((int) date('Y')) + 3;
+        $this->assertNotNull($v->valid_until);
+        $this->assertSame($expectedYear . '-12-31', $v->valid_until->format('Y-m-d'));
+    }
+
+    public function testZeroValidityYearsMeansNoExpiry()
+    {
+        Settings::set('default_validity_years', 0);
+
+        $v = Voucher::create([
+            'number_source' => 'manual',
+            'number'        => 100301,
+            'type'          => 'digital',
+            'value_euro'    => '10,00',
+        ]);
+
+        $this->assertNull($v->valid_until);
+    }
+
+    public function testExplicitExpiryIsKept()
+    {
+        Settings::set('default_validity_years', 3);
+
+        $v = Voucher::create([
+            'number_source' => 'manual',
+            'number'        => 100302,
+            'type'          => 'digital',
+            'value_euro'    => '10,00',
+            'valid_until'   => '2027-06-15',
+        ]);
+
+        $this->assertSame('2027-06-15', $v->valid_until->format('Y-m-d'));
     }
 
     public function testDistinctRecipientsDeduplicates()

@@ -10,13 +10,13 @@ tabs:
             span: left
             default: 100000
             comment: 'Ab dieser Nummer werden digitale Gutscheine automatisch nummeriert. Muss über dem handschriftlichen Ordner-Bereich liegen.'
-        default_validity_months:
-            label: Gültigkeit (Monate, optional)
+        default_validity_years:
+            label: Gültigkeit (Jahre)
             tab: Gutscheine
             type: number
             span: right
-            default: 0
-            comment: '0 = kein Ablaufdatum (empfohlen). In DE gilt ohnehin die gesetzliche Verjährung von 3 Jahren zum Jahresende; kürzere Fristen sind oft unwirksam.'
+            default: 3
+            comment: 'Standard-Gültigkeit, gerundet auf das Jahresende — entspricht der gesetzlichen 3-Jahres-Verjährung in DE (§§195/199 BGB). 0 = kein Ablaufdatum drucken.'
         min_value_cents:
             label: Mindestbetrag (Cent)
             tab: Gutscheine

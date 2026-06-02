@@ -62,7 +62,7 @@ tabs:
             tab: Gutschein
             type: dropdown
             span: right
-            default: pos
+            default: cash
             emptyOption: '— bitte wählen —'
         recipient_name:
             label: Empfänger
@@ -81,7 +81,7 @@ tabs:
             type: datepicker
             mode: date
             span: left
-            comment: 'Optional. Leer = kein Ablaufdatum (in DE gilt ohnehin die gesetzliche 3-Jahres-Frist zum Jahresende).'
+            comment: 'Leer = Standard-Gültigkeit aus den Einstellungen (Standard: 3 Jahre zum Jahresende). Hier kann ein abweichendes Datum gesetzt werden.'
         issued_at:
             label: Ausgestellt am
             tab: Gutschein

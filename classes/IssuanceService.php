@@ -4,7 +4,6 @@ use Db;
 use Carbon\Carbon;
 use JumpLink\Vouchers\Models\Voucher;
 use JumpLink\Vouchers\Models\VoucherOrder;
-use JumpLink\Vouchers\Models\Settings;
 
 /**
  * Turns a paid order into issued voucher(s).
@@ -49,8 +48,8 @@ class IssuanceService
             $voucher->payment_method      = 'online';
             $voucher->token_secret        = bin2hex(random_bytes(16));
             $voucher->recipient_name      = $order->recipient_name;
-            $voucher->valid_until         = self::defaultValidUntil();
             $voucher->issued_at           = Carbon::now();
+            // valid_until is applied centrally in Voucher::beforeCreate.
             $voucher->save();
 
             $order->status         = 'issued';
@@ -62,19 +61,5 @@ class IssuanceService
 
             return ['voucher' => $voucher, 'created' => true];
         });
-    }
-
-    /**
-     * Optional expiry. Off by default (returns null): German gift vouchers carry
-     * the statutory 3-year limitation anyway (§195 BGB, counted from year-end),
-     * and shorter expiry dates are often legally ineffective — so we don't stamp
-     * one unless the shop deliberately configures a positive validity period.
-     */
-    protected static function defaultValidUntil(): ?Carbon
-    {
-        $months = (int) Settings::get('default_validity_months', 0);
-        return $months > 0
-            ? Carbon::now()->addMonths($months)->endOfDay()
-            : null;
     }
 }

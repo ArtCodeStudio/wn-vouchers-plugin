@@ -38,10 +38,10 @@ class Settings extends Model
             ['value_cents' => 10000],
         ];
 
-        // Validity: off by default (no expiry). German gift vouchers carry the
-        // statutory 3-year limitation anyway; shorter expiry dates are often
-        // ineffective. Set a positive number of months only if deliberately wanted.
-        $this->default_validity_months = 0;
+        // Validity: 3 years by default, rounded to year-end — this matches the
+        // German statutory limitation (§§195/199 BGB), so printing it is accurate
+        // and transparent. Set 0 to print no expiry at all.
+        $this->default_validity_years = 3;
 
         // VAT: Mehrzweckgutschein by default (no VAT at sale; due on redemption).
         $this->vat_mode = 'multi_purpose';
