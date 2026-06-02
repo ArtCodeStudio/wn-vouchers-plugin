@@ -1,7 +1,20 @@
 {
     "name": "jumplink/wn-vouchers-plugin",
     "type": "winter-plugin",
-    "description": "Gutscheine: Online-Kauf (Mollie), digitale (PDF/QR) und physische Gutscheine, Einlösung mit Restguthaben-Ledger.",
+    "description": "Gift vouchers for WinterCMS: online purchase via Mollie, digital (PDF + QR) and physical vouchers, partial redemption with a balance ledger.",
+    "keywords": [
+        "wintercms",
+        "winter",
+        "octobercms",
+        "plugin",
+        "vouchers",
+        "gift-card",
+        "gutschein",
+        "mollie",
+        "qr-code",
+        "pdf"
+    ],
+    "homepage": "https://github.com/ArtCodeStudio/wn-vouchers-plugin",
     "license": "MIT",
     "authors": [
         {
@@ -10,6 +23,10 @@
             "homepage": "https://artandcode.studio"
         }
     ],
+    "support": {
+        "issues": "https://github.com/ArtCodeStudio/wn-vouchers-plugin/issues",
+        "source": "https://github.com/ArtCodeStudio/wn-vouchers-plugin"
+    },
     "require": {
         "composer/installers": "~1.0"
     },

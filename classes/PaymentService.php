@@ -5,7 +5,7 @@
  * plugin depends on our interface, not Mollie types (keeps a later Stripe/PayPal
  * swap or a shared commerce-core extraction cheap).
  *
- * Design (see voucher-plugin-spec.md §4):
+ * Design:
  *   startPayment(order)  -> Mollie createPayment(amount=total, EUR,
  *                           redirectUrl=Return?order=ID, webhookUrl=.../webhook,
  *                           metadata={order_id}); store payment_id; return checkout URL.

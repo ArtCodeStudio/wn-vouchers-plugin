@@ -7,12 +7,10 @@ use JumpLink\Vouchers\Models\VoucherOrder;
 /**
  * JumpLink Vouchers Plugin
  *
- * Gutschein-System für Mahlzeit am Meer: Online-Kauf mit Mollie-Zahlung,
- * digitale Gutscheine (PDF mit QR) und physische Karten, Einlösung mit
- * Restguthaben-Ledger. Bewusst eigenständig neben JumpLink.Events (das
- * zahlungs-agnostisch und von mehreren Themes geteilt bleibt).
- *
- * @see docs/engagements/mahlzeit-am-meer-gutscheinsystem/voucher-plugin-spec.md
+ * A gift-voucher ("Gutschein") system for WinterCMS: online purchase with
+ * Mollie payment, digital vouchers (PDF with QR) and physical cards, and
+ * redemption with a running-balance ledger. Deliberately standalone alongside
+ * JumpLink.Events, which stays payment-agnostic and is shared by several themes.
  */
 class Plugin extends PluginBase
 {
