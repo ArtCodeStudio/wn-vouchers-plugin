@@ -68,7 +68,7 @@
                 <select name="payment_method">
                     {% for key, label in __SELF__.paymentMethods %}<option value="{{ key }}">{{ label }}</option>{% endfor %}
                 </select>
-                <input type="number" name="number" placeholder="Karten-Nr. (nur physisch, optional)">
+                <input type="number" name="number" id="posSellNumber" placeholder="Nr. der vorgedruckten Karte (sonst leer = automatisch)">
                 <input type="text" name="recipient_name" placeholder="Empfänger (optional)">
                 <button type="submit">Verkaufen</button>
             </form>
@@ -110,12 +110,18 @@
             // Digital sale needs an email; physical does not.
             var sellType = root.querySelector('#posSellType');
             var sellEmail = root.querySelector('#posSellEmail');
+            var sellNumber = root.querySelector('#posSellNumber');
             function syncSellType() {
                 var digital = sellType && sellType.value === 'digital';
                 if (sellEmail) {
                     sellEmail.style.display = digital ? '' : 'none';
                     sellEmail.required = !!digital;
                     if (!digital) { sellEmail.value = ''; }
+                }
+                if (sellNumber) {
+                    // The number is the pre-printed card number — only for physical.
+                    sellNumber.style.display = digital ? 'none' : '';
+                    if (digital) { sellNumber.value = ''; }
                 }
             }
             if (sellType) { sellType.addEventListener('change', syncSellType); syncSellType(); }
