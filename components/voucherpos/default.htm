@@ -1,24 +1,42 @@
 <div class="voucher-pos">
     <style>
-        .voucher-pos { max-width: 600px; margin: 0 auto; font-size: 18px; line-height: 1.4; }
-        .voucher-pos input, .voucher-pos select, .voucher-pos button { font-size: 18px; padding: 12px 14px; border-radius: 10px; border: 1px solid #cbd5e1; box-sizing: border-box; }
-        .voucher-pos button { background: #1a3a5a; color: #fff; border: 0; cursor: pointer; font-weight: 600; }
-        .voucher-pos button#posScanBtn { background: #e2e8f0; color: #1a3a5a; }
+        .voucher-pos {
+            /* Light theme (default). */
+            --pos-fg: #1a3a5a; --pos-text: #1f2937; --pos-muted: #64748b;
+            --pos-border: #cbd5e1; --pos-card-bg: transparent; --pos-input-bg: #ffffff;
+            --pos-accent: #1a3a5a; --pos-accent-text: #ffffff; --pos-secondary-bg: #e2e8f0;
+            --pos-error-bg: #fef2f2; --pos-error-fg: #b91c1c; --pos-warn-bg: #fffbeb;
+            --pos-ok-bg: #ecfdf5;
+            color-scheme: light dark;
+            max-width: 600px; margin: 0 auto; font-size: 18px; line-height: 1.4; color: var(--pos-text);
+        }
+        @media (prefers-color-scheme: dark) {
+            .voucher-pos {
+                --pos-fg: #93c5fd; --pos-text: #e5e7eb; --pos-muted: #94a3b8;
+                --pos-border: #475569; --pos-card-bg: #1e293b; --pos-input-bg: #0f172a;
+                --pos-accent: #2563eb; --pos-accent-text: #ffffff; --pos-secondary-bg: #334155;
+                --pos-error-bg: #3f1d1d; --pos-error-fg: #fca5a5; --pos-warn-bg: #3a2f10;
+                --pos-ok-bg: #10241a;
+            }
+        }
+        .voucher-pos input, .voucher-pos select, .voucher-pos button { font-size: 18px; padding: 12px 14px; border-radius: 10px; border: 1px solid var(--pos-border); box-sizing: border-box; background: var(--pos-input-bg); color: var(--pos-text); }
+        .voucher-pos button { background: var(--pos-accent); color: var(--pos-accent-text); border: 0; cursor: pointer; font-weight: 600; }
+        .voucher-pos button#posScanBtn { background: var(--pos-secondary-bg); color: var(--pos-fg); }
         .voucher-pos .pos-search { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 18px; }
         .voucher-pos .pos-search input[name="q"] { flex: 1 1 240px; }
-        .voucher-pos .pos-voucher { border: 2px solid #1a3a5a; border-radius: 14px; padding: 22px; margin: 14px 0; text-align: center; }
-        .voucher-pos .pos-code { font-size: 20px; letter-spacing: 2px; color: #64748b; }
-        .voucher-pos .pos-balance { font-size: 52px; font-weight: 800; color: #1a3a5a; margin: 8px 0; }
-        .voucher-pos .pos-meta { color: #64748b; font-size: 15px; margin-bottom: 14px; }
+        .voucher-pos .pos-voucher { border: 2px solid var(--pos-fg); border-radius: 14px; padding: 22px; margin: 14px 0; text-align: center; background: var(--pos-card-bg); }
+        .voucher-pos .pos-code { font-size: 20px; letter-spacing: 2px; color: var(--pos-muted); }
+        .voucher-pos .pos-balance { font-size: 52px; font-weight: 800; color: var(--pos-fg); margin: 8px 0; }
+        .voucher-pos .pos-meta { color: var(--pos-muted); font-size: 15px; margin-bottom: 14px; }
         .voucher-pos .pos-redeem { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
         .voucher-pos .pos-redeem input { flex: 0 1 180px; text-align: right; }
-        .voucher-pos .pos-error { color: #b91c1c; background: #fef2f2; padding: 16px; border-radius: 10px; text-align: center; }
-        .voucher-pos .pos-note { color: #64748b; }
-        .voucher-pos .pos-denied { background: #fffbeb; padding: 22px; border-radius: 10px; }
-        .voucher-pos .pos-sell-wrap { margin-top: 28px; border-top: 1px solid #e2e8f0; padding-top: 12px; }
-        .voucher-pos .pos-sell-wrap summary { cursor: pointer; font-weight: 600; color: #1a3a5a; padding: 8px 0; }
+        .voucher-pos .pos-error { color: var(--pos-error-fg); background: var(--pos-error-bg); padding: 16px; border-radius: 10px; text-align: center; }
+        .voucher-pos .pos-note { color: var(--pos-muted); }
+        .voucher-pos .pos-denied { background: var(--pos-warn-bg); padding: 22px; border-radius: 10px; }
+        .voucher-pos .pos-sell-wrap { margin-top: 28px; border-top: 1px solid var(--pos-border); padding-top: 12px; }
+        .voucher-pos .pos-sell-wrap summary { cursor: pointer; font-weight: 600; color: var(--pos-fg); padding: 8px 0; }
         .voucher-pos .pos-sell { display: grid; gap: 10px; margin-top: 14px; }
-        .voucher-pos .pos-sold { margin-top: 14px; background: #ecfdf5; padding: 14px; border-radius: 10px; }
+        .voucher-pos .pos-sold { margin-top: 14px; background: var(--pos-ok-bg); padding: 14px; border-radius: 10px; }
         .voucher-pos #posReader { margin: 14px auto; }
     </style>
     {% if not __SELF__.authorized %}
@@ -39,10 +57,11 @@
             <summary>Vor-Ort-Verkauf</summary>
             <form class="pos-sell" data-request="{{ __SELF__ }}::onSell" data-request-flash>
                 <input type="number" name="value_euro" step="0.01" min="0.01" inputmode="decimal" placeholder="Wert €" required>
-                <select name="type">
-                    <option value="digital">Digital (PDF/QR)</option>
+                <select name="type" id="posSellType">
                     <option value="physical">Physische Karte</option>
+                    <option value="digital">Digital (PDF/QR)</option>
                 </select>
+                <input type="email" name="email" id="posSellEmail" placeholder="E-Mail (für digital erforderlich)" style="display:none;">
                 <select name="payment_method">
                     {% for key, label in __SELF__.paymentMethods %}<option value="{{ key }}">{{ label }}</option>{% endfor %}
                 </select>
@@ -84,6 +103,19 @@
                     lookup();
                 });
             });
+
+            // Digital sale needs an email; physical does not.
+            var sellType = root.querySelector('#posSellType');
+            var sellEmail = root.querySelector('#posSellEmail');
+            function syncSellType() {
+                var digital = sellType && sellType.value === 'digital';
+                if (sellEmail) {
+                    sellEmail.style.display = digital ? '' : 'none';
+                    sellEmail.required = !!digital;
+                    if (!digital) { sellEmail.value = ''; }
+                }
+            }
+            if (sellType) { sellType.addEventListener('change', syncSellType); syncSellType(); }
 
             if (input.value) { lookup(); } // arrived from a scanned QR (?t=…)
         })();

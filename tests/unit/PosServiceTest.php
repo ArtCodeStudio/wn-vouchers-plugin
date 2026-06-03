@@ -59,6 +59,18 @@ class PosServiceTest extends PluginTestCase
         $this->assertSame($v->id, PosService::resolveVoucher($url)->id);
     }
 
+    public function testResolveByBareNumber()
+    {
+        $v = $this->makeVoucher(100510);
+
+        // The card only prints the number, so the till must accept it too.
+        $found = PosService::resolveVoucher((string) $v->number);
+        $this->assertNotNull($found);
+        $this->assertSame($v->id, $found->id);
+
+        $this->assertNull(PosService::resolveVoucher('999999')); // no such number
+    }
+
     public function testResolveRejectsTamperedToken()
     {
         $v = $this->makeVoucher(100502);
@@ -89,7 +101,24 @@ class PosServiceTest extends PluginTestCase
 
     public function testSellRejectsZeroAmount()
     {
-        $result = PosService::sell(['value_euro' => '0', 'type' => 'digital'], 1);
+        $result = PosService::sell(['value_euro' => '0', 'type' => 'physical'], 1);
         $this->assertFalse($result['success']);
+    }
+
+    public function testSellDigitalRequiresValidEmail()
+    {
+        $this->assertFalse(PosService::sell(['value_euro' => '20,00', 'type' => 'digital'], 1)['success']);
+        $this->assertFalse(PosService::sell(['value_euro' => '20,00', 'type' => 'digital', 'email' => 'nope'], 1)['success']);
+
+        $ok = PosService::sell(['value_euro' => '20,00', 'type' => 'digital', 'email' => 'kunde@example.test'], 1);
+        $this->assertTrue($ok['success']);
+        $this->assertSame('digital', $ok['voucher']->type);
+    }
+
+    public function testSellPhysicalNeedsNoEmail()
+    {
+        $result = PosService::sell(['value_euro' => '20,00', 'type' => 'physical'], 1);
+        $this->assertTrue($result['success']);
+        $this->assertSame('physical', $result['voucher']->type);
     }
 }

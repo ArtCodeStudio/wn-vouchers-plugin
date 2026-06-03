@@ -31,12 +31,18 @@ class PosService
             return $voucherId ? Voucher::find($voucherId) : null;
         }
 
-        // Otherwise it is a human-readable code (with a typo-catching check char).
+        // A full human-readable code (with the typo-catching check char) …
         $code = strtoupper($input);
-        if (!VoucherCode::isValid($code)) {
-            return null;
+        if (VoucherCode::isValid($code)) {
+            return Voucher::where('code', $code)->first();
         }
-        return Voucher::where('code', $code)->first();
+
+        // … or just the bare voucher number that is printed on the card.
+        if (ctype_digit($input)) {
+            return Voucher::where('number', (int) $input)->first();
+        }
+
+        return null;
     }
 
     /** Record an on-site sale as a new, paid voucher. */
@@ -47,7 +53,16 @@ class PosService
             return ['success' => false, 'error' => 'Bitte einen gültigen Betrag eingeben.'];
         }
 
-        $type = (($input['type'] ?? 'digital') === 'physical') ? 'physical' : 'digital';
+        // On-site, physical is the default (the customer can take the card now).
+        $type = (($input['type'] ?? 'physical') === 'digital') ? 'digital' : 'physical';
+
+        // A digital voucher has to be emailed, so an address is required.
+        if ($type === 'digital') {
+            $email = trim((string) ($input['email'] ?? ''));
+            if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                return ['success' => false, 'error' => 'Für digitale Gutscheine ist eine gültige E-Mail-Adresse erforderlich.'];
+            }
+        }
 
         $voucher = new Voucher;
         $voucher->number_source       = !empty($input['number']) ? 'manual' : 'auto';

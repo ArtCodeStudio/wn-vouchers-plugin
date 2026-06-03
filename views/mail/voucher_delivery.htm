@@ -1,0 +1,18 @@
+subject = "Ihr Gutschein{% if brand_name %} von {{ brand_name }}{% endif %}"
+==
+
+Hallo{% if recipient_name %} {{ recipient_name }}{% endif %},
+
+anbei Ihr Gutschein{% if brand_name %} von **{{ brand_name }}**{% endif %}.
+
+- **Gutschein-Code:** {{ voucher.code }}
+- **Wert:** {{ voucher.initial_value_euro }}
+{% if voucher.valid_until %}- **Gültig bis:** {{ voucher.valid_until|date('d.m.Y') }}{% endif %}
+
+Der QR-Code im PDF wird an der Kasse gescannt; ein Restguthaben bleibt erhalten.
+{% if download_url %}
+[**Gutschein als PDF herunterladen**]({{ download_url }})
+{% endif %}
+
+Herzliche Grüße
+{% if brand_name %}Ihr Team von {{ brand_name }}{% else %}Ihr Team{% endif %}

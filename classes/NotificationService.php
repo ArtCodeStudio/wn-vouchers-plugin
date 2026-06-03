@@ -65,6 +65,48 @@ class NotificationService
         }
     }
 
+    /**
+     * Email a voucher PDF directly (used by the on-site till sale, which has no
+     * order). Attaches the PDF and includes a signed, time-limited download link.
+     */
+    public static function sendVoucherPdf(Voucher $voucher, string $email, ?string $recipientName = null): void
+    {
+        $brandName   = Settings::get('brand_name') ?: config('app.name');
+        $senderEmail = Settings::get('sender_email');
+        $senderName  = Settings::get('sender_name');
+
+        $downloadUrl = null;
+        try {
+            $downloadUrl = URL::temporarySignedRoute('jumplink.vouchers.pdf', now()->addDays(30), ['voucher' => $voucher->id]);
+        } catch (\Throwable $e) {
+            // Link is optional; the PDF is attached anyway.
+        }
+
+        $data = [
+            'voucher'        => $voucher,
+            'brand_name'     => $brandName,
+            'recipient_name' => $recipientName,
+            'download_url'   => $downloadUrl,
+        ];
+
+        try {
+            Mail::send('jumplink.vouchers::mail.voucher_delivery', $data, function ($message) use ($email, $recipientName, $voucher, $senderEmail, $senderName) {
+                $message->to($email, $recipientName ?: null);
+                if ($senderEmail) {
+                    $message->from($senderEmail, $senderName ?: null);
+                }
+                try {
+                    $pdf = PdfService::render($voucher);
+                    $message->attachData($pdf, 'gutschein-' . $voucher->code . '.pdf', ['mime' => 'application/pdf']);
+                } catch (\Throwable $e) {
+                    Log::error('[vouchers] POS PDF attach failed: ' . $e->getMessage());
+                }
+            });
+        } catch (\Throwable $e) {
+            Log::error('[vouchers] POS delivery mail failed: ' . $e->getMessage());
+        }
+    }
+
     /** Tell the buyer their physical voucher card is on its way. */
     public static function sendShippingMail(VoucherOrder $order): void
     {

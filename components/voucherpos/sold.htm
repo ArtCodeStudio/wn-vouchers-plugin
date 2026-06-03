@@ -3,6 +3,8 @@
         <p>Neuer Gutschein <strong>{{ voucher.code }}</strong> über {{ voucher.initial_value_euro }} angelegt.</p>
         {% if voucher.type == 'physical' %}
             <p>Bitte die Nummer <strong>{{ voucher.number }}</strong> auf die Karte schreiben.</p>
+        {% else %}
+            <p>Der Gutschein (PDF) wurde per E-Mail versendet.</p>
         {% endif %}
     </div>
 {% endif %}

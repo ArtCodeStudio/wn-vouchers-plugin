@@ -7,6 +7,7 @@ use JumpLink\Vouchers\Models\Voucher;
 use JumpLink\Vouchers\Models\VoucherOrder;
 use JumpLink\Vouchers\Classes\PosService;
 use JumpLink\Vouchers\Classes\RedemptionService;
+use JumpLink\Vouchers\Classes\NotificationService;
 
 /**
  * VoucherPos – the staff till page (iPad). Gated by a backend session + the
@@ -101,9 +102,16 @@ class VoucherPos extends ComponentBase
             throw new \ApplicationException($result['error'] ?? 'Verkauf fehlgeschlagen.');
         }
 
-        Flash::success('Gutschein angelegt: ' . $result['voucher']->code);
+        $voucher = $result['voucher'];
 
-        return ['#posSold' => $this->renderPartial('@sold', ['voucher' => $result['voucher']])];
+        // A digital voucher is emailed straight away (the address is required).
+        if ($voucher->type === 'digital') {
+            NotificationService::sendVoucherPdf($voucher, trim((string) post('email')), post('recipient_name') ?: null);
+        }
+
+        Flash::success('Gutschein angelegt: ' . $voucher->code);
+
+        return ['#posSold' => $this->renderPartial('@sold', ['voucher' => $voucher])];
     }
 
     protected function renderResult(Voucher $voucher): string
