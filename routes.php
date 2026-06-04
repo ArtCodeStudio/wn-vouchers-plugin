@@ -17,6 +17,10 @@
 Route::group(['prefix' => 'api/jumplink/vouchers'], function () {
     Route::post('webhook', [\JumpLink\Vouchers\Classes\Api::class, 'webhook']);
 
+    // Token-authorised status poll for the return page (lets it update in place
+    // without a hard reload while the webhook issues the voucher).
+    Route::get('order-status', [\JumpLink\Vouchers\Classes\Api::class, 'orderStatus']);
+
     Route::get('pdf/{voucher}', [\JumpLink\Vouchers\Classes\Api::class, 'pdf'])
         ->name('jumplink.vouchers.pdf');
 

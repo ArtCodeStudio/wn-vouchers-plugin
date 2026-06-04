@@ -1,9 +1,11 @@
 <?php namespace JumpLink\Vouchers\Classes;
 
+use URL;
 use Request;
 use Response;
 use Redirect;
 use JumpLink\Vouchers\Models\Voucher;
+use JumpLink\Vouchers\Models\VoucherOrder;
 use JumpLink\Vouchers\Models\Settings;
 
 /**
@@ -29,6 +31,32 @@ class Api
         }
         PaymentService::handleWebhook((string) $id);
         return Response::make('OK', 200);
+    }
+
+    /**
+     * Return-page status poll (token-authorised, JSON). Lets the buyer's browser
+     * swap to the issued state in place — no hard reload — while the webhook (or,
+     * locally, jumplink:vouchers-check-payment) issues the voucher.
+     */
+    public function orderStatus()
+    {
+        $order = VoucherOrder::findForReturn((int) Request::input('order'), (string) Request::input('t'));
+        if (!$order) {
+            return Response::json(['issued' => false], 404);
+        }
+
+        $downloadUrl = null;
+        if ($order->status === 'issued') {
+            $voucher = $order->vouchers()->first();
+            if ($voucher && $voucher->type === 'digital') {
+                $downloadUrl = URL::temporarySignedRoute('jumplink.vouchers.pdf', now()->addDays(30), ['voucher' => $voucher->id]);
+            }
+        }
+
+        return Response::json([
+            'issued'      => $order->status === 'issued',
+            'downloadUrl' => $downloadUrl,
+        ]);
     }
 
     /** Signed, time-limited PDF download for the buyer's digital voucher. */

@@ -8,9 +8,31 @@
         </div>
     {% elseif __SELF__.order %}
         <div class="voucher-pending">
-            <p>Ihre Zahlung wird verarbeitet … einen Moment bitte. Diese Seite aktualisiert sich automatisch.</p>
+            <p>Ihre Zahlung wird verarbeitet … einen Moment bitte.</p>
         </div>
-        {# Framework-agnostic poll: reload until the webhook has issued the voucher. #}
-        <script>setTimeout(function () { window.location.reload(); }, 4000);</script>
+        {# Soft client-side poll (no hard reload): swap to the issued state in place. #}
+        <script>
+        (function () {
+            var root = document.currentScript.closest('.voucher-return');
+            var order = {{ __SELF__.orderId }};
+            var token = '{{ __SELF__.order.access_token|e('js') }}';
+            var tries = 0;
+            function poll() {
+                if (tries++ > 75) { return; }
+                fetch('/api/jumplink/vouchers/order-status?order=' + order + '&t=' + encodeURIComponent(token), { headers: { Accept: 'application/json' } })
+                    .then(function (r) { return r.json(); })
+                    .then(function (d) {
+                        if (d && d.issued) {
+                            var dl = d.downloadUrl ? '<p><a class="voucher-download" href="' + d.downloadUrl + '">Gutschein als PDF herunterladen</a></p>' : '';
+                            root.innerHTML = '<div class="voucher-issued"><p>Vielen Dank! Ihr Gutschein wurde erstellt und an Ihre E-Mail-Adresse gesendet.</p>' + dl + '</div>';
+                        } else {
+                            setTimeout(poll, 4000);
+                        }
+                    })
+                    .catch(function () { setTimeout(poll, 4000); });
+            }
+            setTimeout(poll, 4000);
+        })();
+        </script>
     {% endif %}
 </div>
