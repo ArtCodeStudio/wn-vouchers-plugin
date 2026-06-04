@@ -5,6 +5,7 @@ use BackendAuth;
 use Cms\Classes\ComponentBase;
 use JumpLink\Vouchers\Models\Voucher;
 use JumpLink\Vouchers\Models\VoucherOrder;
+use JumpLink\Vouchers\Models\Settings;
 use JumpLink\Vouchers\Classes\PosService;
 use JumpLink\Vouchers\Classes\RedemptionService;
 use JumpLink\Vouchers\Classes\NotificationService;
@@ -45,6 +46,23 @@ class VoucherPos extends ComponentBase
     public function paymentMethods(): array
     {
         return (new Voucher)->getPaymentMethodOptions();
+    }
+
+    /** Quick-pick amounts in cents for the sell form, e.g. [2500, 5000, 10000]. */
+    public function denominations(): array
+    {
+        return collect(Settings::get('denominations', []))
+            ->pluck('value_cents')
+            ->filter()
+            ->map(fn ($c) => (int) $c)
+            ->values()
+            ->all();
+    }
+
+    /** Distinct recipient names for the till's recipient autocomplete (staff-only). */
+    public function recipientNames(): array
+    {
+        return Voucher::distinctRecipients();
     }
 
     public function onLookup()

@@ -9,9 +9,9 @@
             --pos-border: #cbd5e1; --pos-card-bg: transparent; --pos-input-bg: #ffffff;
             --pos-accent: #1a3a5a; --pos-accent-text: #ffffff; --pos-secondary-bg: #e2e8f0;
             --pos-error-bg: #fef2f2; --pos-error-fg: #b91c1c; --pos-warn-bg: #fffbeb;
-            --pos-ok-bg: #ecfdf5;
+            --pos-ok-bg: #ecfdf5; --pos-panel-bg: #f8fafc;
             color-scheme: light dark;
-            max-width: 600px; margin: 0 auto; font-size: 18px; line-height: 1.4; color: var(--pos-text);
+            max-width: 640px; margin: 0 auto; font-size: 18px; line-height: 1.4; color: var(--pos-text);
         }
         @media (prefers-color-scheme: dark) {
             .voucher-pos {
@@ -19,27 +19,44 @@
                 --pos-border: #475569; --pos-card-bg: #1e293b; --pos-input-bg: #0f172a;
                 --pos-accent: #2563eb; --pos-accent-text: #ffffff; --pos-secondary-bg: #334155;
                 --pos-error-bg: #3f1d1d; --pos-error-fg: #fca5a5; --pos-warn-bg: #3a2f10;
-                --pos-ok-bg: #10241a;
+                --pos-ok-bg: #10241a; --pos-panel-bg: #1e293b;
             }
         }
         .voucher-pos input, .voucher-pos select, .voucher-pos button { font-size: 18px; padding: 12px 14px; border-radius: 10px; border: 1px solid var(--pos-border); box-sizing: border-box; background: var(--pos-input-bg); color: var(--pos-text); }
         .voucher-pos button { background: var(--pos-accent); color: var(--pos-accent-text); border: 0; cursor: pointer; font-weight: 600; }
         .voucher-pos button#posScanBtn { background: var(--pos-secondary-bg); color: var(--pos-fg); }
-        .voucher-pos .pos-search { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 18px; }
+
+        /* Two clearly separated task panels (redeem vs. sell). */
+        .voucher-pos .pos-card { background: var(--pos-panel-bg); border: 1px solid var(--pos-border); border-radius: 16px; padding: 22px; margin-bottom: 22px; }
+        .voucher-pos .pos-card-title { margin: 0 0 16px; font-size: 22px; font-weight: 700; color: var(--pos-fg); }
+        .voucher-pos .pos-card-title small { display: block; margin-top: 2px; font-weight: 500; font-size: 14px; color: var(--pos-muted); }
+
+        .voucher-pos .pos-search { display: flex; gap: 10px; flex-wrap: wrap; }
         .voucher-pos .pos-search input[name="q"] { flex: 1 1 240px; }
-        .voucher-pos .pos-voucher { border: 2px solid var(--pos-fg); border-radius: 14px; padding: 22px; margin: 14px 0; text-align: center; background: var(--pos-card-bg); }
+
+        .voucher-pos .pos-voucher { border: 2px solid var(--pos-fg); border-radius: 14px; padding: 22px; margin: 16px 0 0; text-align: center; background: var(--pos-card-bg); }
         .voucher-pos .pos-code { font-size: 20px; letter-spacing: 2px; color: var(--pos-muted); }
         .voucher-pos .pos-balance { font-size: 52px; font-weight: 800; color: var(--pos-fg); margin: 8px 0; }
         .voucher-pos .pos-meta { color: var(--pos-muted); font-size: 15px; margin-bottom: 14px; }
         .voucher-pos .pos-redeem { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
         .voucher-pos .pos-redeem input { flex: 0 1 180px; text-align: right; }
         .voucher-pos .pos-error { color: var(--pos-error-fg); background: var(--pos-error-bg); padding: 16px; border-radius: 10px; text-align: center; }
-        .voucher-pos .pos-note { color: var(--pos-muted); }
+        .voucher-pos .pos-note { color: var(--pos-muted); font-weight: 400; }
         .voucher-pos .pos-denied { background: var(--pos-warn-bg); padding: 22px; border-radius: 10px; }
-        .voucher-pos .pos-sell-wrap { margin-top: 28px; border-top: 1px solid var(--pos-border); padding-top: 12px; }
-        .voucher-pos .pos-sell-wrap summary { cursor: pointer; font-weight: 600; color: var(--pos-fg); padding: 8px 0; }
-        .voucher-pos .pos-sell { display: grid; gap: 10px; margin-top: 14px; }
-        .voucher-pos .pos-sold { margin-top: 14px; background: var(--pos-ok-bg); padding: 14px; border-radius: 10px; }
+
+        /* Sell form — labelled fields, quick amounts, segmented toggles. */
+        .voucher-pos .pos-sell { display: grid; gap: 16px; }
+        .voucher-pos .pos-field { display: grid; gap: 6px; }
+        .voucher-pos .pos-field > label { font-weight: 600; font-size: 15px; color: var(--pos-muted); }
+        .voucher-pos .pos-amounts { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
+        .voucher-pos .pos-amount-btn { background: var(--pos-secondary-bg); color: var(--pos-fg); font-weight: 700; }
+        .voucher-pos .pos-segment { display: flex; gap: 8px; }
+        .voucher-pos .pos-segment label { flex: 1; margin: 0; text-align: center; padding: 12px 10px; border: 1px solid var(--pos-border); border-radius: 10px; background: var(--pos-input-bg); color: var(--pos-text); cursor: pointer; font-weight: 600; }
+        .voucher-pos .pos-segment input { position: absolute; opacity: 0; width: 0; height: 0; }
+        .voucher-pos .pos-segment label:has(input:checked) { background: var(--pos-accent); color: var(--pos-accent-text); border-color: var(--pos-accent); }
+        .voucher-pos .pos-sell button[type="submit"] { width: 100%; padding: 16px; font-size: 20px; margin-top: 4px; }
+        .voucher-pos #posSold:not(:empty) { margin-top: 16px; }
+        .voucher-pos .pos-sold { background: var(--pos-ok-bg); padding: 14px; border-radius: 10px; }
         .voucher-pos #posReader { margin: 14px auto; }
     </style>
     {% if not __SELF__.authorized %}
@@ -47,33 +64,71 @@
             <p>Diese Seite ist dem Personal vorbehalten. Bitte zuerst im <a href="/backend">Backend</a> anmelden.</p>
         </div>
     {% else %}
-        <form class="pos-search" data-request="{{ __SELF__ }}::onLookup" autocomplete="off">
-            <input type="text" name="q" id="posQuery" value="{{ __SELF__.initialQuery }}" placeholder="Code z. B. MAM-100042-K" autofocus>
-            <button type="submit">Suchen</button>
-            <button type="button" id="posScanBtn">QR scannen</button>
-        </form>
-        <div id="posReader" style="max-width:320px;display:none;"></div>
+        <section class="pos-card">
+            <h2 class="pos-card-title">Gutschein einlösen<small>Code eingeben oder QR-Code scannen</small></h2>
+            <form class="pos-search" data-request="{{ __SELF__ }}::onLookup" autocomplete="off">
+                <input type="text" name="q" id="posQuery" value="{{ __SELF__.initialQuery }}" placeholder="Code z. B. MAM-100042-K" autofocus>
+                <button type="submit">Suchen</button>
+                <button type="button" id="posScanBtn">QR scannen</button>
+            </form>
+            <div id="posReader" style="max-width:320px;display:none;"></div>
+            <div id="posResult"></div>
+        </section>
 
-        <div id="posResult"></div>
-
-        <details class="pos-sell-wrap">
-            <summary>Vor-Ort-Verkauf</summary>
+        <section class="pos-card">
+            <h2 class="pos-card-title">Vor-Ort-Verkauf<small>neuen Gutschein an der Kasse ausstellen</small></h2>
             <form class="pos-sell" data-request="{{ __SELF__ }}::onSell" data-request-flash>
-                <input type="number" name="value_euro" step="0.01" min="0.01" inputmode="decimal" placeholder="Wert €" required>
-                <select name="type" id="posSellType">
-                    <option value="physical">Physische Karte</option>
-                    <option value="digital">Digital (PDF/QR)</option>
-                </select>
-                <input type="email" name="email" id="posSellEmail" placeholder="E-Mail (für digital erforderlich)" style="display:none;">
-                <select name="payment_method">
-                    {% for key, label in __SELF__.paymentMethods %}<option value="{{ key }}">{{ label }}</option>{% endfor %}
-                </select>
-                <input type="number" name="number" id="posSellNumber" placeholder="Nr. der vorgedruckten Karte (sonst leer = automatisch)">
-                <input type="text" name="recipient_name" placeholder="Empfänger (optional)">
+                <div class="pos-field">
+                    <label>Betrag</label>
+                    {% if __SELF__.denominations %}
+                        <div class="pos-amounts">
+                            {% for cents in __SELF__.denominations %}
+                                <button type="button" class="pos-amount-btn" data-amount="{{ (cents / 100)|number_format(2, '.', '') }}">{{ (cents / 100)|number_format(2, ',', '.') }} €</button>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    <input type="number" name="value_euro" id="posSellValue" step="0.01" min="0.01" inputmode="decimal" placeholder="Wert €" required>
+                </div>
+
+                <div class="pos-field">
+                    <label>Art der Karte</label>
+                    <div class="pos-segment" id="posSellType">
+                        <label><input type="radio" name="type" value="physical" checked><span>Physische Karte</span></label>
+                        <label><input type="radio" name="type" value="digital"><span>Digital (PDF/QR)</span></label>
+                    </div>
+                </div>
+
+                <div class="pos-field">
+                    <label>Zahlung</label>
+                    <div class="pos-segment">
+                        {% for key, label in __SELF__.paymentMethods %}
+                            <label><input type="radio" name="payment_method" value="{{ key }}"{% if loop.first %} checked{% endif %}><span>{{ label }}</span></label>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="pos-field" id="posSellNumberField">
+                    <label>Nr. der vorgedruckten Karte <span class="pos-note">(optional — leer = automatisch)</span></label>
+                    <input type="number" name="number" id="posSellNumber" placeholder="z. B. 100042">
+                </div>
+
+                <div class="pos-field" id="posSellEmailField" style="display:none;">
+                    <label>E-Mail <span class="pos-note">(für digital erforderlich)</span></label>
+                    <input type="email" name="email" id="posSellEmail" placeholder="kunde@example.com">
+                </div>
+
+                <div class="pos-field">
+                    <label>Empfänger <span class="pos-note">(optional)</span></label>
+                    <input type="text" name="recipient_name" list="posRecipientList" placeholder="Name des Beschenkten" autocomplete="off">
+                    <datalist id="posRecipientList">
+                        {% for name in __SELF__.recipientNames %}<option value="{{ name }}">{% endfor %}
+                    </datalist>
+                </div>
+
                 <button type="submit">Verkaufen</button>
             </form>
             <div id="posSold"></div>
-        </details>
+        </section>
 
         <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"
             integrity="sha384-c9d8RFSL+u3exBOJ4Yp3HUJXS4znl9f+z66d1y54ig+ea249SpqR+w1wyvXz/lk+"
@@ -107,24 +162,29 @@
                 });
             });
 
-            // Digital sale needs an email; physical does not.
-            var sellType = root.querySelector('#posSellType');
-            var sellEmail = root.querySelector('#posSellEmail');
-            var sellNumber = root.querySelector('#posSellNumber');
+            // Quick-amount buttons fill the value field.
+            var valueInput = root.querySelector('#posSellValue');
+            root.querySelectorAll('.pos-amount-btn').forEach(function (btn) {
+                btn.addEventListener('click', function () { valueInput.value = btn.dataset.amount; valueInput.focus(); });
+            });
+
+            // Digital sale needs an email; physical shows the pre-printed card number.
+            var emailField = root.querySelector('#posSellEmailField');
+            var emailInput = root.querySelector('#posSellEmail');
+            var numberField = root.querySelector('#posSellNumberField');
+            var numberInput = root.querySelector('#posSellNumber');
             function syncSellType() {
-                var digital = sellType && sellType.value === 'digital';
-                if (sellEmail) {
-                    sellEmail.style.display = digital ? '' : 'none';
-                    sellEmail.required = !!digital;
-                    if (!digital) { sellEmail.value = ''; }
-                }
-                if (sellNumber) {
-                    // The number is the pre-printed card number — only for physical.
-                    sellNumber.style.display = digital ? 'none' : '';
-                    if (digital) { sellNumber.value = ''; }
-                }
+                var checked = root.querySelector('input[name="type"]:checked');
+                var digital = checked && checked.value === 'digital';
+                if (emailField) emailField.style.display = digital ? '' : 'none';
+                if (emailInput) { emailInput.required = !!digital; if (!digital) { emailInput.value = ''; } }
+                if (numberField) numberField.style.display = digital ? 'none' : '';
+                if (numberInput && digital) { numberInput.value = ''; }
             }
-            if (sellType) { sellType.addEventListener('change', syncSellType); syncSellType(); }
+            root.querySelectorAll('input[name="type"]').forEach(function (r) {
+                r.addEventListener('change', syncSellType);
+            });
+            syncSellType();
 
             if (input.value) { lookup(); } // arrived from a scanned QR (?t=…)
         })();
