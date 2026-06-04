@@ -57,16 +57,25 @@ class PaymentService
      */
     public static function startPayment(VoucherOrder $order, string $returnUrl): string
     {
-        $payment = self::client()->payments->create([
+        $params = [
             'amount' => [
                 'currency' => $order->currency ?: 'EUR',
                 'value'    => self::formatAmount((int) $order->total_cents),
             ],
             'description' => 'Gutschein #' . $order->id,
             'redirectUrl' => $returnUrl,
-            'webhookUrl'  => url('/api/jumplink/vouchers/webhook'),
             'metadata'    => ['order_id' => $order->id],
-        ]);
+        ];
+
+        // Mollie only accepts (and only calls) a publicly reachable webhook URL.
+        // On a local dev host it is omitted; issue the voucher afterwards by
+        // re-running the webhook logic: `php artisan jumplink:vouchers-check-payment`.
+        $webhookUrl = url('/api/jumplink/vouchers/webhook');
+        if (self::isPublicUrl($webhookUrl)) {
+            $params['webhookUrl'] = $webhookUrl;
+        }
+
+        $payment = self::client()->payments->create($params);
 
         $order->provider       = 'mollie';
         $order->payment_id     = $payment->id;
@@ -74,6 +83,28 @@ class PaymentService
         $order->save();
 
         return (string) $payment->getCheckoutUrl();
+    }
+
+    /**
+     * Whether a URL is public enough for Mollie to call back (not localhost, a
+     * private/reserved IP, or a non-routable dev TLD). Used to skip webhookUrl in
+     * local dev, where Mollie would reject it — issue via the
+     * jumplink:vouchers-check-payment command instead.
+     */
+    public static function isPublicUrl(string $url): bool
+    {
+        $host = strtolower((string) parse_url($url, PHP_URL_HOST));
+        if ($host === '' || $host === 'localhost' || $host === '127.0.0.1' || $host === '::1') {
+            return false;
+        }
+        if (preg_match('/\.(local|localhost|test|example|invalid)$/', $host)) {
+            return false;
+        }
+        if (filter_var($host, FILTER_VALIDATE_IP)
+            && !filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
+            return false;
+        }
+        return true;
     }
 
     /**

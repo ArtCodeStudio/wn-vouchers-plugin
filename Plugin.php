@@ -118,6 +118,10 @@ class Plugin extends PluginBase
             'jumplink.vouchers.verify',
             \JumpLink\Vouchers\Console\VerifyBalances::class
         );
+        $this->registerConsoleCommand(
+            'jumplink.vouchers.check_payment',
+            \JumpLink\Vouchers\Console\CheckPayment::class
+        );
 
         // Winter does not run Laravel package auto-discovery, so the dompdf
         // service provider (binds `dompdf.wrapper`, used by PdfService) must be

@@ -15,3 +15,5 @@
 1.0.4:
     - "Adresse: optionale Versandadresse für manuell/an der Kasse angelegte Gutscheine (Telefonbestellung mit Versand)."
     - add_address_to_vouchers.php
+1.0.5:
+    - "Dev/Ops: Command jumplink:vouchers-check-payment (Webhook manuell/lokal auslösen) + webhookUrl nur bei öffentlicher APP_URL setzen (lokaler Mollie-Test ohne Tunnel)."
