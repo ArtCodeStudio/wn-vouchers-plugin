@@ -24,6 +24,9 @@ Route::group(['prefix' => 'api/jumplink/vouchers'], function () {
     Route::get('pdf/{voucher}', [\JumpLink\Vouchers\Classes\Api::class, 'pdf'])
         ->name('jumplink.vouchers.pdf');
 
+    Route::get('image/{voucher}', [\JumpLink\Vouchers\Classes\Api::class, 'image'])
+        ->name('jumplink.vouchers.image');
+
     // A scanned QR opens this; redirect to the staff till page with the token.
     Route::get('scan', [\JumpLink\Vouchers\Classes\Api::class, 'scan']);
 });

@@ -46,7 +46,7 @@ class Api
 
         return Response::json([
             'issued'      => $order->status === 'issued',
-            'downloadUrl' => $order->digitalPdfUrl(),
+            'downloadUrl' => $order->digitalDownloadUrl(),
         ]);
     }
 
@@ -59,6 +59,32 @@ class Api
         $voucher = Voucher::find($voucherId);
         if (!$voucher) {
             return Response::make('not found', 404);
+        }
+        return Response::make(PdfService::render($voucher), 200, [
+            'Content-Type'        => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="gutschein-' . $voucher->code . '.pdf"',
+        ]);
+    }
+
+    /**
+     * Signed, time-limited download of the voucher as a PNG image (universal —
+     * every phone opens it). Falls back to the PDF where image rendering is
+     * unavailable.
+     */
+    public function image($voucherId)
+    {
+        if (!Request::hasValidSignature()) {
+            return Response::make('invalid or expired link', 403);
+        }
+        $voucher = Voucher::find($voucherId);
+        if (!$voucher) {
+            return Response::make('not found', 404);
+        }
+        if (ImageService::isAvailable()) {
+            return Response::make(ImageService::render($voucher), 200, [
+                'Content-Type'        => 'image/png',
+                'Content-Disposition' => 'inline; filename="gutschein-' . $voucher->code . '.png"',
+            ]);
         }
         return Response::make(PdfService::render($voucher), 200, [
             'Content-Type'        => 'application/pdf',

@@ -19,3 +19,5 @@
     - "Dev/Ops: Command jumplink:vouchers-check-payment (Webhook manuell/lokal auslösen) + webhookUrl nur bei öffentlicher APP_URL setzen (lokaler Mollie-Test ohne Tunnel)."
 1.0.6:
     - "UX: Rückkehrseite pollt den Status client-seitig (kein Hard-Reload) via api/jumplink/vouchers/order-status."
+1.0.7:
+    - "Lieferung: Gutschein als PNG-Bild statt PDF (universell öffenbar, GD-gerendert); PDF bleibt als Fallback."

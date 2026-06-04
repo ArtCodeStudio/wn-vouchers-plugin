@@ -124,7 +124,7 @@ class VoucherPos extends ComponentBase
 
         // A digital voucher is emailed straight away (the address is required).
         if ($voucher->type === 'digital') {
-            NotificationService::sendVoucherPdf($voucher, trim((string) post('email')), post('recipient_name') ?: null);
+            NotificationService::sendVoucherImage($voucher, trim((string) post('email')), post('recipient_name') ?: null);
         }
 
         Flash::success('Gutschein angelegt: ' . $voucher->code);

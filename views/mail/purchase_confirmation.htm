@@ -12,10 +12,10 @@ vielen Dank für Ihren Gutschein-Kauf bei **{{ brand_name|default('uns') }}**.
 {% endif %}
 
 {% if order.delivery_type == 'digital' %}
-Ihr Gutschein liegt als PDF bei und kann ausgedruckt oder am Smartphone vorgezeigt
+Ihr Gutschein liegt als Bild bei und kann ausgedruckt oder am Smartphone vorgezeigt
 werden. An der Kasse wird der QR-Code gescannt; ein Restguthaben bleibt erhalten.
 {% if download_url %}
-[**Gutschein als PDF herunterladen**]({{ download_url }})
+[**Gutschein als Bild herunterladen**]({{ download_url }})
 {% endif %}
 {% else %}
 Ihre Gutscheinkarte wird per Post an die angegebene Adresse versendet.

@@ -4,7 +4,7 @@
     <div class="voucher-issued">
         <p>Vielen Dank! Ihr Gutschein wurde erstellt und an Ihre E-Mail-Adresse gesendet.</p>
         <p class="voucher-download-wrap"{% if not __SELF__.downloadUrl %} hidden{% endif %}>
-            <a class="voucher-download" href="{{ __SELF__.downloadUrl ?: '#' }}">Gutschein als PDF herunterladen</a>
+            <a class="voucher-download" href="{{ __SELF__.downloadUrl ?: '#' }}">Gutschein als Bild herunterladen</a>
         </p>
     </div>
 {% endset %}

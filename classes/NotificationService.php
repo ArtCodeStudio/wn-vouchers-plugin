@@ -8,9 +8,9 @@ use JumpLink\Vouchers\Models\VoucherOrder;
 use JumpLink\Vouchers\Models\Settings;
 
 /**
- * Sends the purchase emails — buyer confirmation (with the PDF attached and a
- * signed download link for digital delivery) plus an optional staff
- * notification. Mirrors JumpLink.Events BookingService::sendMails.
+ * Sends the purchase emails — buyer confirmation (with the voucher image
+ * attached and a signed download link for digital delivery) plus an optional
+ * staff notification. Mirrors JumpLink.Events BookingService::sendMails.
  *
  * A mail failure is logged but never bubbles up: an already-issued voucher must
  * not be rolled back because an SMTP server hiccupped.
@@ -40,12 +40,7 @@ class NotificationService
                     $message->from($senderEmail, $senderName ?: null);
                 }
                 if ($voucher && $order->delivery_type === 'digital') {
-                    try {
-                        $pdf = PdfService::render($voucher);
-                        $message->attachData($pdf, 'gutschein-' . $voucher->code . '.pdf', ['mime' => 'application/pdf']);
-                    } catch (\Throwable $e) {
-                        Log::error('[vouchers] PDF attach failed: ' . $e->getMessage());
-                    }
+                    self::attachVoucher($message, $voucher);
                 }
             });
         } catch (\Throwable $e) {
@@ -66,10 +61,10 @@ class NotificationService
     }
 
     /**
-     * Email a voucher PDF directly (used by the on-site till sale, which has no
-     * order). Attaches the PDF and includes a signed, time-limited download link.
+     * Email a voucher image directly (used by the on-site till sale, which has no
+     * order). Attaches the image (PDF fallback) + a signed, time-limited link.
      */
-    public static function sendVoucherPdf(Voucher $voucher, string $email, ?string $recipientName = null): void
+    public static function sendVoucherImage(Voucher $voucher, string $email, ?string $recipientName = null): void
     {
         $brandName   = Settings::get('brand_name') ?: config('app.name');
         $senderEmail = Settings::get('sender_email');
@@ -77,9 +72,9 @@ class NotificationService
 
         $downloadUrl = null;
         try {
-            $downloadUrl = URL::temporarySignedRoute('jumplink.vouchers.pdf', now()->addDays(30), ['voucher' => $voucher->id]);
+            $downloadUrl = URL::temporarySignedRoute('jumplink.vouchers.image', now()->addDays(30), ['voucher' => $voucher->id]);
         } catch (\Throwable $e) {
-            // Link is optional; the PDF is attached anyway.
+            // Link is optional; the image is attached anyway.
         }
 
         $data = [
@@ -95,12 +90,7 @@ class NotificationService
                 if ($senderEmail) {
                     $message->from($senderEmail, $senderName ?: null);
                 }
-                try {
-                    $pdf = PdfService::render($voucher);
-                    $message->attachData($pdf, 'gutschein-' . $voucher->code . '.pdf', ['mime' => 'application/pdf']);
-                } catch (\Throwable $e) {
-                    Log::error('[vouchers] POS PDF attach failed: ' . $e->getMessage());
-                }
+                self::attachVoucher($message, $voucher);
             });
         } catch (\Throwable $e) {
             Log::error('[vouchers] POS delivery mail failed: ' . $e->getMessage());
@@ -126,14 +116,28 @@ class NotificationService
         }
     }
 
-    /** A signed, time-limited PDF download URL for a digital voucher. */
+    /** Attach the voucher to a mail — as a PNG image where possible, else PDF. */
+    protected static function attachVoucher($message, Voucher $voucher): void
+    {
+        try {
+            if (ImageService::isAvailable()) {
+                $message->attachData(ImageService::render($voucher), 'gutschein-' . $voucher->code . '.png', ['mime' => 'image/png']);
+            } else {
+                $message->attachData(PdfService::render($voucher), 'gutschein-' . $voucher->code . '.pdf', ['mime' => 'application/pdf']);
+            }
+        } catch (\Throwable $e) {
+            Log::error('[vouchers] voucher attach failed: ' . $e->getMessage());
+        }
+    }
+
+    /** A signed, time-limited download URL for a digital voucher image. */
     protected static function downloadUrl(VoucherOrder $order, ?Voucher $voucher): ?string
     {
         if (!$voucher || $order->delivery_type !== 'digital') {
             return null;
         }
         try {
-            return URL::temporarySignedRoute('jumplink.vouchers.pdf', now()->addDays(30), ['voucher' => $voucher->id]);
+            return URL::temporarySignedRoute('jumplink.vouchers.image', now()->addDays(30), ['voucher' => $voucher->id]);
         } catch (\Throwable $e) {
             Log::error('[vouchers] could not sign download URL: ' . $e->getMessage());
             return null;

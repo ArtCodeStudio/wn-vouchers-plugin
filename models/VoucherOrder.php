@@ -90,11 +90,11 @@ class VoucherOrder extends Model
     }
 
     /**
-     * Signed, time-limited PDF download URL for this order's digital voucher, or
-     * null if it is not issued / has no digital voucher. Single source for the
+     * Signed, time-limited download URL for this order's digital voucher image,
+     * or null if it is not issued / has no digital voucher. Single source for the
      * return component and the status-poll endpoint.
      */
-    public function digitalPdfUrl(): ?string
+    public function digitalDownloadUrl(): ?string
     {
         if ($this->status !== 'issued') {
             return null;
@@ -103,7 +103,7 @@ class VoucherOrder extends Model
         if (!$voucher || $voucher->type !== 'digital') {
             return null;
         }
-        return \URL::temporarySignedRoute('jumplink.vouchers.pdf', now()->addDays(30), ['voucher' => $voucher->id]);
+        return \URL::temporarySignedRoute('jumplink.vouchers.image', now()->addDays(30), ['voucher' => $voucher->id]);
     }
 
     //

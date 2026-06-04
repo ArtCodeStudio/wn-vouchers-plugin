@@ -50,6 +50,6 @@ class VoucherReturn extends ComponentBase
     /** Signed, time-limited PDF download URL once the voucher is issued. */
     public function downloadUrl()
     {
-        return $this->order()?->digitalPdfUrl();
+        return $this->order()?->digitalDownloadUrl();
     }
 }
