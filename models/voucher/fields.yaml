@@ -75,6 +75,42 @@ tabs:
             path: recipient_datalist
             tab: Gutschein
             span: full
+        address_section:
+            type: section
+            label: 'Versandadresse (optional)'
+            tab: Gutschein
+            comment: 'Nur falls eine physische Karte verschickt werden soll (z. B. telefonische Bestellung). Wird die Karte direkt mitgenommen, leer lassen.'
+            trigger:
+                action: show
+                field: type
+                condition: value[physical]
+        street:
+            label: 'Straße & Nr.'
+            tab: Gutschein
+            type: text
+            span: full
+            trigger:
+                action: show
+                field: type
+                condition: value[physical]
+        zip:
+            label: PLZ
+            tab: Gutschein
+            type: text
+            span: left
+            trigger:
+                action: show
+                field: type
+                condition: value[physical]
+        city:
+            label: Ort
+            tab: Gutschein
+            type: text
+            span: right
+            trigger:
+                action: show
+                field: type
+                condition: value[physical]
         valid_until:
             label: 'Gültig bis (optional)'
             tab: Gutschein

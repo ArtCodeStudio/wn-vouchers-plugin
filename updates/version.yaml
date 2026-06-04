@@ -12,3 +12,6 @@
 1.0.3:
     - "Zahlung: Zahlungsstatus/-art für manuell angelegte Gutscheine (z. B. an der Kasse bezahlt)."
     - add_payment_to_vouchers.php
+1.0.4:
+    - "Adresse: optionale Versandadresse für manuell/an der Kasse angelegte Gutscheine (Telefonbestellung mit Versand)."
+    - add_address_to_vouchers.php

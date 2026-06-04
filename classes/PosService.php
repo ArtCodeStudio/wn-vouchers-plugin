@@ -72,6 +72,10 @@ class PosService
         $voucher->type                = $type;
         $voucher->initial_value_cents = $valueCents;
         $voucher->recipient_name      = $input['recipient_name'] ?? null;
+        // Optional shipping address (physical card to be shipped, e.g. phone order).
+        $voucher->street              = $input['street'] ?? null;
+        $voucher->zip                 = $input['zip'] ?? null;
+        $voucher->city                = $input['city'] ?? null;
         $voucher->payment_status      = 'paid';
         $voucher->payment_method      = $input['payment_method'] ?? 'cash';
         $voucher->created_by          = $userId;

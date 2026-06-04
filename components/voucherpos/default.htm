@@ -26,6 +26,9 @@
         .voucher-pos button { background: var(--pos-accent); color: var(--pos-accent-text); border: 0; cursor: pointer; font-weight: 600; }
         .voucher-pos button#posScanBtn { background: var(--pos-secondary-bg); color: var(--pos-fg); }
 
+        .voucher-pos .pos-toolbar { display: flex; justify-content: flex-end; margin-bottom: 14px; }
+        .voucher-pos .pos-backlink { color: var(--pos-fg); text-decoration: none; font-weight: 600; font-size: 15px; padding: 9px 14px; border: 1px solid var(--pos-border); border-radius: 10px; background: var(--pos-input-bg); }
+
         /* Two clearly separated task panels (redeem vs. sell). */
         .voucher-pos .pos-card { background: var(--pos-panel-bg); border: 1px solid var(--pos-border); border-radius: 16px; padding: 22px; margin-bottom: 22px; }
         .voucher-pos .pos-card-title { margin: 0 0 16px; font-size: 22px; font-weight: 700; color: var(--pos-fg); }
@@ -64,6 +67,9 @@
             <p>Diese Seite ist dem Personal vorbehalten. Bitte zuerst im <a href="/backend">Backend</a> anmelden.</p>
         </div>
     {% else %}
+        <div class="pos-toolbar">
+            <a href="/backend/jumplink/vouchers/vouchers" class="pos-backlink">↩ Zum Backend</a>
+        </div>
         <section class="pos-card">
             <h2 class="pos-card-title">Gutschein einlösen<small>Code eingeben oder QR-Code scannen</small></h2>
             <form class="pos-search" data-request="{{ __SELF__ }}::onLookup" autocomplete="off">
@@ -110,6 +116,15 @@
                 <div class="pos-field" id="posSellNumberField">
                     <label>Nr. der vorgedruckten Karte <span class="pos-note">(optional — leer = automatisch)</span></label>
                     <input type="number" name="number" id="posSellNumber" placeholder="z. B. 100042">
+                </div>
+
+                <div class="pos-field" id="posSellAddressField">
+                    <label>Versandadresse <span class="pos-note">(optional — nur falls die Karte verschickt wird)</span></label>
+                    <input type="text" name="street" placeholder="Straße &amp; Nr.">
+                    <div style="display:flex; gap:10px;">
+                        <input type="text" name="zip" placeholder="PLZ" style="flex:0 1 140px;">
+                        <input type="text" name="city" placeholder="Ort" style="flex:1 1 auto;">
+                    </div>
                 </div>
 
                 <div class="pos-field" id="posSellEmailField" style="display:none;">
@@ -173,6 +188,7 @@
             var emailInput = root.querySelector('#posSellEmail');
             var numberField = root.querySelector('#posSellNumberField');
             var numberInput = root.querySelector('#posSellNumber');
+            var addressField = root.querySelector('#posSellAddressField');
             function syncSellType() {
                 var checked = root.querySelector('input[name="type"]:checked');
                 var digital = checked && checked.value === 'digital';
@@ -180,6 +196,9 @@
                 if (emailInput) { emailInput.required = !!digital; if (!digital) { emailInput.value = ''; } }
                 if (numberField) numberField.style.display = digital ? 'none' : '';
                 if (numberInput && digital) { numberInput.value = ''; }
+                // Address only applies to a physical card that will be shipped.
+                if (addressField) addressField.style.display = digital ? 'none' : '';
+                if (addressField && digital) { addressField.querySelectorAll('input').forEach(function (i) { i.value = ''; }); }
             }
             root.querySelectorAll('input[name="type"]').forEach(function (r) {
                 r.addEventListener('change', syncSellType);

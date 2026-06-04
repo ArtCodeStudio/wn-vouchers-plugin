@@ -31,7 +31,8 @@ class Voucher extends Model
         'order_id', 'code', 'number', 'number_source', 'type',
         'initial_value_cents', 'value_euro', 'balance_cents', 'currency', 'vat_mode',
         'status', 'payment_status', 'payment_method', 'token_secret',
-        'recipient_name', 'valid_until', 'issued_at', 'pdf_generated_at', 'created_by',
+        'recipient_name', 'street', 'zip', 'city',
+        'valid_until', 'issued_at', 'pdf_generated_at', 'created_by',
     ];
 
     protected $dates = ['valid_until', 'issued_at', 'pdf_generated_at'];
