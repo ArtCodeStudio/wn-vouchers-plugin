@@ -1,7 +1,7 @@
 {
     "name": "jumplink/wn-vouchers-plugin",
     "type": "winter-plugin",
-    "description": "Gift vouchers for WinterCMS: online purchase via Mollie, digital (PDF + QR) and physical vouchers, partial redemption with a balance ledger.",
+    "description": "Gift vouchers for WinterCMS: online purchase via Mollie, digital (PNG image + QR) and physical vouchers, partial redemption with a balance ledger.",
     "keywords": [
         "wintercms",
         "winter",

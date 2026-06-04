@@ -6,7 +6,7 @@ use JumpLink\Vouchers\Models\VoucherOrder;
 /**
  * VoucherReturn – the post-payment landing component. Reads ?order=<id> and
  * shows the status. While the webhook is still issuing the voucher it shows a
- * "payment processing" notice and polls; once issued it shows the PDF download
+ * "payment processing" notice and polls; once issued it shows the image download
  * link ("also sent by email"). It NEVER issues a voucher itself — the Mollie
  * webhook is the only issuing authority.
  */
@@ -16,7 +16,7 @@ class VoucherReturn extends ComponentBase
     {
         return [
             'name'        => 'Gutschein-Rückkehr (nach Zahlung)',
-            'description' => 'Landeseite nach der Mollie-Zahlung: Status + PDF-Download.',
+            'description' => 'Landeseite nach der Mollie-Zahlung: Status + Bild-Download.',
         ];
     }
 
@@ -47,7 +47,7 @@ class VoucherReturn extends ComponentBase
         return $order && $order->status === 'issued';
     }
 
-    /** Signed, time-limited PDF download URL once the voucher is issued. */
+    /** Signed, time-limited download URL (image) once the voucher is issued. */
     public function downloadUrl()
     {
         return $this->order()?->digitalDownloadUrl();

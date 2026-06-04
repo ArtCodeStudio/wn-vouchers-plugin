@@ -57,7 +57,7 @@ class Voucher extends Model
 
     public function getTypeOptions()
     {
-        return ['digital' => 'Digital (PDF/QR)', 'physical' => 'Physisch (Karte)'];
+        return ['digital' => 'Digital (Bild/QR)', 'physical' => 'Physisch (Karte)'];
     }
 
     public function getPaymentStatusOptions()

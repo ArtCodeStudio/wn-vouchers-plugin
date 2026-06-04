@@ -3,7 +3,7 @@
 return [
     'plugin' => [
         'name'        => 'Gutscheine',
-        'description' => 'Gutschein-Verkauf (Mollie), digitale (PDF/QR) und physische Gutscheine, Einlösung mit Restguthaben.',
+        'description' => 'Gutschein-Verkauf (Mollie), digitale (Bild/QR) und physische Gutscheine, Einlösung mit Restguthaben.',
         'menu_label'  => 'Gutscheine',
     ],
     'vouchers' => [
@@ -26,6 +26,6 @@ return [
     ],
     'settings' => [
         'label'       => 'Gutschein-Einstellungen',
-        'description' => 'Nummerierung, Servicepauschale, MwSt-Modell, Mollie, Absender, PDF.',
+        'description' => 'Nummerierung, Servicepauschale, MwSt-Modell, Mollie, Absender, Gutschein-Design.',
     ],
 ];

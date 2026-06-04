@@ -137,38 +137,38 @@ tabs:
             comment: 'Leer lassen, um den globalen Mail-Absender zu verwenden.'
 
         #
-        # Tab: PDF
+        # Tab: Gutschein-Design
         #
         brand_name:
             label: Markenname
-            tab: PDF
+            tab: Gutschein-Design
             type: text
             span: left
-            comment: 'Erscheint auf dem Gutschein-PDF und in den E-Mails.'
+            comment: 'Erscheint auf dem Gutschein und in den E-Mails.'
         pdf_accent_color:
             label: Akzentfarbe
-            tab: PDF
+            tab: Gutschein-Design
             type: colorpicker
             span: right
             default: '#1a3a5a'
         pdf_logo:
             label: Logo (optional)
-            tab: PDF
+            tab: Gutschein-Design
             type: fileupload
             mode: image
             imageHeight: 60
             span: left
-            comment: 'Wird oben auf dem Gutschein-PDF angezeigt.'
+            comment: 'Wird oben auf dem Gutschein angezeigt.'
         pdf_background:
             label: Briefpapier / Hintergrund (optional)
-            tab: PDF
+            tab: Gutschein-Design
             type: fileupload
             mode: image
             span: right
-            comment: 'Vollflächiges Hintergrundbild (A4 hochkant, 210×297 mm) für ein individuelles Gutschein-Design. Die Gutschein-Daten werden darübergelegt.'
+            comment: 'Vollflächiges Hintergrundbild für ein individuelles Gutschein-Design (Kartenformat quer). Die Gutschein-Daten werden darübergelegt.'
         pdf_footer_text:
             label: Fußzeile / rechtlicher Hinweis
-            tab: PDF
+            tab: Gutschein-Design
             type: textarea
             span: full
             size: small

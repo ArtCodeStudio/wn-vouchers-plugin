@@ -7,17 +7,17 @@
 [![PHP](https://img.shields.io/badge/PHP-8.1%2B-777bb4.svg)](https://www.php.net)
 
 Sell gift vouchers online with validated data and real payments, deliver them
-**digitally** (PDF + QR code by email) or **physically** (pre-printed card by
+**digitally** (image + QR code by email) or **physically** (pre-printed card by
 post), and let staff redeem them — including **partial redemptions with a
 running balance** — from the backend or a tablet at the till.
 
 Originally built to replace a brittle “request a voucher” contact form for a
 seaside restaurant, but written as a self-contained, reusable plugin: money,
-numbering, ledger, payment, PDF/QR and fulfillment are all generic.
+numbering, ledger, payment, image/QR and fulfillment are all generic.
 
 > **Standalone by design.** This is *not* an extension of
 > [`JumpLink.Events`](https://github.com/ArtCodeStudio/wn-events-plugin). Vouchers
-> (monetary value, sequential numbering, a balance ledger, payment, PDF/QR,
+> (monetary value, sequential numbering, a balance ledger, payment, image/QR,
 > fulfillment) are a distinct domain. The proven Events conventions (plugin
 > registration, service classes, settings, mail templates, route style) are
 > *reused, not coupled*.
@@ -31,7 +31,7 @@ numbering, ledger, payment, PDF/QR and fulfillment are all generic.
 - 💳 **Mollie payment** (Apple/Google Pay, cards, SEPA, PayPal via one
   integration). The webhook is the **sole** voucher-issuing authority — no
   voucher is created until the payment is confirmed server-side.
-- 📄 **Digital delivery**: a branded PDF with a QR code, downloadable and emailed.
+- 🖼️ **Digital delivery**: a branded image (PNG) with a QR code, downloadable and emailed.
 - 📬 **Physical delivery**: a pre-printed card by post, with a configurable
   service fee and a shipping notification for staff.
 - 💶 **Partial redemption with a running balance**: a 50 € voucher spent in a

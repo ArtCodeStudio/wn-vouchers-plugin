@@ -3,7 +3,7 @@
 return [
     'plugin' => [
         'name'        => 'Vouchers',
-        'description' => 'Voucher sales (Mollie), digital (PDF/QR) and physical vouchers, redemption with running balance.',
+        'description' => 'Voucher sales (Mollie), digital (image/QR) and physical vouchers, redemption with running balance.',
         'menu_label'  => 'Vouchers',
     ],
     'vouchers' => [
@@ -26,6 +26,6 @@ return [
     ],
     'settings' => [
         'label'       => 'Voucher settings',
-        'description' => 'Numbering, service fee, VAT mode, Mollie, sender, PDF.',
+        'description' => 'Numbering, service fee, VAT mode, Mollie, sender, voucher design.',
     ],
 ];

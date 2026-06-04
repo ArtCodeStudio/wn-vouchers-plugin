@@ -4,7 +4,7 @@ use Model;
 
 /**
  * Plugin settings (start number, fee, value bounds, VAT mode, Mollie mode,
- * sender/notify emails, PDF branding). Secrets (MOLLIE_API_KEY,
+ * sender/notify emails, voucher design). Secrets (MOLLIE_API_KEY,
  * VOUCHER_TOKEN_SECRET) are NOT stored here — they are read from env() so they
  * never land in a CMS settings export.
  */
@@ -16,7 +16,7 @@ class Settings extends Model
 
     public $settingsFields = 'fields.yaml';
 
-    /** PDF customization: an optional logo and a full-page "Briefpapier" background. */
+    /** Voucher design: an optional logo and a full-page "Briefpapier" background. */
     public $attachOne = [
         'pdf_logo'       => \System\Models\File::class,
         'pdf_background' => \System\Models\File::class,
@@ -65,7 +65,7 @@ class Settings extends Model
         $this->sender_email = null;
         $this->send_customer_copy = true;
 
-        // Branding (used on the PDF and in emails).
+        // Branding (used on the voucher and in emails).
         $this->brand_name = null;
         $this->pdf_accent_color = '#1a3a5a';
         $this->pdf_footer_text = null;

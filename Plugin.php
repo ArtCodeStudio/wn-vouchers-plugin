@@ -8,7 +8,7 @@ use JumpLink\Vouchers\Models\VoucherOrder;
  * JumpLink Vouchers Plugin
  *
  * A gift-voucher ("Gutschein") system for WinterCMS: online purchase with
- * Mollie payment, digital vouchers (PDF with QR) and physical cards, and
+ * Mollie payment, digital vouchers (image with QR) and physical cards, and
  * redemption with a running-balance ledger. Deliberately standalone alongside
  * JumpLink.Events, which stays payment-agnostic and is shared by several themes.
  */

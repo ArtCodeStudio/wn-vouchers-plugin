@@ -86,7 +86,7 @@ class VoucherOrder extends Model
 
     public function getDeliveryTypeOptions()
     {
-        return ['digital' => 'Digital (PDF/QR)', 'physical' => 'Physisch (Post)'];
+        return ['digital' => 'Digital (Bild/QR)', 'physical' => 'Physisch (Post)'];
     }
 
     /**
