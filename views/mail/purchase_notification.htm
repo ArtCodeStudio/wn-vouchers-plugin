@@ -7,6 +7,7 @@ Ein Gutschein wurde gekauft und bezahlt.
 - **Versand:** {{ order.delivery_type }}{% if order.delivery_type == 'physical' %} (Karte per Post – bitte ausstellen & versenden){% endif %}
 - **Summe:** {{ order.total_euro }}
 - **Käufer:** {{ order.firstname }} {{ order.lastname }} <{{ order.email }}>
+{% if order.phone %}- **Telefon:** {{ order.phone }}{% endif %}
 {% if order.delivery_type == 'physical' %}
 - **Adresse:** {{ order.street }}, {{ order.zip }} {{ order.city }}
 {% endif %}
