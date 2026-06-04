@@ -1,6 +1,5 @@
 <?php namespace JumpLink\Vouchers\Components;
 
-use URL;
 use Cms\Classes\ComponentBase;
 use JumpLink\Vouchers\Models\VoucherOrder;
 
@@ -31,9 +30,15 @@ class VoucherReturn extends ComponentBase
      * The token (not the enumerable id) is what authorizes access — see
      * VoucherOrder::findForReturn.
      */
+    /** Resolved once per request (the partial reads order() several times). */
+    protected $resolvedOrder = false;
+
     public function order()
     {
-        return VoucherOrder::findForReturn($this->orderId(), input('t') ?: post('t'));
+        if ($this->resolvedOrder === false) {
+            $this->resolvedOrder = VoucherOrder::findForReturn($this->orderId(), input('t') ?: post('t'));
+        }
+        return $this->resolvedOrder;
     }
 
     public function isIssued()
@@ -45,14 +50,6 @@ class VoucherReturn extends ComponentBase
     /** Signed, time-limited PDF download URL once the voucher is issued. */
     public function downloadUrl()
     {
-        $order = $this->order();
-        if (!$order || $order->status !== 'issued') {
-            return null;
-        }
-        $voucher = $order->vouchers()->first();
-        if (!$voucher || $voucher->type !== 'digital') {
-            return null;
-        }
-        return URL::temporarySignedRoute('jumplink.vouchers.pdf', now()->addDays(30), ['voucher' => $voucher->id]);
+        return $this->order()?->digitalPdfUrl();
     }
 }

@@ -1,6 +1,5 @@
 <?php namespace JumpLink\Vouchers\Classes;
 
-use URL;
 use Request;
 use Response;
 use Redirect;
@@ -45,17 +44,9 @@ class Api
             return Response::json(['issued' => false], 404);
         }
 
-        $downloadUrl = null;
-        if ($order->status === 'issued') {
-            $voucher = $order->vouchers()->first();
-            if ($voucher && $voucher->type === 'digital') {
-                $downloadUrl = URL::temporarySignedRoute('jumplink.vouchers.pdf', now()->addDays(30), ['voucher' => $voucher->id]);
-            }
-        }
-
         return Response::json([
             'issued'      => $order->status === 'issued',
-            'downloadUrl' => $downloadUrl,
+            'downloadUrl' => $order->digitalPdfUrl(),
         ]);
     }
 

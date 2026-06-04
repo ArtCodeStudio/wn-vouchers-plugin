@@ -94,9 +94,11 @@ class PaymentService
     public static function isPublicUrl(string $url): bool
     {
         $host = strtolower((string) parse_url($url, PHP_URL_HOST));
-        if ($host === '' || $host === 'localhost' || $host === '127.0.0.1' || $host === '::1') {
+        if ($host === '' || $host === 'localhost') {
             return false;
         }
+        // Non-routable dev TLDs, and any private/reserved IP (the reserved range
+        // already covers 127.0.0.1 / ::1 loopback).
         if (preg_match('/\.(local|localhost|test|example|invalid)$/', $host)) {
             return false;
         }

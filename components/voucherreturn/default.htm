@@ -1,16 +1,22 @@
+{# Issued state — single source for both the initial render and the soft poll
+   below, which only unhides this block (no markup rebuilt in JS). #}
+{% set issued %}
+    <div class="voucher-issued">
+        <p>Vielen Dank! Ihr Gutschein wurde erstellt und an Ihre E-Mail-Adresse gesendet.</p>
+        <p class="voucher-download-wrap"{% if not __SELF__.downloadUrl %} hidden{% endif %}>
+            <a class="voucher-download" href="{{ __SELF__.downloadUrl ?: '#' }}">Gutschein als PDF herunterladen</a>
+        </p>
+    </div>
+{% endset %}
 <div class="voucher-return">
     {% if __SELF__.isIssued %}
-        <div class="voucher-issued">
-            <p>Vielen Dank! Ihr Gutschein wurde erstellt und an Ihre E-Mail-Adresse gesendet.</p>
-            {% if __SELF__.downloadUrl %}
-                <p><a class="voucher-download" href="{{ __SELF__.downloadUrl }}">Gutschein als PDF herunterladen</a></p>
-            {% endif %}
-        </div>
+        {{ issued }}
     {% elseif __SELF__.order %}
-        <div class="voucher-pending">
+        <div class="voucher-pending" data-voucher-pending>
             <p>Ihre Zahlung wird verarbeitet … einen Moment bitte.</p>
         </div>
-        {# Soft client-side poll (no hard reload): swap to the issued state in place. #}
+        <div data-voucher-issued hidden>{{ issued }}</div>
+        {# Soft client-side poll (no hard reload): unhide the issued block in place. #}
         <script>
         (function () {
             var root = document.currentScript.closest('.voucher-return');
@@ -22,12 +28,13 @@
                 fetch('/api/jumplink/vouchers/order-status?order=' + order + '&t=' + encodeURIComponent(token), { headers: { Accept: 'application/json' } })
                     .then(function (r) { return r.json(); })
                     .then(function (d) {
-                        if (d && d.issued) {
-                            var dl = d.downloadUrl ? '<p><a class="voucher-download" href="' + d.downloadUrl + '">Gutschein als PDF herunterladen</a></p>' : '';
-                            root.innerHTML = '<div class="voucher-issued"><p>Vielen Dank! Ihr Gutschein wurde erstellt und an Ihre E-Mail-Adresse gesendet.</p>' + dl + '</div>';
-                        } else {
-                            setTimeout(poll, 4000);
+                        if (!d || !d.issued) { setTimeout(poll, 4000); return; }
+                        if (d.downloadUrl) {
+                            var a = root.querySelector('.voucher-download');
+                            if (a) { a.href = d.downloadUrl; a.closest('.voucher-download-wrap').hidden = false; }
                         }
+                        root.querySelector('[data-voucher-pending]').hidden = true;
+                        root.querySelector('[data-voucher-issued]').hidden = false;
                     })
                     .catch(function () { setTimeout(poll, 4000); });
             }

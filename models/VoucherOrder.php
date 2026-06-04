@@ -89,6 +89,23 @@ class VoucherOrder extends Model
         return ['digital' => 'Digital (PDF/QR)', 'physical' => 'Physisch (Post)'];
     }
 
+    /**
+     * Signed, time-limited PDF download URL for this order's digital voucher, or
+     * null if it is not issued / has no digital voucher. Single source for the
+     * return component and the status-poll endpoint.
+     */
+    public function digitalPdfUrl(): ?string
+    {
+        if ($this->status !== 'issued') {
+            return null;
+        }
+        $voucher = $this->vouchers()->first();
+        if (!$voucher || $voucher->type !== 'digital') {
+            return null;
+        }
+        return \URL::temporarySignedRoute('jumplink.vouchers.pdf', now()->addDays(30), ['voucher' => $voucher->id]);
+    }
+
     //
     // Money display accessors (cents -> "50,00 €")
     //
