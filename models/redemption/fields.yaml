@@ -1,40 +1,40 @@
 fields:
     amount_cents:
-        label: Betrag (Cent)
+        label: jumplink.vouchers::lang.redeem.amount_cents_label
         span: left
         disabled: true
-        comment: 'Positiv = Einlösung, negativ = Storno/Korrektur.'
+        comment: jumplink.vouchers::lang.redeem.amount_cents_comment
     balance_after_cents:
-        label: Restguthaben danach (Cent)
+        label: jumplink.vouchers::lang.redeem.balance_after_label
         span: right
         disabled: true
 
 tabs:
     fields:
         kind:
-            label: Art
-            tab: Einlösung
+            label: jumplink.vouchers::lang.redeem.col_kind
+            tab: jumplink.vouchers::lang.tab.redemption
             type: dropdown
             span: left
             disabled: true
         source:
-            label: Quelle
-            tab: Einlösung
+            label: jumplink.vouchers::lang.redeem.col_source
+            tab: jumplink.vouchers::lang.tab.redemption
             type: text
             span: right
             disabled: true
         note:
-            label: Notiz
-            tab: Einlösung
+            label: jumplink.vouchers::lang.redeem.col_note
+            tab: jumplink.vouchers::lang.tab.redemption
             type: textarea
             size: small
             span: full
             disabled: true
         vat_breakdown:
-            label: 'MwSt-Aufteilung (JSON)'
-            tab: Einlösung
+            label: jumplink.vouchers::lang.redeem.vat_breakdown
+            tab: jumplink.vouchers::lang.tab.redemption
             type: textarea
             size: small
             span: full
             disabled: true
-            comment: 'z. B. [{"rate":7,"net_cents":1308,"vat_cents":92,"gross_cents":1400}]'
+            comment: jumplink.vouchers::lang.redeem.vat_breakdown_comment

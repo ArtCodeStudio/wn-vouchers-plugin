@@ -44,7 +44,7 @@ class PurchaseService
             return [
                 'success' => false,
                 'status'  => 422,
-                'errors'  => ['face_value' => ['Betrag liegt außerhalb der erlaubten Grenzen.']],
+                'errors'  => ['face_value' => [trans('jumplink.vouchers::lang.error.amount_out_of_range')]],
             ];
         }
 

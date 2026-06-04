@@ -1,28 +1,28 @@
 columns:
     code:
-        label: Code
+        label: jumplink.vouchers::lang.field.code
         searchable: true
     number:
-        label: 'Nr.'
+        label: jumplink.vouchers::lang.field.number_short
         searchable: true
     type:
-        label: Typ
+        label: jumplink.vouchers::lang.field.type
         type: text
     initial_value_euro:
-        label: Wert
+        label: jumplink.vouchers::lang.field.value
         type: text
     balance_euro:
-        label: Restguthaben
+        label: jumplink.vouchers::lang.field.balance
         type: text
     status:
-        label: Status
+        label: jumplink.vouchers::lang.field.status
         type: text
     payment_status_label:
-        label: Zahlung
+        label: jumplink.vouchers::lang.field.payment
         type: text
     valid_until:
-        label: 'Gültig bis'
+        label: jumplink.vouchers::lang.field.valid_until
         type: date
     created_at:
-        label: Erstellt
+        label: jumplink.vouchers::lang.field.created
         type: datetime

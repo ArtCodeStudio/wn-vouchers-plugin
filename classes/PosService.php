@@ -50,7 +50,7 @@ class PosService
     {
         $valueCents = self::toCents($input['value_euro'] ?? ($input['value'] ?? 0));
         if ($valueCents <= 0) {
-            return ['success' => false, 'error' => 'Bitte einen gültigen Betrag eingeben.'];
+            return ['success' => false, 'error' => trans('jumplink.vouchers::lang.error.invalid_amount')];
         }
 
         // On-site, physical is the default (the customer can take the card now).
@@ -60,7 +60,7 @@ class PosService
         if ($type === 'digital') {
             $email = trim((string) ($input['email'] ?? ''));
             if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                return ['success' => false, 'error' => 'Für digitale Gutscheine ist eine gültige E-Mail-Adresse erforderlich.'];
+                return ['success' => false, 'error' => trans('jumplink.vouchers::lang.error.digital_email_required')];
             }
         }
 
@@ -83,7 +83,7 @@ class PosService
         try {
             $voucher->save();
         } catch (\Throwable $e) {
-            return ['success' => false, 'error' => 'Konnte nicht gespeichert werden: ' . $e->getMessage()];
+            return ['success' => false, 'error' => trans('jumplink.vouchers::lang.error.save_failed', ['error' => $e->getMessage()])];
         }
 
         return ['success' => true, 'voucher' => $voucher];
@@ -100,15 +100,15 @@ class PosService
     {
         switch ($code) {
             case 'insufficient_balance':
-                return 'Betrag übersteigt das Restguthaben (' . VoucherOrder::formatEuro((int) $balanceCents) . ').';
+                return trans('jumplink.vouchers::lang.error.insufficient_balance', ['balance' => VoucherOrder::formatEuro((int) $balanceCents)]);
             case 'voucher_void':
-                return 'Gutschein ist storniert.';
+                return trans('jumplink.vouchers::lang.error.voucher_void');
             case 'voucher_expired':
-                return 'Gutschein ist abgelaufen.';
+                return trans('jumplink.vouchers::lang.error.voucher_expired');
             case 'voucher_not_found':
-                return 'Gutschein nicht gefunden.';
+                return trans('jumplink.vouchers::lang.error.voucher_not_found_short');
             default:
-                return 'Einlösung fehlgeschlagen.';
+                return trans('jumplink.vouchers::lang.error.redeem_failed');
         }
     }
 

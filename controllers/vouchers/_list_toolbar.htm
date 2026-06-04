@@ -2,23 +2,23 @@
     <a
         href="<?= Backend::url('jumplink/vouchers/vouchers/create') ?>"
         class="btn btn-primary oc-icon-plus">
-        Gutschein manuell anlegen
+        <?= e(trans('jumplink.vouchers::lang.toolbar.create_manual')) ?>
     </a>
 
     <a
         href="<?= e(\JumpLink\Vouchers\Models\Settings::get('pos_page_url', '/kasse/gutschein')) ?>"
         target="_blank" rel="noopener"
         class="btn btn-default oc-icon-shopping-cart">
-        Kasse / Vor-Ort-Verkauf öffnen
+        <?= e(trans('jumplink.vouchers::lang.toolbar.open_pos')) ?>
     </a>
 
     <button
         class="btn btn-default oc-icon-trash-o"
         disabled
         data-request="onDelete"
-        data-request-confirm="Ausgewählte Gutscheine wirklich löschen?"
+        data-request-confirm="<?= e(trans('jumplink.vouchers::lang.toolbar.delete_confirm')) ?>"
         data-list-checked-trigger
         data-list-checked-request>
-        Löschen
+        <?= e(trans('jumplink.vouchers::lang.toolbar.delete')) ?>
     </button>
 </div>

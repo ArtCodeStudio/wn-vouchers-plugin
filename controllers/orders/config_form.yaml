@@ -4,6 +4,6 @@ modelClass: JumpLink\Vouchers\Models\VoucherOrder
 defaultRedirect: jumplink/vouchers/orders
 
 update:
-    title: Bestellung
+    title: jumplink.vouchers::lang.orders.label
     redirect: jumplink/vouchers/orders
     redirectClose: jumplink/vouchers/orders

@@ -22,8 +22,8 @@ class VoucherPos extends ComponentBase
     public function componentDetails()
     {
         return [
-            'name'        => 'Gutschein-Kasse (Einlösung)',
-            'description' => 'Tablet-Einlöseseite für das Personal: Lookup (Code/QR), Restguthaben, Teileinlösung, Vor-Ort-Verkauf.',
+            'name'        => trans('jumplink.vouchers::lang.component.pos_name'),
+            'description' => trans('jumplink.vouchers::lang.component.pos_description'),
         ];
     }
 
@@ -73,7 +73,7 @@ class VoucherPos extends ComponentBase
         if (!$voucher) {
             return ['#posResult' => $this->renderPartial('@result', [
                 'voucher' => null,
-                'error'   => 'Kein Gutschein gefunden. Bitte Code prüfen.',
+                'error'   => trans('jumplink.vouchers::lang.error.voucher_not_found'),
             ])];
         }
 
@@ -86,12 +86,12 @@ class VoucherPos extends ComponentBase
 
         $voucher = Voucher::find((int) post('voucher_id'));
         if (!$voucher) {
-            throw new \ApplicationException('Gutschein nicht gefunden.');
+            throw new \ApplicationException(trans('jumplink.vouchers::lang.error.voucher_not_found_short'));
         }
 
         $amountCents = PosService::toCents(post('amount'));
         if ($amountCents <= 0) {
-            throw new \ApplicationException('Bitte einen gültigen Betrag eingeben.');
+            throw new \ApplicationException(trans('jumplink.vouchers::lang.error.invalid_amount'));
         }
 
         $user = BackendAuth::getUser();
@@ -105,7 +105,7 @@ class VoucherPos extends ComponentBase
             throw new \ApplicationException(PosService::redeemError($result['error'] ?? 'error', $result['balance_cents'] ?? null));
         }
 
-        Flash::success('Eingelöst. Neues Restguthaben: ' . VoucherOrder::formatEuro($result['balance_cents']));
+        Flash::success(trans('jumplink.vouchers::lang.flash.redeemed', ['balance' => VoucherOrder::formatEuro($result['balance_cents'])]));
 
         return ['#posResult' => $this->renderResult($voucher->fresh())];
     }
@@ -117,7 +117,7 @@ class VoucherPos extends ComponentBase
         $user = BackendAuth::getUser();
         $result = PosService::sell((array) post(), $user ? $user->id : null);
         if (empty($result['success'])) {
-            throw new \ApplicationException($result['error'] ?? 'Verkauf fehlgeschlagen.');
+            throw new \ApplicationException($result['error'] ?? trans('jumplink.vouchers::lang.error.sell_failed'));
         }
 
         $voucher = $result['voucher'];
@@ -127,7 +127,7 @@ class VoucherPos extends ComponentBase
             NotificationService::sendVoucherImage($voucher, trim((string) post('email')), post('recipient_name') ?: null);
         }
 
-        Flash::success('Gutschein angelegt: ' . $voucher->code);
+        Flash::success(trans('jumplink.vouchers::lang.flash.sold', ['code' => $voucher->code]));
 
         return ['#posSold' => $this->renderPartial('@sold', ['voucher' => $voucher])];
     }
@@ -143,7 +143,7 @@ class VoucherPos extends ComponentBase
     protected function ensureAuthorized(): void
     {
         if (!$this->authorized()) {
-            throw new \ApplicationException('Keine Berechtigung. Bitte im Backend anmelden.');
+            throw new \ApplicationException(trans('jumplink.vouchers::lang.error.not_authorized'));
         }
     }
 }

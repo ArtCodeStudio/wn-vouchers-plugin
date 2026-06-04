@@ -15,7 +15,7 @@
             {% endfor %}
         </div>
 
-        <label>Betrag (€)
+        <label>{{ 'jumplink.vouchers::lang.purchase.amount_label'|trans }}
             <input type="number" name="face_value" id="voucher-face-value" step="0.01" required
                 min="{{ (__SELF__.minValueCents / 100)|number_format(2, '.', '') }}"
                 max="{{ (__SELF__.maxValueCents / 100)|number_format(2, '.', '') }}">
@@ -23,30 +23,30 @@
         <span data-validate-for="face_value" class="form-error"></span>
 
         <fieldset class="voucher-delivery">
-            <legend>Zustellung</legend>
-            <label><input type="radio" name="delivery_type" value="digital" checked> Digital (Bild mit QR-Code, sofort per E-Mail)</label>
-            <label><input type="radio" name="delivery_type" value="physical"> Karte per Post (zzgl. {{ (__SELF__.serviceFeeCents / 100)|number_format(2, ',', '.') }} € Versand)</label>
+            <legend>{{ 'jumplink.vouchers::lang.purchase.delivery_legend'|trans }}</legend>
+            <label><input type="radio" name="delivery_type" value="digital" checked> {{ 'jumplink.vouchers::lang.purchase.delivery_digital'|trans }}</label>
+            <label><input type="radio" name="delivery_type" value="physical"> {{ 'jumplink.vouchers::lang.purchase.delivery_physical'|trans({ fee: (__SELF__.serviceFeeCents / 100)|number_format(2, ',', '.') ~ ' €' }) }}</label>
         </fieldset>
 
-        <label>Vorname <input type="text" name="firstname" required></label>
-        <label>Nachname <input type="text" name="lastname"></label>
-        <label>E-Mail <input type="email" name="email" required></label>
+        <label>{{ 'jumplink.vouchers::lang.field.firstname'|trans }} <input type="text" name="firstname" required></label>
+        <label>{{ 'jumplink.vouchers::lang.field.lastname'|trans }} <input type="text" name="lastname"></label>
+        <label>{{ 'jumplink.vouchers::lang.field.email'|trans }} <input type="email" name="email" required></label>
         <span data-validate-for="email" class="form-error"></span>
 
         <div class="voucher-address" hidden>
-            <label>Straße &amp; Nr. <input type="text" name="street"></label>
-            <label>PLZ <input type="text" name="zip"></label>
-            <label>Ort <input type="text" name="city"></label>
+            <label>{{ 'jumplink.vouchers::lang.field.street'|trans }} <input type="text" name="street"></label>
+            <label>{{ 'jumplink.vouchers::lang.field.zip'|trans }} <input type="text" name="zip"></label>
+            <label>{{ 'jumplink.vouchers::lang.field.city'|trans }} <input type="text" name="city"></label>
         </div>
 
-        <label>Empfänger (optional) <input type="text" name="recipient_name"></label>
-        <label>Persönliche Nachricht (optional) <textarea name="message" rows="3"></textarea></label>
+        <label>{{ 'jumplink.vouchers::lang.purchase.recipient_optional'|trans }} <input type="text" name="recipient_name"></label>
+        <label>{{ 'jumplink.vouchers::lang.purchase.message_optional'|trans }} <textarea name="message" rows="3"></textarea></label>
 
         {# Honeypot: hidden from humans; bots fill it and get a benign success. #}
         <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true"
             style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;">
 
-        <button type="submit" class="voucher-submit">Weiter zur Zahlung</button>
+        <button type="submit" class="voucher-submit">{{ 'jumplink.vouchers::lang.purchase.submit'|trans }}</button>
     </form>
 
     <script>

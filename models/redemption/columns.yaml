@@ -1,21 +1,21 @@
 columns:
     created_at:
-        label: Datum
+        label: jumplink.vouchers::lang.field.date
         type: datetime
     voucher:
-        label: Gutschein
+        label: jumplink.vouchers::lang.vouchers.label
         relation: voucher
         select: code
         searchable: true
     amount_euro:
-        label: Betrag
+        label: jumplink.vouchers::lang.redeem.col_amount
         type: text
     kind:
-        label: Art
+        label: jumplink.vouchers::lang.redeem.col_kind
         type: text
     source:
-        label: Quelle
+        label: jumplink.vouchers::lang.redeem.col_source
         type: text
     note:
-        label: Notiz
+        label: jumplink.vouchers::lang.redeem.col_note
         type: text

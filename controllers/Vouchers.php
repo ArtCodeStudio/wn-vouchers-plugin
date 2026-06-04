@@ -40,13 +40,13 @@ class Vouchers extends Controller
     {
         if (!BackendAuth::userHasAccess('jumplink.vouchers.redeem_vouchers')
             && !BackendAuth::userHasAccess('jumplink.vouchers.manage_vouchers')) {
-            throw new \ApplicationException('Keine Berechtigung zum Einlösen.');
+            throw new \ApplicationException(trans('jumplink.vouchers::lang.redeem.no_permission'));
         }
 
         $id = (int) post('voucher_id');
         $amountCents = self::toCents(post('amount'));
         if ($amountCents <= 0) {
-            throw new \ApplicationException('Bitte einen gültigen Betrag eingeben.');
+            throw new \ApplicationException(trans('jumplink.vouchers::lang.error.invalid_amount'));
         }
 
         $user = BackendAuth::getUser();
@@ -60,7 +60,7 @@ class Vouchers extends Controller
             throw new \ApplicationException(self::redeemError($result['error'] ?? 'error', $result['balance_cents'] ?? null));
         }
 
-        Flash::success('Einlösung gebucht. Neues Restguthaben: ' . VoucherOrder::formatEuro($result['balance_cents']));
+        Flash::success(trans('jumplink.vouchers::lang.flash.redeem_booked', ['balance' => VoucherOrder::formatEuro($result['balance_cents'])]));
 
         return ['#voucherRedeemPanel' => $this->makePartial('redeem', ['formModel' => Voucher::find($id)])];
     }
@@ -76,15 +76,15 @@ class Vouchers extends Controller
     {
         switch ($code) {
             case 'insufficient_balance':
-                return 'Betrag übersteigt das Restguthaben (' . VoucherOrder::formatEuro((int) $balanceCents) . ').';
+                return trans('jumplink.vouchers::lang.error.insufficient_balance', ['balance' => VoucherOrder::formatEuro((int) $balanceCents)]);
             case 'voucher_void':
-                return 'Gutschein ist storniert und nicht einlösbar.';
+                return trans('jumplink.vouchers::lang.error.voucher_void');
             case 'voucher_expired':
-                return 'Gutschein ist abgelaufen und nicht einlösbar.';
+                return trans('jumplink.vouchers::lang.error.voucher_expired');
             case 'voucher_not_found':
-                return 'Gutschein nicht gefunden.';
+                return trans('jumplink.vouchers::lang.error.voucher_not_found_short');
             default:
-                return 'Einlösung fehlgeschlagen.';
+                return trans('jumplink.vouchers::lang.error.redeem_failed');
         }
     }
 }

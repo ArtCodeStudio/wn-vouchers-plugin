@@ -32,11 +32,11 @@
             <div class="{{ empty($background) ? 'framed' : '' }}">
                 @if(!empty($logo))<img class="logo" src="{{ $logo }}" alt="">@endif
                 @if(!empty($brand_name))<div class="brand">{{ $brand_name }}</div>@endif
-                <div class="value">Gutschein über {{ $voucher->initial_value_euro }}</div>
+                <div class="value">{{ trans('jumplink.vouchers::lang.voucher_card.value_over', ['value' => $voucher->initial_value_euro]) }}</div>
                 <div class="code">{{ $voucher->code }}</div>
-                @if($voucher->recipient_name)<p class="muted">Für: {{ $voucher->recipient_name }}</p>@endif
-                @if($voucher->valid_until)<p class="muted">Gültig bis {{ $voucher->valid_until->format('d.m.Y') }}</p>@endif
-                <p class="muted">An der Kasse vorzeigen – ein Restguthaben bleibt erhalten.</p>
+                @if($voucher->recipient_name)<p class="muted">{{ trans('jumplink.vouchers::lang.voucher_card.for', ['name' => $voucher->recipient_name]) }}</p>@endif
+                @if($voucher->valid_until)<p class="muted">{{ trans('jumplink.vouchers::lang.voucher_card.valid_until', ['date' => $voucher->valid_until->format('d.m.Y')]) }}</p>@endif
+                <p class="muted">{{ trans('jumplink.vouchers::lang.voucher_card.till_hint') }}</p>
                 @if(!empty($footer))<p class="muted">{{ $footer }}</p>@endif
             </div>
         </div>

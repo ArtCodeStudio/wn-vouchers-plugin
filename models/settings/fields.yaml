@@ -1,69 +1,66 @@
 tabs:
     fields:
         #
-        # Tab: Gutscheine
+        # Tab: Vouchers
         #
         voucher_start_number:
-            label: Startnummer (automatisch)
-            tab: Gutscheine
+            label: jumplink.vouchers::lang.setting.start_number
+            tab: jumplink.vouchers::lang.setting_tab.vouchers
             type: number
             span: left
             default: 100000
-            comment: 'Ab dieser Nummer werden digitale Gutscheine automatisch nummeriert. Muss über dem handschriftlichen Ordner-Bereich liegen.'
+            comment: jumplink.vouchers::lang.setting.start_number_comment
         default_validity_years:
-            label: Gültigkeit (Jahre)
-            tab: Gutscheine
+            label: jumplink.vouchers::lang.setting.validity_years
+            tab: jumplink.vouchers::lang.setting_tab.vouchers
             type: number
             span: right
             default: 3
-            comment: 'Standard-Gültigkeit, gerundet auf das Jahresende — entspricht der gesetzlichen 3-Jahres-Verjährung in DE (§§195/199 BGB). 0 = kein Ablaufdatum drucken.'
+            comment: jumplink.vouchers::lang.setting.validity_years_comment
         min_value_cents:
-            label: Mindestbetrag (Cent)
-            tab: Gutscheine
+            label: jumplink.vouchers::lang.setting.min_value
+            tab: jumplink.vouchers::lang.setting_tab.vouchers
             type: number
             span: left
             default: 1000
         max_value_cents:
-            label: Höchstbetrag (Cent)
-            tab: Gutscheine
+            label: jumplink.vouchers::lang.setting.max_value
+            tab: jumplink.vouchers::lang.setting_tab.vouchers
             type: number
             span: right
             default: 50000
         service_fee_cents:
-            label: Servicepauschale Versand (Cent)
-            tab: Gutscheine
+            label: jumplink.vouchers::lang.setting.service_fee
+            tab: jumplink.vouchers::lang.setting_tab.vouchers
             type: number
             span: left
             default: 250
-            comment: 'Wird nur bei physischem Versand berechnet (2,50 €).'
+            comment: jumplink.vouchers::lang.setting.service_fee_comment
         denominations:
-            label: Vorgeschlagene Beträge
-            tab: Gutscheine
+            label: jumplink.vouchers::lang.setting.denominations
+            tab: jumplink.vouchers::lang.setting_tab.vouchers
             type: repeater
             span: full
-            prompt: Betrag hinzufügen
+            prompt: jumplink.vouchers::lang.setting.denominations_prompt
             form:
                 fields:
                     value_cents:
-                        label: Betrag (Cent)
+                        label: jumplink.vouchers::lang.setting.amount_cents
                         type: number
 
         #
-        # Tab: MwSt
+        # Tab: VAT
         #
         vat_mode:
-            label: MwSt-Modell
-            tab: MwSt
+            label: jumplink.vouchers::lang.field.vat_mode
+            tab: jumplink.vouchers::lang.setting_tab.vat
             type: dropdown
             span: left
             default: multi_purpose
-            options:
-                multi_purpose: 'Mehrzweckgutschein (MwSt bei Einlösung)'
-                single_purpose: 'Einzweckgutschein (MwSt beim Verkauf)'
-            comment: 'Mehrzweck = empfohlen für ein Restaurant mit 7%/19%-Einlösungen. Final mit dem Steuerberater abstimmen.'
+            comment: jumplink.vouchers::lang.setting.vat_mode_comment
         vat_rate:
-            label: MwSt-Satz Verkauf (%)
-            tab: MwSt
+            label: jumplink.vouchers::lang.setting.vat_rate
+            tab: jumplink.vouchers::lang.setting_tab.vat
             type: number
             span: right
             default: 19
@@ -71,104 +68,104 @@ tabs:
                 action: show
                 field: vat_mode
                 condition: value[single_purpose]
-            comment: 'Nur für Einzweckgutschein relevant.'
+            comment: jumplink.vouchers::lang.setting.vat_rate_comment
         vat_rates:
-            label: Wählbare Sätze bei Einlösung (%)
-            tab: MwSt
+            label: jumplink.vouchers::lang.setting.vat_rates
+            tab: jumplink.vouchers::lang.setting_tab.vat
             type: repeater
             span: full
-            prompt: Satz hinzufügen
+            prompt: jumplink.vouchers::lang.setting.vat_rates_prompt
             form:
                 fields:
                     rate:
-                        label: Satz (%)
+                        label: jumplink.vouchers::lang.setting.rate
                         type: number
 
         #
-        # Tab: Zahlung
+        # Tab: Payment
         #
         mollie_mode:
-            label: Mollie-Modus
-            tab: Zahlung
+            label: jumplink.vouchers::lang.setting.mollie_mode
+            tab: jumplink.vouchers::lang.setting_tab.payment
             type: dropdown
             span: left
             default: test
             options:
                 test: Test
                 live: Live
-            comment: 'Der API-Key wird aus der .env (MOLLIE_API_KEY) gelesen, nie hier gespeichert.'
+            comment: jumplink.vouchers::lang.setting.mollie_mode_comment
         pos_page_url:
-            label: Kassen-Seite (URL-Pfad)
-            tab: Zahlung
+            label: jumplink.vouchers::lang.setting.pos_page_url
+            tab: jumplink.vouchers::lang.setting_tab.payment
             type: text
             span: right
             default: /kasse/gutschein
-            comment: 'CMS-Seite mit der Komponente „Gutschein-Kasse". Der QR-Code-Scan leitet hierher.'
+            comment: jumplink.vouchers::lang.setting.pos_page_url_comment
 
         #
-        # Tab: Benachrichtigung
+        # Tab: Notification
         #
         notify_name:
-            label: Standard-Empfänger Name
-            tab: Benachrichtigung
+            label: jumplink.vouchers::lang.setting.notify_name
+            tab: jumplink.vouchers::lang.setting_tab.notification
             type: text
             span: left
         notify_email:
-            label: Standard-Empfänger E-Mail
-            tab: Benachrichtigung
+            label: jumplink.vouchers::lang.setting.notify_email
+            tab: jumplink.vouchers::lang.setting_tab.notification
             type: text
             span: right
-            comment: 'Empfänger für Bestell-/Versandbenachrichtigungen.'
+            comment: jumplink.vouchers::lang.setting.notify_email_comment
         send_customer_copy:
-            label: Bestätigung an Käufer senden
-            tab: Benachrichtigung
+            label: jumplink.vouchers::lang.setting.send_customer_copy
+            tab: jumplink.vouchers::lang.setting_tab.notification
             type: switch
             default: true
         sender_name:
-            label: Absender-Name
-            tab: Benachrichtigung
+            label: jumplink.vouchers::lang.setting.sender_name
+            tab: jumplink.vouchers::lang.setting_tab.notification
             type: text
             span: left
         sender_email:
-            label: Absender-E-Mail
-            tab: Benachrichtigung
+            label: jumplink.vouchers::lang.setting.sender_email
+            tab: jumplink.vouchers::lang.setting_tab.notification
             type: text
             span: right
-            comment: 'Leer lassen, um den globalen Mail-Absender zu verwenden.'
+            comment: jumplink.vouchers::lang.setting.sender_email_comment
 
         #
-        # Tab: Gutschein-Design
+        # Tab: Voucher design
         #
         brand_name:
-            label: Markenname
-            tab: Gutschein-Design
+            label: jumplink.vouchers::lang.setting.brand_name
+            tab: jumplink.vouchers::lang.setting_tab.design
             type: text
             span: left
-            comment: 'Erscheint auf dem Gutschein und in den E-Mails.'
+            comment: jumplink.vouchers::lang.setting.brand_name_comment
         pdf_accent_color:
-            label: Akzentfarbe
-            tab: Gutschein-Design
+            label: jumplink.vouchers::lang.setting.accent_color
+            tab: jumplink.vouchers::lang.setting_tab.design
             type: colorpicker
             span: right
             default: '#1a3a5a'
         pdf_logo:
-            label: Logo (optional)
-            tab: Gutschein-Design
+            label: jumplink.vouchers::lang.setting.logo
+            tab: jumplink.vouchers::lang.setting_tab.design
             type: fileupload
             mode: image
             imageHeight: 60
             span: left
-            comment: 'Wird oben auf dem Gutschein angezeigt.'
+            comment: jumplink.vouchers::lang.setting.logo_comment
         pdf_background:
-            label: Briefpapier / Hintergrund (optional)
-            tab: Gutschein-Design
+            label: jumplink.vouchers::lang.setting.background
+            tab: jumplink.vouchers::lang.setting_tab.design
             type: fileupload
             mode: image
             span: right
-            comment: 'Vollflächiges Hintergrundbild für ein individuelles Gutschein-Design (Kartenformat quer). Die Gutschein-Daten werden darübergelegt.'
+            comment: jumplink.vouchers::lang.setting.background_comment
         pdf_footer_text:
-            label: Fußzeile / rechtlicher Hinweis
-            tab: Gutschein-Design
+            label: jumplink.vouchers::lang.setting.footer_text
+            tab: jumplink.vouchers::lang.setting_tab.design
             type: textarea
             span: full
             size: small

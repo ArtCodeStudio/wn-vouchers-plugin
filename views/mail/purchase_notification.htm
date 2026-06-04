@@ -1,15 +1,15 @@
-subject = "Neuer Gutschein-Kauf: {{ order.total_euro }} ({{ order.delivery_type }})"
+subject = "{{ 'jumplink.vouchers::lang.mail.notification_subject'|trans({ total: order.total_euro, delivery: ('jumplink.vouchers::lang.delivery.' ~ order.delivery_type)|trans }) }}"
 ==
 
-Ein Gutschein wurde gekauft und bezahlt.
+{{ 'jumplink.vouchers::lang.mail.notification_intro'|trans }}
 
-- **Wert:** {{ order.face_value_euro }}
-- **Versand:** {{ order.delivery_type }}{% if order.delivery_type == 'physical' %} (Karte per Post – bitte ausstellen & versenden){% endif %}
-- **Summe:** {{ order.total_euro }}
-- **Käufer:** {{ order.firstname }} {{ order.lastname }} <{{ order.email }}>
-{% if order.phone %}- **Telefon:** {{ order.phone }}{% endif %}
+- **{{ 'jumplink.vouchers::lang.mail.label_value'|trans }}** {{ order.face_value_euro }}
+- **{{ 'jumplink.vouchers::lang.mail.label_delivery'|trans }}** {{ ('jumplink.vouchers::lang.delivery.' ~ order.delivery_type)|trans }}{% if order.delivery_type == 'physical' %} {{ 'jumplink.vouchers::lang.mail.notification_physical_hint'|trans }}{% endif %}
+- **{{ 'jumplink.vouchers::lang.mail.label_total'|trans }}** {{ order.total_euro }}
+- **{{ 'jumplink.vouchers::lang.mail.label_buyer'|trans }}** {{ order.firstname }} {{ order.lastname }} <{{ order.email }}>
+{% if order.phone %}- **{{ 'jumplink.vouchers::lang.mail.label_phone'|trans }}** {{ order.phone }}{% endif %}
 {% if order.delivery_type == 'physical' %}
-- **Adresse:** {{ order.street }}, {{ order.zip }} {{ order.city }}
+- **{{ 'jumplink.vouchers::lang.mail.label_address'|trans }}** {{ order.street }}, {{ order.zip }} {{ order.city }}
 {% endif %}
-{% if order.recipient_name %}- **Empfänger:** {{ order.recipient_name }}{% endif %}
-{% if order.message %}- **Nachricht:** {{ order.message }}{% endif %}
+{% if order.recipient_name %}- **{{ 'jumplink.vouchers::lang.mail.label_recipient'|trans }}** {{ order.recipient_name }}{% endif %}
+{% if order.message %}- **{{ 'jumplink.vouchers::lang.mail.label_message'|trans }}** {{ order.message }}{% endif %}

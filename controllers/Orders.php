@@ -37,16 +37,16 @@ class Orders extends Controller
     {
         $order = VoucherOrder::find((int) post('order_id'));
         if (!$order) {
-            throw new \ApplicationException('Bestellung nicht gefunden.');
+            throw new \ApplicationException(trans('jumplink.vouchers::lang.error.order_not_found'));
         }
 
         $user = BackendAuth::getUser();
         if (!$order->markShipped($user ? $user->id : null)) {
-            throw new \ApplicationException('Bestellung kann nicht als versendet markiert werden (kein Versand oder bereits versendet).');
+            throw new \ApplicationException(trans('jumplink.vouchers::lang.error.cannot_mark_shipped'));
         }
 
         NotificationService::sendShippingMail($order);
-        Flash::success('Als versendet markiert. Versandbenachrichtigung an den Käufer gesendet.');
+        Flash::success(trans('jumplink.vouchers::lang.flash.marked_shipped'));
 
         return ['#voucherShippingPanel' => $this->makePartial('shipping', ['formModel' => $order->fresh()])];
     }

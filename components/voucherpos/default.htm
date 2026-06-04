@@ -64,28 +64,28 @@
     </style>
     {% if not __SELF__.authorized %}
         <div class="pos-denied">
-            <p>Diese Seite ist dem Personal vorbehalten. Bitte zuerst im <a href="/backend">Backend</a> anmelden.</p>
+            <p>{{ 'jumplink.vouchers::lang.pos.staff_only'|trans({ link: '<a href="/backend">' ~ ('jumplink.vouchers::lang.pos.backend'|trans) ~ '</a>' })|raw }}</p>
         </div>
     {% else %}
         <div class="pos-toolbar">
-            <a href="/backend/jumplink/vouchers/vouchers" class="pos-backlink">↩ Zum Backend</a>
+            <a href="/backend/jumplink/vouchers/vouchers" class="pos-backlink">{{ 'jumplink.vouchers::lang.pos.back_to_backend'|trans }}</a>
         </div>
         <section class="pos-card">
-            <h2 class="pos-card-title">Gutschein einlösen<small>Code eingeben oder QR-Code scannen</small></h2>
+            <h2 class="pos-card-title">{{ 'jumplink.vouchers::lang.pos.redeem_title'|trans }}<small>{{ 'jumplink.vouchers::lang.pos.redeem_subtitle'|trans }}</small></h2>
             <form class="pos-search" data-request="{{ __SELF__ }}::onLookup" autocomplete="off">
-                <input type="text" name="q" id="posQuery" value="{{ __SELF__.initialQuery }}" placeholder="Code z. B. MAM-100042-K" autofocus>
-                <button type="submit">Suchen</button>
-                <button type="button" id="posScanBtn">QR scannen</button>
+                <input type="text" name="q" id="posQuery" value="{{ __SELF__.initialQuery }}" placeholder="{{ 'jumplink.vouchers::lang.pos.code_ph'|trans }}" autofocus>
+                <button type="submit">{{ 'jumplink.vouchers::lang.pos.search'|trans }}</button>
+                <button type="button" id="posScanBtn">{{ 'jumplink.vouchers::lang.pos.scan_qr'|trans }}</button>
             </form>
             <div id="posReader" style="max-width:320px;display:none;"></div>
             <div id="posResult"></div>
         </section>
 
         <section class="pos-card">
-            <h2 class="pos-card-title">Vor-Ort-Verkauf<small>neuen Gutschein an der Kasse ausstellen</small></h2>
+            <h2 class="pos-card-title">{{ 'jumplink.vouchers::lang.pos.sell_title'|trans }}<small>{{ 'jumplink.vouchers::lang.pos.sell_subtitle'|trans }}</small></h2>
             <form class="pos-sell" data-request="{{ __SELF__ }}::onSell" data-request-flash>
                 <div class="pos-field">
-                    <label>Betrag</label>
+                    <label>{{ 'jumplink.vouchers::lang.pos.amount'|trans }}</label>
                     {% if __SELF__.denominations %}
                         <div class="pos-amounts">
                             {% for cents in __SELF__.denominations %}
@@ -93,19 +93,19 @@
                             {% endfor %}
                         </div>
                     {% endif %}
-                    <input type="number" name="value_euro" id="posSellValue" step="0.01" min="0.01" inputmode="decimal" placeholder="Wert €" required>
+                    <input type="number" name="value_euro" id="posSellValue" step="0.01" min="0.01" inputmode="decimal" placeholder="{{ 'jumplink.vouchers::lang.pos.value_ph'|trans }}" required>
                 </div>
 
                 <div class="pos-field">
-                    <label>Art der Karte</label>
+                    <label>{{ 'jumplink.vouchers::lang.pos.card_type'|trans }}</label>
                     <div class="pos-segment" id="posSellType">
-                        <label><input type="radio" name="type" value="physical" checked><span>Physische Karte</span></label>
-                        <label><input type="radio" name="type" value="digital"><span>Digital (Bild/QR)</span></label>
+                        <label><input type="radio" name="type" value="physical" checked><span>{{ 'jumplink.vouchers::lang.pos.physical_card'|trans }}</span></label>
+                        <label><input type="radio" name="type" value="digital"><span>{{ 'jumplink.vouchers::lang.pos.digital_card'|trans }}</span></label>
                     </div>
                 </div>
 
                 <div class="pos-field">
-                    <label>Zahlung</label>
+                    <label>{{ 'jumplink.vouchers::lang.field.payment'|trans }}</label>
                     <div class="pos-segment">
                         {% for key, label in __SELF__.paymentMethods %}
                             <label><input type="radio" name="payment_method" value="{{ key }}"{% if loop.first %} checked{% endif %}><span>{{ label }}</span></label>
@@ -114,33 +114,33 @@
                 </div>
 
                 <div class="pos-field" id="posSellNumberField">
-                    <label>Nr. der vorgedruckten Karte <span class="pos-note">(optional — leer = automatisch)</span></label>
-                    <input type="number" name="number" id="posSellNumber" placeholder="z. B. 100042">
+                    <label>{{ 'jumplink.vouchers::lang.pos.preprinted'|trans }} <span class="pos-note">{{ 'jumplink.vouchers::lang.pos.preprinted_hint'|trans }}</span></label>
+                    <input type="number" name="number" id="posSellNumber" placeholder="{{ 'jumplink.vouchers::lang.pos.preprinted_ph'|trans }}">
                 </div>
 
                 <div class="pos-field" id="posSellAddressField">
-                    <label>Versandadresse <span class="pos-note">(optional — nur falls die Karte verschickt wird)</span></label>
-                    <input type="text" name="street" placeholder="Straße &amp; Nr.">
+                    <label>{{ 'jumplink.vouchers::lang.pos.shipping_address'|trans }} <span class="pos-note">{{ 'jumplink.vouchers::lang.pos.shipping_hint'|trans }}</span></label>
+                    <input type="text" name="street" placeholder="{{ 'jumplink.vouchers::lang.field.street'|trans }}">
                     <div style="display:flex; gap:10px;">
-                        <input type="text" name="zip" placeholder="PLZ" style="flex:0 1 140px;">
-                        <input type="text" name="city" placeholder="Ort" style="flex:1 1 auto;">
+                        <input type="text" name="zip" placeholder="{{ 'jumplink.vouchers::lang.field.zip'|trans }}" style="flex:0 1 140px;">
+                        <input type="text" name="city" placeholder="{{ 'jumplink.vouchers::lang.field.city'|trans }}" style="flex:1 1 auto;">
                     </div>
                 </div>
 
                 <div class="pos-field" id="posSellEmailField" style="display:none;">
-                    <label>E-Mail <span class="pos-note">(für digital erforderlich)</span></label>
-                    <input type="email" name="email" id="posSellEmail" placeholder="kunde@example.com">
+                    <label>{{ 'jumplink.vouchers::lang.field.email'|trans }} <span class="pos-note">{{ 'jumplink.vouchers::lang.pos.email_hint'|trans }}</span></label>
+                    <input type="email" name="email" id="posSellEmail" placeholder="{{ 'jumplink.vouchers::lang.pos.email_ph'|trans }}">
                 </div>
 
                 <div class="pos-field">
-                    <label>Empfänger <span class="pos-note">(optional)</span></label>
-                    <input type="text" name="recipient_name" list="posRecipientList" placeholder="Name des Beschenkten" autocomplete="off">
+                    <label>{{ 'jumplink.vouchers::lang.field.recipient'|trans }} <span class="pos-note">{{ 'jumplink.vouchers::lang.pos.recipient_hint'|trans }}</span></label>
+                    <input type="text" name="recipient_name" list="posRecipientList" placeholder="{{ 'jumplink.vouchers::lang.pos.recipient_ph'|trans }}" autocomplete="off">
                     <datalist id="posRecipientList">
                         {% for name in __SELF__.recipientNames %}<option value="{{ name }}">{% endfor %}
                     </datalist>
                 </div>
 
-                <button type="submit">Verkaufen</button>
+                <button type="submit">{{ 'jumplink.vouchers::lang.pos.sell_button'|trans }}</button>
             </form>
             <div id="posSold"></div>
         </section>
@@ -167,7 +167,7 @@
             }
             if (scanBtn) scanBtn.addEventListener('click', function () {
                 if (scanner) { stopScan(); return; }
-                if (!window.Html5QrcodeScanner) { alert('QR-Scanner lädt noch – bitte erneut tippen.'); return; }
+                if (!window.Html5QrcodeScanner) { alert('{{ 'jumplink.vouchers::lang.pos.scanner_loading'|trans|e('js') }}'); return; }
                 reader.style.display = 'block';
                 scanner = new Html5QrcodeScanner('posReader', { fps: 10, qrbox: 240 }, false);
                 scanner.render(function (decoded) {

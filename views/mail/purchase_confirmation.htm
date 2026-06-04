@@ -1,25 +1,24 @@
-subject = "Ihr Gutschein für {{ brand_name|default('uns') }}"
+subject = "{{ 'jumplink.vouchers::lang.mail.confirmation_subject'|trans({ brand: brand_name ?: 'jumplink.vouchers::lang.mail.brand_fallback'|trans }) }}"
 ==
 
-Hallo {{ order.firstname }},
+{{ 'jumplink.vouchers::lang.mail.greeting'|trans({ name: order.firstname }) }}
 
-vielen Dank für Ihren Gutschein-Kauf bei **{{ brand_name|default('uns') }}**.
+{{ 'jumplink.vouchers::lang.mail.confirmation_thanks'|trans({ brand: brand_name ?: 'jumplink.vouchers::lang.mail.brand_fallback'|trans }) }}
 
 {% if voucher %}
-- **Gutschein-Code:** {{ voucher.code }}
-- **Wert:** {{ voucher.initial_value_euro }}
-{% if voucher.valid_until %}- **Gültig bis:** {{ voucher.valid_until|date('d.m.Y') }}{% endif %}
+- **{{ 'jumplink.vouchers::lang.mail.label_code'|trans }}** {{ voucher.code }}
+- **{{ 'jumplink.vouchers::lang.mail.label_value'|trans }}** {{ voucher.initial_value_euro }}
+{% if voucher.valid_until %}- **{{ 'jumplink.vouchers::lang.mail.label_valid_until'|trans }}** {{ voucher.valid_until|date('d.m.Y') }}{% endif %}
 {% endif %}
 
 {% if order.delivery_type == 'digital' %}
-Ihr Gutschein liegt als Bild bei und kann ausgedruckt oder am Smartphone vorgezeigt
-werden. An der Kasse wird der QR-Code gescannt; ein Restguthaben bleibt erhalten.
+{{ 'jumplink.vouchers::lang.mail.confirmation_digital'|trans }}
 {% if download_url %}
-[**Gutschein als Bild herunterladen**]({{ download_url }})
+[**{{ 'jumplink.vouchers::lang.mail.download_image'|trans }}**]({{ download_url }})
 {% endif %}
 {% else %}
-Ihre Gutscheinkarte wird per Post an die angegebene Adresse versendet.
+{{ 'jumplink.vouchers::lang.mail.confirmation_physical'|trans }}
 {% endif %}
 
-Herzliche Grüße
-{% if brand_name %}Ihr Team von {{ brand_name }}{% else %}Ihr Team{% endif %}
+{{ 'jumplink.vouchers::lang.mail.regards'|trans }}
+{% if brand_name %}{{ 'jumplink.vouchers::lang.mail.team_with_brand'|trans({ brand: brand_name }) }}{% else %}{{ 'jumplink.vouchers::lang.mail.team'|trans }}{% endif %}

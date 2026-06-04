@@ -48,34 +48,54 @@ class Voucher extends Model
     public function getStatusOptions()
     {
         return [
-            'active'   => 'Aktiv',
-            'redeemed' => 'Eingelöst (0 €)',
-            'void'     => 'Storniert',
-            'expired'  => 'Abgelaufen',
+            'active'   => trans('jumplink.vouchers::lang.voucher_status.active'),
+            'redeemed' => trans('jumplink.vouchers::lang.voucher_status.redeemed'),
+            'void'     => trans('jumplink.vouchers::lang.voucher_status.void'),
+            'expired'  => trans('jumplink.vouchers::lang.voucher_status.expired'),
         ];
     }
 
     public function getTypeOptions()
     {
-        return ['digital' => 'Digital (Bild/QR)', 'physical' => 'Physisch (Karte)'];
+        return [
+            'digital'  => trans('jumplink.vouchers::lang.type.digital'),
+            'physical' => trans('jumplink.vouchers::lang.type.physical'),
+        ];
     }
 
     public function getPaymentStatusOptions()
     {
-        return ['paid' => 'Bezahlt', 'unpaid' => 'Offen / unbezahlt'];
+        return [
+            'paid'   => trans('jumplink.vouchers::lang.payment_status.paid'),
+            'unpaid' => trans('jumplink.vouchers::lang.payment_status.unpaid'),
+        ];
     }
 
     public function getPaymentMethodOptions()
     {
-        // Bar / Karte already imply payment at the till, so there is no separate
+        // Cash / card already imply payment at the till, so there is no separate
         // "paid externally at the POS" option.
         return [
-            'cash'    => 'Bar',
-            'card'    => 'Karte / EC',
-            'invoice' => 'Auf Rechnung',
-            'online'  => 'Online (Mollie)',
-            'other'   => 'Sonstiges',
+            'cash'    => trans('jumplink.vouchers::lang.payment_method.cash'),
+            'card'    => trans('jumplink.vouchers::lang.payment_method.card'),
+            'invoice' => trans('jumplink.vouchers::lang.payment_method.invoice'),
+            'online'  => trans('jumplink.vouchers::lang.payment_method.online'),
+            'other'   => trans('jumplink.vouchers::lang.payment_method.other'),
         ];
+    }
+
+    public function getNumberSourceOptions()
+    {
+        return [
+            'auto'   => trans('jumplink.vouchers::lang.number_source.auto'),
+            'manual' => trans('jumplink.vouchers::lang.number_source.manual'),
+        ];
+    }
+
+    public function getStatusLabelAttribute()
+    {
+        $options = $this->getStatusOptions();
+        return $options[$this->status] ?? $this->status;
     }
 
     public function getPaymentStatusLabelAttribute()

@@ -4,6 +4,6 @@ modelClass: JumpLink\Vouchers\Models\Redemption
 defaultRedirect: jumplink/vouchers/redemptions
 
 update:
-    title: Einlösung
+    title: jumplink.vouchers::lang.redemptions.label
     redirect: jumplink/vouchers/redemptions
     redirectClose: jumplink/vouchers/redemptions

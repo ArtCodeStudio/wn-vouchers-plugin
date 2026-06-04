@@ -62,7 +62,7 @@ class PaymentService
                 'currency' => $order->currency ?: 'EUR',
                 'value'    => self::formatAmount((int) $order->total_cents),
             ],
-            'description' => 'Gutschein #' . $order->id,
+            'description' => trans('jumplink.vouchers::lang.purchase.payment_description', ['id' => $order->id]),
             'redirectUrl' => $returnUrl,
             'metadata'    => ['order_id' => $order->id],
         ];

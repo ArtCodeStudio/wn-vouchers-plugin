@@ -31,7 +31,17 @@ class Redemption extends Model
 
     public function getKindOptions()
     {
-        return ['redeem' => 'Einlösung', 'reversal' => 'Storno', 'adjust' => 'Korrektur'];
+        return [
+            'redeem'   => trans('jumplink.vouchers::lang.redemption_kind.redeem'),
+            'reversal' => trans('jumplink.vouchers::lang.redemption_kind.reversal'),
+            'adjust'   => trans('jumplink.vouchers::lang.redemption_kind.adjust'),
+        ];
+    }
+
+    public function getKindLabelAttribute()
+    {
+        $options = $this->getKindOptions();
+        return $options[$this->kind] ?? $this->kind;
     }
 
     public function getAmountEuroAttribute()

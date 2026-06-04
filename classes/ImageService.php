@@ -65,20 +65,20 @@ class ImageService
             imagettftext($img, 19, 0, $x, 112, $acc, $bold, $settings->brand_name);
         }
 
-        $value = 'Gutschein über ' . $voucher->initial_value_euro;
+        $value = trans('jumplink.vouchers::lang.voucher_card.value_over', ['value' => $voucher->initial_value_euro]);
         imagettftext($img, self::fitSize($value, $bold, 34, $W - 2 * $pad), 0, $x, 300, $dark, $bold, $value);
         imagettftext($img, 22, 0, $x, 360, $acc, $mono, $voucher->code);
 
         $y = 408;
         if ($voucher->recipient_name) {
-            imagettftext($img, 14, 0, $x, $y, $muted, $reg, 'Für: ' . $voucher->recipient_name);
+            imagettftext($img, 14, 0, $x, $y, $muted, $reg, trans('jumplink.vouchers::lang.voucher_card.for', ['name' => $voucher->recipient_name]));
             $y += 38;
         }
         if ($voucher->valid_until) {
-            imagettftext($img, 14, 0, $x, $y, $muted, $reg, 'Gültig bis ' . $voucher->valid_until->format('d.m.Y'));
+            imagettftext($img, 14, 0, $x, $y, $muted, $reg, trans('jumplink.vouchers::lang.voucher_card.valid_until', ['date' => $voucher->valid_until->format('d.m.Y')]));
             $y += 38;
         }
-        imagettftext($img, 13, 0, $x, $y, $muted, $reg, 'An der Kasse vorzeigen – ein Restguthaben bleibt erhalten.');
+        imagettftext($img, 13, 0, $x, $y, $muted, $reg, trans('jumplink.vouchers::lang.voucher_card.till_hint'));
         $y += 34;
         if (!empty($settings->pdf_footer_text)) {
             imagettftext($img, 12, 0, $x, $y, $muted, $reg, $settings->pdf_footer_text);

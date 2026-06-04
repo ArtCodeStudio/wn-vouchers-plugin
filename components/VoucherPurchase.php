@@ -22,8 +22,8 @@ class VoucherPurchase extends ComponentBase
     public function componentDetails()
     {
         return [
-            'name'        => 'Gutschein-Kauf',
-            'description' => 'Kaufformular für Gutscheine mit Mollie-Zahlung.',
+            'name'        => trans('jumplink.vouchers::lang.component.purchase_name'),
+            'description' => trans('jumplink.vouchers::lang.component.purchase_description'),
         ];
     }
 
@@ -62,15 +62,15 @@ class VoucherPurchase extends ComponentBase
 
         // Honeypot tripped: look successful, do nothing.
         if (!empty($result['spam'])) {
-            return ['#voucherPurchaseResult' => '<p class="voucher-ok">Vielen Dank.</p>'];
+            return ['#voucherPurchaseResult' => '<p class="voucher-ok">' . e(trans('jumplink.vouchers::lang.purchase.thank_you')) . '</p>'];
         }
 
         if (empty($result['success'])) {
-            throw new \ValidationException($result['errors'] ?? ['face_value' => 'Bitte prüfen Sie Ihre Eingaben.']);
+            throw new \ValidationException($result['errors'] ?? ['face_value' => trans('jumplink.vouchers::lang.error.check_input')]);
         }
 
         if (!PaymentService::isConfigured()) {
-            throw new \ApplicationException('Die Online-Zahlung ist derzeit nicht verfügbar. Bitte versuchen Sie es später erneut.');
+            throw new \ApplicationException(trans('jumplink.vouchers::lang.error.payment_unavailable'));
         }
 
         $order = $result['order'];
@@ -81,7 +81,7 @@ class VoucherPurchase extends ComponentBase
             $checkoutUrl = PaymentService::startPayment($order, $returnUrl);
         } catch (\Throwable $e) {
             Log::error('[vouchers] startPayment failed: ' . $e->getMessage());
-            throw new \ApplicationException('Die Zahlung konnte nicht gestartet werden. Bitte versuchen Sie es erneut.');
+            throw new \ApplicationException(trans('jumplink.vouchers::lang.error.payment_start_failed'));
         }
 
         return Redirect::to($checkoutUrl);

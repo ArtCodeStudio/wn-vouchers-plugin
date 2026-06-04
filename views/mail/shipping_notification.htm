@@ -1,14 +1,13 @@
-subject = "Ihr Gutschein ist unterwegs"
+subject = "{{ 'jumplink.vouchers::lang.mail.shipping_subject'|trans }}"
 ==
 
-Hallo {{ order.firstname }},
+{{ 'jumplink.vouchers::lang.mail.greeting'|trans({ name: order.firstname }) }}
 
-Ihre Gutscheinkarte{% if brand_name %} von **{{ brand_name }}**{% endif %} wurde heute
-per Post an folgende Adresse versendet:
+{% if brand_name %}{{ 'jumplink.vouchers::lang.mail.shipping_body_brand'|trans({ brand: brand_name }) }}{% else %}{{ 'jumplink.vouchers::lang.mail.shipping_body'|trans }}{% endif %}
 
 {{ order.firstname }} {{ order.lastname }}
 {{ order.street }}
 {{ order.zip }} {{ order.city }}
 
-Herzliche Grüße
-{% if brand_name %}Ihr Team von {{ brand_name }}{% else %}Ihr Team{% endif %}
+{{ 'jumplink.vouchers::lang.mail.regards'|trans }}
+{% if brand_name %}{{ 'jumplink.vouchers::lang.mail.team_with_brand'|trans({ brand: brand_name }) }}{% else %}{{ 'jumplink.vouchers::lang.mail.team'|trans }}{% endif %}

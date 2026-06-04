@@ -1,10 +1,10 @@
 {% if voucher %}
     <div class="pos-sold">
-        <p>Neuer Gutschein <strong>{{ voucher.code }}</strong> über {{ voucher.initial_value_euro }} angelegt.</p>
+        <p>{{ 'jumplink.vouchers::lang.pos.sold_created'|trans({ code: '<strong>' ~ voucher.code ~ '</strong>', value: voucher.initial_value_euro })|raw }}</p>
         {% if voucher.type == 'physical' %}
-            <p>Bitte die Nummer <strong>{{ voucher.number }}</strong> auf die Karte schreiben.</p>
+            <p>{{ 'jumplink.vouchers::lang.pos.sold_write_number'|trans({ number: '<strong>' ~ voucher.number ~ '</strong>' })|raw }}</p>
         {% else %}
-            <p>Der Gutschein wurde per E-Mail versendet.</p>
+            <p>{{ 'jumplink.vouchers::lang.pos.sold_emailed'|trans }}</p>
         {% endif %}
     </div>
 {% endif %}

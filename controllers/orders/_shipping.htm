@@ -4,33 +4,33 @@
 ?>
 <div id="voucherShippingPanel">
     <?php if (!$order || $order->delivery_type !== 'physical'): ?>
-        <p class="text-muted">Versand nur bei physischen Gutscheinen (per Post).</p>
+        <p class="text-muted"><?= e(trans('jumplink.vouchers::lang.shipping.only_physical')) ?></p>
     <?php else: ?>
         <p>
-            <strong>Lieferadresse:</strong><br>
+            <strong><?= e(trans('jumplink.vouchers::lang.shipping.address_label')) ?></strong><br>
             <?= e(trim($order->firstname . ' ' . $order->lastname)) ?><br>
             <?= e($order->street) ?><br>
             <?= e(trim($order->zip . ' ' . $order->city)) ?>
         </p>
 
         <?php if ($voucher): ?>
-            <p><strong>Auf die Karte schreiben — Gutschein-Nr.:</strong> <?= e($voucher->code) ?>
-                (Wert: <?= e(\JumpLink\Vouchers\Models\VoucherOrder::formatEuro($voucher->initial_value_cents)) ?>)</p>
+            <p><strong><?= e(trans('jumplink.vouchers::lang.shipping.write_on_card')) ?></strong> <?= e($voucher->code) ?>
+                (<?= e(trans('jumplink.vouchers::lang.shipping.value')) ?>: <?= e(\JumpLink\Vouchers\Models\VoucherOrder::formatEuro($voucher->initial_value_cents)) ?>)</p>
         <?php endif; ?>
 
         <?php if ($order->shipped_at): ?>
-            <p class="text-success">✓ Versendet am <?= e($order->shipped_at->format('d.m.Y H:i')) ?></p>
+            <p class="text-success"><?= e(trans('jumplink.vouchers::lang.shipping.shipped_on', ['date' => $order->shipped_at->format('d.m.Y H:i')])) ?></p>
         <?php else: ?>
             <input type="hidden" name="order_id" value="<?= e($order->id) ?>">
             <button
                 type="button"
                 class="btn btn-primary"
                 data-request="onMarkShipped"
-                data-request-confirm="Karte als versendet markieren und den Käufer benachrichtigen?"
-                data-load-indicator="Markiere als versendet …">
-                Als versendet markieren
+                data-request-confirm="<?= e(trans('jumplink.vouchers::lang.shipping.mark_confirm')) ?>"
+                data-load-indicator="<?= e(trans('jumplink.vouchers::lang.shipping.mark_loading')) ?>">
+                <?= e(trans('jumplink.vouchers::lang.shipping.mark_button')) ?>
             </button>
-            <p class="help-block text-muted">Setzt das Versanddatum und schickt dem Käufer die „Ihr Gutschein ist unterwegs“-E-Mail.</p>
+            <p class="help-block text-muted"><?= e(trans('jumplink.vouchers::lang.shipping.mark_help')) ?></p>
         <?php endif; ?>
     <?php endif; ?>
 </div>

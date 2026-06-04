@@ -4,11 +4,11 @@ modelClass: JumpLink\Vouchers\Models\Voucher
 defaultRedirect: jumplink/vouchers/vouchers
 
 create:
-    title: Gutschein anlegen
+    title: jumplink.vouchers::lang.vouchers.create_title
     redirect: jumplink/vouchers/vouchers/update/:id
     redirectClose: jumplink/vouchers/vouchers
 
 update:
-    title: Gutschein
+    title: jumplink.vouchers::lang.vouchers.label
     redirect: jumplink/vouchers/vouchers
     redirectClose: jumplink/vouchers/vouchers

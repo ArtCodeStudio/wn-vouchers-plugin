@@ -74,19 +74,22 @@ class VoucherOrder extends Model
     public function getStatusOptions()
     {
         return [
-            'pending'   => 'Offen (Zahlung ausstehend)',
-            'paid'      => 'Bezahlt',
-            'issued'    => 'Ausgestellt',
-            'failed'    => 'Fehlgeschlagen',
-            'cancelled' => 'Abgebrochen',
-            'expired'   => 'Abgelaufen',
-            'refunded'  => 'Erstattet',
+            'pending'   => trans('jumplink.vouchers::lang.order_status.pending'),
+            'paid'      => trans('jumplink.vouchers::lang.order_status.paid'),
+            'issued'    => trans('jumplink.vouchers::lang.order_status.issued'),
+            'failed'    => trans('jumplink.vouchers::lang.order_status.failed'),
+            'cancelled' => trans('jumplink.vouchers::lang.order_status.cancelled'),
+            'expired'   => trans('jumplink.vouchers::lang.order_status.expired'),
+            'refunded'  => trans('jumplink.vouchers::lang.order_status.refunded'),
         ];
     }
 
     public function getDeliveryTypeOptions()
     {
-        return ['digital' => 'Digital (Bild/QR)', 'physical' => 'Physisch (Post)'];
+        return [
+            'digital'  => trans('jumplink.vouchers::lang.delivery.digital'),
+            'physical' => trans('jumplink.vouchers::lang.delivery.physical'),
+        ];
     }
 
     /**

@@ -1,18 +1,18 @@
-subject = "Ihr Gutschein{% if brand_name %} von {{ brand_name }}{% endif %}"
+subject = "{% if brand_name %}{{ 'jumplink.vouchers::lang.mail.delivery_subject_brand'|trans({ brand: brand_name }) }}{% else %}{{ 'jumplink.vouchers::lang.mail.delivery_subject'|trans }}{% endif %}"
 ==
 
-Hallo{% if recipient_name %} {{ recipient_name }}{% endif %},
+{% if recipient_name %}{{ 'jumplink.vouchers::lang.mail.greeting'|trans({ name: recipient_name }) }}{% else %}{{ 'jumplink.vouchers::lang.mail.greeting_plain'|trans }}{% endif %}
 
-anbei Ihr Gutschein{% if brand_name %} von **{{ brand_name }}**{% endif %}.
+{% if brand_name %}{{ 'jumplink.vouchers::lang.mail.delivery_intro_brand'|trans({ brand: brand_name }) }}{% else %}{{ 'jumplink.vouchers::lang.mail.delivery_intro'|trans }}{% endif %}
 
-- **Gutschein-Code:** {{ voucher.code }}
-- **Wert:** {{ voucher.initial_value_euro }}
-{% if voucher.valid_until %}- **Gültig bis:** {{ voucher.valid_until|date('d.m.Y') }}{% endif %}
+- **{{ 'jumplink.vouchers::lang.mail.label_code'|trans }}** {{ voucher.code }}
+- **{{ 'jumplink.vouchers::lang.mail.label_value'|trans }}** {{ voucher.initial_value_euro }}
+{% if voucher.valid_until %}- **{{ 'jumplink.vouchers::lang.mail.label_valid_until'|trans }}** {{ voucher.valid_until|date('d.m.Y') }}{% endif %}
 
-Der QR-Code wird an der Kasse gescannt; ein Restguthaben bleibt erhalten.
+{{ 'jumplink.vouchers::lang.mail.qr_hint'|trans }}
 {% if download_url %}
-[**Gutschein als Bild herunterladen**]({{ download_url }})
+[**{{ 'jumplink.vouchers::lang.mail.download_image'|trans }}**]({{ download_url }})
 {% endif %}
 
-Herzliche Grüße
-{% if brand_name %}Ihr Team von {{ brand_name }}{% else %}Ihr Team{% endif %}
+{{ 'jumplink.vouchers::lang.mail.regards'|trans }}
+{% if brand_name %}{{ 'jumplink.vouchers::lang.mail.team_with_brand'|trans({ brand: brand_name }) }}{% else %}{{ 'jumplink.vouchers::lang.mail.team'|trans }}{% endif %}

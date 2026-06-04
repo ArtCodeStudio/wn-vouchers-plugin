@@ -1,25 +1,25 @@
 columns:
     created_at:
-        label: Datum
+        label: jumplink.vouchers::lang.field.date
         type: datetime
     status:
-        label: Status
+        label: jumplink.vouchers::lang.field.status
         type: text
     delivery_type:
-        label: Versand
+        label: jumplink.vouchers::lang.field.delivery
         type: text
     total_euro:
-        label: Summe
+        label: jumplink.vouchers::lang.field.total
         type: text
     firstname:
-        label: Vorname
+        label: jumplink.vouchers::lang.field.firstname
         searchable: true
     lastname:
-        label: Nachname
+        label: jumplink.vouchers::lang.field.lastname
         searchable: true
     email:
-        label: 'E-Mail'
+        label: jumplink.vouchers::lang.field.email
         searchable: true
     payment_status:
-        label: Zahlung
+        label: jumplink.vouchers::lang.field.payment
         type: text

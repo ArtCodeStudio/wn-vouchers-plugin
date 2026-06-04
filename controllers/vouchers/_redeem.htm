@@ -6,37 +6,37 @@
 ?>
 <div id="voucherRedeemPanel" class="voucher-redeem-panel">
     <p style="font-size:16px;">
-        <strong>Restguthaben:</strong> <?= e($balance) ?>
-        <?php if ($voucher): ?><span class="text-muted"> &middot; Status: <?= e($voucher->status) ?></span><?php endif; ?>
+        <strong><?= e(trans('jumplink.vouchers::lang.redeem.balance_label')) ?></strong> <?= e($balance) ?>
+        <?php if ($voucher): ?><span class="text-muted"> &middot; <?= e(trans('jumplink.vouchers::lang.redeem.status_label')) ?> <?= e($voucher->status_label) ?></span><?php endif; ?>
     </p>
 
     <?php if ($canRedeem): ?>
         <div class="form-group">
-            <label class="form-label">Betrag einlösen (€)</label>
+            <label class="form-label"><?= e(trans('jumplink.vouchers::lang.redeem.amount_label')) ?></label>
             <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
-                <input type="text" name="amount" class="form-control" style="max-width:160px;" placeholder="z. B. 30,00" autocomplete="off">
-                <input type="text" name="note" class="form-control" style="max-width:240px;" placeholder="Notiz (optional)" autocomplete="off">
+                <input type="text" name="amount" class="form-control" style="max-width:160px;" placeholder="<?= e(trans('jumplink.vouchers::lang.redeem.amount_ph')) ?>" autocomplete="off">
+                <input type="text" name="note" class="form-control" style="max-width:240px;" placeholder="<?= e(trans('jumplink.vouchers::lang.redeem.note_ph')) ?>" autocomplete="off">
                 <input type="hidden" name="voucher_id" value="<?= e($voucher->id) ?>">
                 <button
                     type="button"
                     class="btn btn-primary"
                     data-request="onRedeem"
-                    data-request-confirm="Einlösung jetzt verbindlich buchen?"
-                    data-load-indicator="Buche Einlösung …">
-                    Einlösen
+                    data-request-confirm="<?= e(trans('jumplink.vouchers::lang.redeem.confirm')) ?>"
+                    data-load-indicator="<?= e(trans('jumplink.vouchers::lang.redeem.loading')) ?>">
+                    <?= e(trans('jumplink.vouchers::lang.redeem.button')) ?>
                 </button>
             </div>
-            <p class="help-block text-muted">Bucht eine (Teil-)Einlösung über den manipulationssicheren Ledger. Eine gebuchte Einlösung kann nicht bearbeitet, nur durch eine spätere Korrekturbuchung ausgeglichen werden.</p>
+            <p class="help-block text-muted"><?= e(trans('jumplink.vouchers::lang.redeem.help')) ?></p>
         </div>
     <?php else: ?>
-        <p class="text-muted">Für diesen Gutschein ist derzeit keine Einlösung möglich.</p>
+        <p class="text-muted"><?= e(trans('jumplink.vouchers::lang.redeem.not_possible')) ?></p>
     <?php endif; ?>
 
-    <h4 style="margin-top:16px;">Einlöse-Verlauf</h4>
+    <h4 style="margin-top:16px;"><?= e(trans('jumplink.vouchers::lang.redeem.history')) ?></h4>
     <?php if ($ledger->count()): ?>
         <table class="table table-condensed data" style="margin-top:8px;">
             <thead>
-                <tr><th>Zeitpunkt</th><th>Betrag</th><th>Rest danach</th><th>Art</th><th>Quelle</th><th>Notiz</th></tr>
+                <tr><th><?= e(trans('jumplink.vouchers::lang.redeem.col_time')) ?></th><th><?= e(trans('jumplink.vouchers::lang.redeem.col_amount')) ?></th><th><?= e(trans('jumplink.vouchers::lang.redeem.col_balance')) ?></th><th><?= e(trans('jumplink.vouchers::lang.redeem.col_kind')) ?></th><th><?= e(trans('jumplink.vouchers::lang.redeem.col_source')) ?></th><th><?= e(trans('jumplink.vouchers::lang.redeem.col_note')) ?></th></tr>
             </thead>
             <tbody>
                 <?php foreach ($ledger as $r): ?>
@@ -44,7 +44,7 @@
                         <td><?= e(optional($r->created_at)->format('d.m.Y H:i')) ?></td>
                         <td><?= e(\JumpLink\Vouchers\Models\VoucherOrder::formatEuro($r->amount_cents)) ?></td>
                         <td><?= e(\JumpLink\Vouchers\Models\VoucherOrder::formatEuro($r->balance_after_cents)) ?></td>
-                        <td><?= e($r->kind) ?></td>
+                        <td><?= e($r->kind_label) ?></td>
                         <td><?= e($r->source) ?></td>
                         <td><?= e($r->note) ?></td>
                     </tr>
@@ -52,6 +52,6 @@
             </tbody>
         </table>
     <?php else: ?>
-        <p class="text-muted">Noch keine Einlösungen.</p>
+        <p class="text-muted"><?= e(trans('jumplink.vouchers::lang.redeem.empty')) ?></p>
     <?php endif; ?>
 </div>

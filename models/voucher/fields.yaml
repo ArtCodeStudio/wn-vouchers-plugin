@@ -1,92 +1,89 @@
 fields:
     code:
-        label: Code
+        label: jumplink.vouchers::lang.field.code
         span: left
         disabled: true
-        comment: 'Wird automatisch aus der Nummer erzeugt.'
+        comment: jumplink.vouchers::lang.field.code_comment
     status:
-        label: Status
+        label: jumplink.vouchers::lang.field.status
         type: dropdown
         span: right
 
 tabs:
     fields:
         number_source:
-            label: Nummernquelle
-            tab: Gutschein
+            label: jumplink.vouchers::lang.field.number_source
+            tab: jumplink.vouchers::lang.tab.voucher
             type: dropdown
             span: left
             default: auto
-            options:
-                auto: 'Automatisch (fortlaufend)'
-                manual: 'Manuell (Ordner-Nummer)'
-            comment: 'Automatisch = nächste freie Nummer wird vergeben. Manuell = Nummer aus dem Aktenordner eintragen.'
+            comment: jumplink.vouchers::lang.field.number_source_comment
         number:
-            label: Nummer
-            tab: Gutschein
+            label: jumplink.vouchers::lang.field.number
+            tab: jumplink.vouchers::lang.tab.voucher
             type: number
             span: right
-            comment: 'Bei „Automatisch“ leer lassen, bei „Manuell“ eintragen.'
+            comment: jumplink.vouchers::lang.field.number_comment
         type:
-            label: Typ
-            tab: Gutschein
+            label: jumplink.vouchers::lang.field.type
+            tab: jumplink.vouchers::lang.tab.voucher
             type: dropdown
             span: left
             default: physical
         value_euro:
-            label: Wert (€)
-            tab: Gutschein
+            label: jumplink.vouchers::lang.field.value_euro
+            tab: jumplink.vouchers::lang.tab.voucher
             type: text
             span: right
-            comment: 'z. B. 50,00'
+            comment: jumplink.vouchers::lang.field.value_euro_comment
         balance_euro:
-            label: Restguthaben
-            tab: Gutschein
+            label: jumplink.vouchers::lang.field.balance
+            tab: jumplink.vouchers::lang.tab.voucher
             type: text
             span: left
             disabled: true
-            comment: 'Wird aus dem Einlöse-Ledger berechnet.'
+            comment: jumplink.vouchers::lang.field.balance_comment
         payment_section:
             type: section
-            label: Zahlung
-            tab: Gutschein
-            comment: 'Bei manueller Anlage: ob und wie der Kunde bezahlt hat (z. B. bereits an der normalen Kasse).'
+            label: jumplink.vouchers::lang.field.payment
+            tab: jumplink.vouchers::lang.tab.voucher
+            comment: jumplink.vouchers::lang.field.payment_section_comment
         payment_status:
-            label: Zahlungsstatus
-            tab: Gutschein
+            label: jumplink.vouchers::lang.field.payment_status
+            tab: jumplink.vouchers::lang.tab.voucher
             type: dropdown
             span: left
             default: paid
         payment_method:
-            label: Zahlungsart
-            tab: Gutschein
+            label: jumplink.vouchers::lang.field.payment_method
+            tab: jumplink.vouchers::lang.tab.voucher
             type: dropdown
             span: right
             default: cash
-            emptyOption: '— bitte wählen —'
+            emptyOption: jumplink.vouchers::lang.field.payment_method_empty
         recipient_name:
-            label: Empfänger
-            tab: Gutschein
+            label: jumplink.vouchers::lang.field.recipient
+            tab: jumplink.vouchers::lang.tab.voucher
             type: text
             span: right
-            comment: 'Vorschläge erscheinen, wenn der Name bereits vergeben wurde.'
+            comment: jumplink.vouchers::lang.field.recipient_comment
         recipient_suggest:
             type: partial
             path: recipient_datalist
-            tab: Gutschein
+            tab: jumplink.vouchers::lang.tab.voucher
             span: full
         address_section:
             type: section
-            label: 'Versandadresse (optional)'
-            tab: Gutschein
-            comment: 'Nur falls eine physische Karte verschickt werden soll (z. B. telefonische Bestellung). Wird die Karte direkt mitgenommen, leer lassen.'
+            label: jumplink.vouchers::lang.field.address_section
+            tab: jumplink.vouchers::lang.tab.voucher
+            comment: jumplink.vouchers::lang.field.address_section_comment
             trigger:
                 action: show
                 field: type
                 condition: value[physical]
         street:
-            label: 'Straße & Nr.'
-            tab: Gutschein
+            label: jumplink.vouchers::lang.field.street
+            tab: jumplink.vouchers::lang.tab.voucher
             type: text
             span: full
             trigger:
@@ -94,8 +91,8 @@ tabs:
                 field: type
                 condition: value[physical]
         zip:
-            label: PLZ
-            tab: Gutschein
+            label: jumplink.vouchers::lang.field.zip
+            tab: jumplink.vouchers::lang.tab.voucher
             type: text
             span: left
             trigger:
@@ -103,8 +100,8 @@ tabs:
                 field: type
                 condition: value[physical]
         city:
-            label: Ort
-            tab: Gutschein
+            label: jumplink.vouchers::lang.field.city
+            tab: jumplink.vouchers::lang.tab.voucher
             type: text
             span: right
             trigger:
@@ -112,15 +109,15 @@ tabs:
                 field: type
                 condition: value[physical]
         valid_until:
-            label: 'Gültig bis (optional)'
-            tab: Gutschein
+            label: jumplink.vouchers::lang.field.valid_until_optional
+            tab: jumplink.vouchers::lang.tab.voucher
             type: datepicker
             mode: date
             span: left
-            comment: 'Leer = Standard-Gültigkeit aus den Einstellungen (Standard: 3 Jahre zum Jahresende). Hier kann ein abweichendes Datum gesetzt werden.'
+            comment: jumplink.vouchers::lang.field.valid_until_comment
         issued_at:
-            label: Ausgestellt am
-            tab: Gutschein
+            label: jumplink.vouchers::lang.field.issued_at
+            tab: jumplink.vouchers::lang.tab.voucher
             type: datepicker
             mode: datetime
             span: right
@@ -129,6 +126,6 @@ tabs:
         redeem:
             type: partial
             path: redeem
-            tab: Einlösung
+            tab: jumplink.vouchers::lang.tab.redemption
             span: full
             context: [update]

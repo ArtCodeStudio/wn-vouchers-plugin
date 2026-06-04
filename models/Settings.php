@@ -22,6 +22,15 @@ class Settings extends Model
         'pdf_background' => \System\Models\File::class,
     ];
 
+    /** Translated VAT-mode labels for the settings dropdown. */
+    public function getVatModeOptions()
+    {
+        return [
+            'multi_purpose'  => trans('jumplink.vouchers::lang.vat_mode_option.multi_purpose'),
+            'single_purpose' => trans('jumplink.vouchers::lang.vat_mode_option.single_purpose'),
+        ];
+    }
+
     public function initSettingsData()
     {
         // Numbering: auto numbers start here; must stay above the binder's

@@ -15,8 +15,8 @@ class VoucherReturn extends ComponentBase
     public function componentDetails()
     {
         return [
-            'name'        => 'Gutschein-Rückkehr (nach Zahlung)',
-            'description' => 'Landeseite nach der Mollie-Zahlung: Status + Bild-Download.',
+            'name'        => trans('jumplink.vouchers::lang.component.return_name'),
+            'description' => trans('jumplink.vouchers::lang.component.return_description'),
         ];
     }
 

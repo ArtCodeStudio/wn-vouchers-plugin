@@ -1,10 +1,10 @@
 fields:
     status:
-        label: Status
+        label: jumplink.vouchers::lang.field.status
         type: dropdown
         span: left
     delivery_type:
-        label: Versandart
+        label: jumplink.vouchers::lang.field.delivery_type
         type: dropdown
         span: right
         disabled: true
@@ -12,98 +12,98 @@ fields:
 tabs:
     fields:
         face_value_cents:
-            label: Gutscheinwert (Cent)
-            tab: Bestellung
+            label: jumplink.vouchers::lang.field.face_value_cents
+            tab: jumplink.vouchers::lang.tab.order
             type: number
             span: left
             disabled: true
         service_fee_cents:
-            label: Servicepauschale (Cent)
-            tab: Bestellung
+            label: jumplink.vouchers::lang.field.service_fee_cents
+            tab: jumplink.vouchers::lang.tab.order
             type: number
             span: right
             disabled: true
         total_cents:
-            label: Gesamt (Cent)
-            tab: Bestellung
+            label: jumplink.vouchers::lang.field.total_cents
+            tab: jumplink.vouchers::lang.tab.order
             type: number
             span: left
             disabled: true
         vat_mode:
-            label: MwSt-Modell
-            tab: Bestellung
+            label: jumplink.vouchers::lang.field.vat_mode
+            tab: jumplink.vouchers::lang.tab.order
             type: text
             span: right
             disabled: true
         recipient_name:
-            label: Empfänger
-            tab: Bestellung
+            label: jumplink.vouchers::lang.field.recipient
+            tab: jumplink.vouchers::lang.tab.order
             type: text
             span: left
         message:
-            label: Nachricht
-            tab: Bestellung
+            label: jumplink.vouchers::lang.field.message
+            tab: jumplink.vouchers::lang.tab.order
             type: textarea
             size: small
             span: full
 
         firstname:
-            label: Vorname
-            tab: Kontakt
+            label: jumplink.vouchers::lang.field.firstname
+            tab: jumplink.vouchers::lang.tab.contact
             type: text
             span: left
         lastname:
-            label: Nachname
-            tab: Kontakt
+            label: jumplink.vouchers::lang.field.lastname
+            tab: jumplink.vouchers::lang.tab.contact
             type: text
             span: right
         email:
-            label: 'E-Mail'
-            tab: Kontakt
+            label: jumplink.vouchers::lang.field.email
+            tab: jumplink.vouchers::lang.tab.contact
             type: text
             span: left
         phone:
-            label: Telefon
-            tab: Kontakt
+            label: jumplink.vouchers::lang.field.phone
+            tab: jumplink.vouchers::lang.tab.contact
             type: text
             span: right
         street:
-            label: 'Straße & Nr.'
-            tab: Kontakt
+            label: jumplink.vouchers::lang.field.street
+            tab: jumplink.vouchers::lang.tab.contact
             type: text
             span: left
         zip:
-            label: PLZ
-            tab: Kontakt
+            label: jumplink.vouchers::lang.field.zip
+            tab: jumplink.vouchers::lang.tab.contact
             type: text
             span: right
         city:
-            label: Ort
-            tab: Kontakt
+            label: jumplink.vouchers::lang.field.city
+            tab: jumplink.vouchers::lang.tab.contact
             type: text
             span: left
 
         provider:
-            label: Anbieter
-            tab: Zahlung
+            label: jumplink.vouchers::lang.field.provider
+            tab: jumplink.vouchers::lang.tab.payment
             type: text
             span: left
             disabled: true
         payment_id:
-            label: 'Payment-ID'
-            tab: Zahlung
+            label: jumplink.vouchers::lang.field.payment_id
+            tab: jumplink.vouchers::lang.tab.payment
             type: text
             span: right
             disabled: true
         payment_status:
-            label: Zahlungsstatus
-            tab: Zahlung
+            label: jumplink.vouchers::lang.field.payment_status
+            tab: jumplink.vouchers::lang.tab.payment
             type: text
             span: left
             disabled: true
         paid_at:
-            label: Bezahlt am
-            tab: Zahlung
+            label: jumplink.vouchers::lang.field.paid_at
+            tab: jumplink.vouchers::lang.tab.payment
             type: datepicker
             mode: datetime
             span: right
@@ -112,6 +112,6 @@ tabs:
         shipping:
             type: partial
             path: shipping
-            tab: Versand
+            tab: jumplink.vouchers::lang.tab.shipping
             span: full
             context: [update]

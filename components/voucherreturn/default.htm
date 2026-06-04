@@ -2,9 +2,9 @@
    below, which only unhides this block (no markup rebuilt in JS). #}
 {% set issued %}
     <div class="voucher-issued">
-        <p>Vielen Dank! Ihr Gutschein wurde erstellt und an Ihre E-Mail-Adresse gesendet.</p>
+        <p>{{ 'jumplink.vouchers::lang.return.issued_thanks'|trans }}</p>
         <p class="voucher-download-wrap"{% if not __SELF__.downloadUrl %} hidden{% endif %}>
-            <a class="voucher-download" href="{{ __SELF__.downloadUrl ?: '#' }}">Gutschein als Bild herunterladen</a>
+            <a class="voucher-download" href="{{ __SELF__.downloadUrl ?: '#' }}">{{ 'jumplink.vouchers::lang.mail.download_image'|trans }}</a>
         </p>
     </div>
 {% endset %}
@@ -13,7 +13,7 @@
         {{ issued }}
     {% elseif __SELF__.order %}
         <div class="voucher-pending" data-voucher-pending>
-            <p>Ihre Zahlung wird verarbeitet … einen Moment bitte.</p>
+            <p>{{ 'jumplink.vouchers::lang.return.processing'|trans }}</p>
         </div>
         <div data-voucher-issued hidden>{{ issued }}</div>
         {# Soft client-side poll (no hard reload): unhide the issued block in place. #}
