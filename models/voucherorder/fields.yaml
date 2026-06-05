@@ -29,7 +29,7 @@ tabs:
             type: number
             span: left
             disabled: true
-        vat_mode:
+        vat_mode_label:
             label: jumplink.vouchers::lang.field.vat_mode
             tab: jumplink.vouchers::lang.tab.order
             type: text
@@ -95,7 +95,7 @@ tabs:
             type: text
             span: right
             disabled: true
-        payment_status:
+        payment_status_label:
             label: jumplink.vouchers::lang.field.payment_status
             tab: jumplink.vouchers::lang.tab.payment
             type: text

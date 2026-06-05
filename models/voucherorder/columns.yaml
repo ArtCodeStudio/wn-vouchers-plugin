@@ -2,10 +2,10 @@ columns:
     created_at:
         label: jumplink.vouchers::lang.field.date
         type: datetime
-    status:
+    status_label:
         label: jumplink.vouchers::lang.field.status
         type: text
-    delivery_type:
+    delivery_type_label:
         label: jumplink.vouchers::lang.field.delivery
         type: text
     total_euro:
@@ -20,6 +20,6 @@ columns:
     email:
         label: jumplink.vouchers::lang.field.email
         searchable: true
-    payment_status:
+    payment_status_label:
         label: jumplink.vouchers::lang.field.payment
         type: text

@@ -44,6 +44,21 @@ class Redemption extends Model
         return $options[$this->kind] ?? $this->kind;
     }
 
+    public function getSourceOptions()
+    {
+        return [
+            'pos'     => trans('jumplink.vouchers::lang.redemption_source.pos'),
+            'backend' => trans('jumplink.vouchers::lang.redemption_source.backend'),
+            'api'     => trans('jumplink.vouchers::lang.redemption_source.api'),
+        ];
+    }
+
+    public function getSourceLabelAttribute()
+    {
+        $options = $this->getSourceOptions();
+        return $options[$this->source] ?? $this->source;
+    }
+
     public function getAmountEuroAttribute()
     {
         return VoucherOrder::formatEuro($this->amount_cents);

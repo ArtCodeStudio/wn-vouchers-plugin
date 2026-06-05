@@ -98,6 +98,12 @@ class Voucher extends Model
         return $options[$this->status] ?? $this->status;
     }
 
+    public function getTypeLabelAttribute()
+    {
+        $options = $this->getTypeOptions();
+        return $options[$this->type] ?? $this->type;
+    }
+
     public function getPaymentStatusLabelAttribute()
     {
         $options = $this->getPaymentStatusOptions();

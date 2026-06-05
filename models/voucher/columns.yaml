@@ -5,7 +5,7 @@ columns:
     number:
         label: jumplink.vouchers::lang.field.number_short
         searchable: true
-    type:
+    type_label:
         label: jumplink.vouchers::lang.field.type
         type: text
     initial_value_euro:
@@ -14,7 +14,7 @@ columns:
     balance_euro:
         label: jumplink.vouchers::lang.field.balance
         type: text
-    status:
+    status_label:
         label: jumplink.vouchers::lang.field.status
         type: text
     payment_status_label:

@@ -78,6 +78,22 @@ return [
         'reversal' => 'Storno',
         'adjust'   => 'Korrektur',
     ],
+    // Mollie-Zahlungsstatus der Bestellung (vom Provider gesetzt; „canceled“ mit
+    // einem l — bewusst getrennt von order_status.cancelled).
+    'order_payment_status' => [
+        'open'       => 'Offen',
+        'pending'    => 'Ausstehend',
+        'authorized' => 'Autorisiert',
+        'paid'       => 'Bezahlt',
+        'failed'     => 'Fehlgeschlagen',
+        'canceled'   => 'Abgebrochen',
+        'expired'    => 'Abgelaufen',
+    ],
+    'redemption_source' => [
+        'pos'     => 'Kasse',
+        'backend' => 'Backend',
+        'api'     => 'API',
+    ],
 
     // Formular-Tabs
     'tab' => [

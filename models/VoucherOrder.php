@@ -93,6 +93,61 @@ class VoucherOrder extends Model
     }
 
     /**
+     * The order's payment status is the raw Mollie status (set by PaymentService),
+     * so it has its own translation set — distinct from the voucher's paid/unpaid
+     * till semantics. Note Mollie spells it "canceled" (one l).
+     */
+    public function getPaymentStatusOptions()
+    {
+        return [
+            'open'       => trans('jumplink.vouchers::lang.order_payment_status.open'),
+            'pending'    => trans('jumplink.vouchers::lang.order_payment_status.pending'),
+            'authorized' => trans('jumplink.vouchers::lang.order_payment_status.authorized'),
+            'paid'       => trans('jumplink.vouchers::lang.order_payment_status.paid'),
+            'failed'     => trans('jumplink.vouchers::lang.order_payment_status.failed'),
+            'canceled'   => trans('jumplink.vouchers::lang.order_payment_status.canceled'),
+            'expired'    => trans('jumplink.vouchers::lang.order_payment_status.expired'),
+        ];
+    }
+
+    public function getVatModeOptions()
+    {
+        return [
+            'multi_purpose'  => trans('jumplink.vouchers::lang.vat_mode_option.multi_purpose'),
+            'single_purpose' => trans('jumplink.vouchers::lang.vat_mode_option.single_purpose'),
+        ];
+    }
+
+    //
+    // Translated label accessors so list columns + read-only form fields show the
+    // localised label instead of the raw stored code (Winter only auto-translates
+    // form dropdowns, not type:text list columns).
+    //
+    public function getStatusLabelAttribute()
+    {
+        $options = $this->getStatusOptions();
+        return $options[$this->status] ?? $this->status;
+    }
+
+    public function getDeliveryTypeLabelAttribute()
+    {
+        $options = $this->getDeliveryTypeOptions();
+        return $options[$this->delivery_type] ?? $this->delivery_type;
+    }
+
+    public function getPaymentStatusLabelAttribute()
+    {
+        $options = $this->getPaymentStatusOptions();
+        return $options[$this->payment_status] ?? $this->payment_status;
+    }
+
+    public function getVatModeLabelAttribute()
+    {
+        $options = $this->getVatModeOptions();
+        return $options[$this->vat_mode] ?? $this->vat_mode;
+    }
+
+    /**
      * Signed, time-limited download URL for this order's digital voucher image,
      * or null if it is not issued / has no digital voucher. Single source for the
      * return component and the status-poll endpoint.

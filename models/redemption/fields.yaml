@@ -17,7 +17,7 @@ tabs:
             type: dropdown
             span: left
             disabled: true
-        source:
+        source_label:
             label: jumplink.vouchers::lang.redeem.col_source
             tab: jumplink.vouchers::lang.tab.redemption
             type: text

@@ -45,7 +45,7 @@
                         <td><?= e(\JumpLink\Vouchers\Models\VoucherOrder::formatEuro($r->amount_cents)) ?></td>
                         <td><?= e(\JumpLink\Vouchers\Models\VoucherOrder::formatEuro($r->balance_after_cents)) ?></td>
                         <td><?= e($r->kind_label) ?></td>
-                        <td><?= e($r->source) ?></td>
+                        <td><?= e($r->source_label) ?></td>
                         <td><?= e($r->note) ?></td>
                     </tr>
                 <?php endforeach; ?>

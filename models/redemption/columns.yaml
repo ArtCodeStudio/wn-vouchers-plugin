@@ -10,10 +10,10 @@ columns:
     amount_euro:
         label: jumplink.vouchers::lang.redeem.col_amount
         type: text
-    kind:
+    kind_label:
         label: jumplink.vouchers::lang.redeem.col_kind
         type: text
-    source:
+    source_label:
         label: jumplink.vouchers::lang.redeem.col_source
         type: text
     note:
