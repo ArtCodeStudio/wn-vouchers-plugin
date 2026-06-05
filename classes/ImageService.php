@@ -26,7 +26,9 @@ class ImageService
     /** Render the voucher as PNG bytes (a card image). */
     public static function render(Voucher $voucher): string
     {
-        $W = 1000; $H = 560; $pad = 56; $border = 16;
+        // Portrait card — the voucher is digital and most buyers save it to a
+        // phone, where portrait fills the screen and reads better than landscape.
+        $W = 760; $H = 980; $pad = 56; $border = 16;
         $settings = Settings::instance();
 
         $img = imagecreatetruecolor($W, $H);
@@ -48,40 +50,46 @@ class ImageService
             imagesetthickness($img, 1);
         }
 
-        // QR top-right (drawn first; the value sits below it, so it never collides).
-        $qrSize = 180;
-        if ($qr = self::voucherQr($voucher)) {
-            imagecopyresampled($img, $qr, $W - $pad - $qrSize, $pad, 0, 0, $qrSize, $qrSize, imagesx($qr), imagesy($qr));
-            imagedestroy($qr);
-        }
-
         $dir  = self::fontDir();
         $bold = $dir . 'DejaVuSans-Bold.ttf';
         $reg  = $dir . 'DejaVuSans.ttf';
         $mono = $dir . 'DejaVuSansMono-Bold.ttf';
-        $x = $pad;
+        $inner = $W - 2 * $pad;
 
+        // Brand, centered at the top.
         if (!empty($settings->brand_name)) {
-            imagettftext($img, 19, 0, $x, 112, $acc, $bold, $settings->brand_name);
+            self::centered($img, self::fitSize($settings->brand_name, $bold, 24, $inner), $bold, $acc, 115, $settings->brand_name, $W);
         }
 
-        $value = trans('jumplink.vouchers::lang.voucher_card.value_over', ['value' => $voucher->initial_value_euro]);
-        imagettftext($img, self::fitSize($value, $bold, 34, $W - 2 * $pad), 0, $x, 300, $dark, $bold, $value);
-        imagettftext($img, 22, 0, $x, 360, $acc, $mono, $voucher->code);
+        // QR, large and centered (scanned at the till).
+        $qrSize = 340;
+        if ($qr = self::voucherQr($voucher)) {
+            imagecopyresampled($img, $qr, (int) (($W - $qrSize) / 2), 165, 0, 0, $qrSize, $qrSize, imagesx($qr), imagesy($qr));
+            imagedestroy($qr);
+        }
 
-        $y = 408;
+        // Hero value + code, centered.
+        $value = trans('jumplink.vouchers::lang.voucher_card.value_over', ['value' => $voucher->initial_value_euro]);
+        self::centered($img, self::fitSize($value, $bold, 42, $inner), $bold, $dark, 625, $value, $W);
+        self::centered($img, 24, $mono, $acc, 695, $voucher->code, $W);
+
+        // Optional recipient + validity, centered below the code.
+        $y = 770;
         if ($voucher->recipient_name) {
-            imagettftext($img, 14, 0, $x, $y, $muted, $reg, trans('jumplink.vouchers::lang.voucher_card.for', ['name' => $voucher->recipient_name]));
-            $y += 38;
+            $t = trans('jumplink.vouchers::lang.voucher_card.for', ['name' => $voucher->recipient_name]);
+            self::centered($img, self::fitSize($t, $reg, 17, $inner), $reg, $muted, $y, $t, $W);
+            $y += 44;
         }
         if ($voucher->valid_until) {
-            imagettftext($img, 14, 0, $x, $y, $muted, $reg, trans('jumplink.vouchers::lang.voucher_card.valid_until', ['date' => $voucher->valid_until->format('d.m.Y')]));
-            $y += 38;
+            $t = trans('jumplink.vouchers::lang.voucher_card.valid_until', ['date' => $voucher->valid_until->format('d.m.Y')]);
+            self::centered($img, self::fitSize($t, $reg, 17, $inner), $reg, $muted, $y, $t, $W);
         }
-        imagettftext($img, 13, 0, $x, $y, $muted, $reg, trans('jumplink.vouchers::lang.voucher_card.till_hint'));
-        $y += 34;
+
+        // Till hint + optional footer, pinned near the bottom edge.
+        $hint = trans('jumplink.vouchers::lang.voucher_card.till_hint');
+        self::centered($img, self::fitSize($hint, $reg, 15, $inner), $reg, $muted, $H - 115, $hint, $W);
         if (!empty($settings->pdf_footer_text)) {
-            imagettftext($img, 12, 0, $x, $y, $muted, $reg, $settings->pdf_footer_text);
+            self::centered($img, self::fitSize($settings->pdf_footer_text, $reg, 13, $inner), $reg, $muted, $H - 70, $settings->pdf_footer_text, $W);
         }
 
         ob_start();
@@ -89,6 +97,15 @@ class ImageService
         $blob = ob_get_clean();
         imagedestroy($img);
         return $blob;
+    }
+
+    /** Draw $text horizontally centered across width $W, at baseline $y. */
+    protected static function centered($img, int $size, string $font, int $color, int $y, string $text, int $W): void
+    {
+        $box = imagettfbbox($size, 0, $font, $text);
+        $width = $box[2] - $box[0];
+        $x = (int) (($W - $width) / 2 - $box[0]);
+        imagettftext($img, $size, 0, $x, $y, $color, $font, $text);
     }
 
     /** Largest font size (<= $max) at which $text fits within $maxWidth px. */

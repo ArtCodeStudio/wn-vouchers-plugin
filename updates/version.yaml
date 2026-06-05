@@ -27,3 +27,7 @@
     - "i18n: Backend-Listenspalten zeigen übersetzte Labels statt Roh-Codes (Status, Typ, Versand, Zahlung, Einlöseart/-quelle) über *_label-Accessoren; neue Sprachgruppe order_payment_status für die rohen Mollie-Status (open/pending/… inkl. canceled mit einem l) und redemption_source."
 1.0.10:
     - "Backend: Gutschein-Bild jedes bestehenden Gutscheins direkt im Backend ansehen/herunterladen (Tab „Gutschein-Bild“ mit Vorschau) — neue auth-geschützte Aktion Vouchers::image, ohne öffentlichen Signatur-Link."
+1.0.11:
+    - "Gutschein-Bild im Hochformat (smartphone-freundlich) statt quer; zentriertes Layout."
+    - "Standard-Gültigkeit auf 0 (kein Ablaufdatum) — die alte 3-Jahres-Voreinstellung wird einmalig auf 0 zurückgesetzt, individuelle Werte bleiben erhalten."
+    - reset_default_validity_to_none.php

@@ -15,7 +15,7 @@ tabs:
             tab: jumplink.vouchers::lang.setting_tab.vouchers
             type: number
             span: right
-            default: 3
+            default: 0
             comment: jumplink.vouchers::lang.setting.validity_years_comment
         min_value_cents:
             label: jumplink.vouchers::lang.setting.min_value

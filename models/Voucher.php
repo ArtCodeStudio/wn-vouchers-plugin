@@ -157,7 +157,7 @@ class Voucher extends Model
      */
     public static function configuredValidUntil(): ?Carbon
     {
-        $years = (int) Settings::get('default_validity_years', 3);
+        $years = (int) Settings::get('default_validity_years', 0);
         return $years > 0
             ? Carbon::now()->addYears($years)->endOfYear()
             : null;
