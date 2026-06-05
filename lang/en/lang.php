@@ -103,6 +103,16 @@ return [
         'contact'    => 'Contact',
         'payment'    => 'Payment',
         'shipping'   => 'Shipping',
+        'image'      => 'Voucher image',
+    ],
+
+    // Backend: voucher image preview (form)
+    'voucher_image' => [
+        'open'       => 'Open in new tab',
+        'download'   => 'Download image',
+        'alt'        => 'Voucher preview',
+        'hint'       => 'Generated live from the voucher data. Save first after any changes.',
+        'save_first' => 'Please save the voucher first — the preview then appears here.',
     ],
 
     // Form fields + list columns (labels + comments)

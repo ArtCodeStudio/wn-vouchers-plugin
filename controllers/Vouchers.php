@@ -1,12 +1,15 @@
 <?php namespace JumpLink\Vouchers\Controllers;
 
 use Flash;
+use Response;
 use BackendAuth;
 use BackendMenu;
 use Backend\Classes\Controller;
 use JumpLink\Vouchers\Models\Voucher;
 use JumpLink\Vouchers\Models\VoucherOrder;
 use JumpLink\Vouchers\Classes\RedemptionService;
+use JumpLink\Vouchers\Classes\ImageService;
+use JumpLink\Vouchers\Classes\PdfService;
 
 /**
  * Vouchers Backend Controller – manage issued vouchers, balances and status,
@@ -63,6 +66,35 @@ class Vouchers extends Controller
         Flash::success(trans('jumplink.vouchers::lang.flash.redeem_booked', ['balance' => VoucherOrder::formatEuro($result['balance_cents'])]));
 
         return ['#voucherRedeemPanel' => $this->makePartial('redeem', ['formModel' => Voucher::find($id)])];
+    }
+
+    /**
+     * Stream the generated voucher (PNG image, PDF fallback) for an existing
+     * voucher straight from the backend — so staff can re-open or re-download a
+     * voucher's artwork at any time without the customer's signed email link.
+     * Gated by the controller's backend auth + manage_vouchers permission, so no
+     * public signed URL is involved. Add ?download=1 to force a download.
+     */
+    public function image($recordId)
+    {
+        $voucher = Voucher::find((int) $recordId);
+        if (!$voucher) {
+            return Response::make('not found', 404);
+        }
+
+        $disposition = input('download') ? 'attachment' : 'inline';
+
+        if (ImageService::isAvailable()) {
+            return Response::make(ImageService::render($voucher), 200, [
+                'Content-Type'        => 'image/png',
+                'Content-Disposition' => $disposition . '; filename="gutschein-' . $voucher->code . '.png"',
+            ]);
+        }
+
+        return Response::make(PdfService::render($voucher), 200, [
+            'Content-Type'        => 'application/pdf',
+            'Content-Disposition' => $disposition . '; filename="gutschein-' . $voucher->code . '.pdf"',
+        ]);
     }
 
     /** "12,50" / "12.50" euro string -> integer cents. */

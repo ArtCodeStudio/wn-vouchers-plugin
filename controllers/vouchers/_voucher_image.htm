@@ -1,0 +1,29 @@
+<?php
+    // Live preview + download of the generated voucher (PNG image, PDF fallback)
+    // for an existing voucher. The image is streamed by the backend-auth-gated
+    // Vouchers::image() action, so the <img> below loads it with the staff session
+    // — no public signed link needed.
+    $voucher = $formModel ?? null;
+    $url = ($voucher && $voucher->exists)
+        ? Backend::url('jumplink/vouchers/vouchers/image/' . $voucher->id)
+        : null;
+?>
+<div class="voucher-image-panel">
+    <?php if ($url): ?>
+        <p>
+            <a href="<?= e($url) ?>" target="_blank" rel="noopener" class="btn btn-default oc-icon-external-link">
+                <?= e(trans('jumplink.vouchers::lang.voucher_image.open')) ?>
+            </a>
+            <a href="<?= e($url) ?>?download=1" class="btn btn-default oc-icon-download">
+                <?= e(trans('jumplink.vouchers::lang.voucher_image.download')) ?>
+            </a>
+        </p>
+        <a href="<?= e($url) ?>" target="_blank" rel="noopener" title="<?= e(trans('jumplink.vouchers::lang.voucher_image.open')) ?>">
+            <img src="<?= e($url) ?>" alt="<?= e(trans('jumplink.vouchers::lang.voucher_image.alt')) ?>"
+                 style="max-width:520px; width:100%; height:auto; border:1px solid #d8d8d8; border-radius:6px; margin-top:6px;">
+        </a>
+        <p class="help-block text-muted"><?= e(trans('jumplink.vouchers::lang.voucher_image.hint')) ?></p>
+    <?php else: ?>
+        <p class="text-muted"><?= e(trans('jumplink.vouchers::lang.voucher_image.save_first')) ?></p>
+    <?php endif; ?>
+</div>

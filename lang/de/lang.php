@@ -103,6 +103,16 @@ return [
         'contact'    => 'Kontakt',
         'payment'    => 'Zahlung',
         'shipping'   => 'Versand',
+        'image'      => 'Gutschein-Bild',
+    ],
+
+    // Backend: Gutschein-Bild-Vorschau (Formular)
+    'voucher_image' => [
+        'open'       => 'Im neuen Tab öffnen',
+        'download'   => 'Bild herunterladen',
+        'alt'        => 'Gutschein-Vorschau',
+        'hint'       => 'Wird live aus den Gutscheindaten erzeugt. Nach Änderungen zuerst speichern.',
+        'save_first' => 'Bitte den Gutschein zuerst speichern – danach erscheint hier die Vorschau.',
     ],
 
     // Formularfelder + Listenspalten (Labels + Kommentare)

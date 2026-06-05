@@ -129,3 +129,10 @@ tabs:
             tab: jumplink.vouchers::lang.tab.redemption
             span: full
             context: [update]
+
+        voucher_image:
+            type: partial
+            path: voucher_image
+            tab: jumplink.vouchers::lang.tab.image
+            span: full
+            context: [update]

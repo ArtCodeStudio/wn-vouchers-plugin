@@ -25,3 +25,5 @@
     - "i18n: Plugin vollständig zweisprachig (Deutsch + Englisch) — Status, Felder, Einstellungen, Mails, Kassen-/Kauf-UI und Meldungen folgen jetzt der App-Locale."
 1.0.9:
     - "i18n: Backend-Listenspalten zeigen übersetzte Labels statt Roh-Codes (Status, Typ, Versand, Zahlung, Einlöseart/-quelle) über *_label-Accessoren; neue Sprachgruppe order_payment_status für die rohen Mollie-Status (open/pending/… inkl. canceled mit einem l) und redemption_source."
+1.0.10:
+    - "Backend: Gutschein-Bild jedes bestehenden Gutscheins direkt im Backend ansehen/herunterladen (Tab „Gutschein-Bild“ mit Vorschau) — neue auth-geschützte Aktion Vouchers::image, ohne öffentlichen Signatur-Link."
