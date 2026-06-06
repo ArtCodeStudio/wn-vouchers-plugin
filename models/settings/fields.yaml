@@ -101,6 +101,13 @@ tabs:
             span: right
             default: /kasse/gutschein
             comment: jumplink.vouchers::lang.setting.pos_page_url_comment
+        ip_retention_days:
+            label: jumplink.vouchers::lang.setting.ip_retention_days
+            tab: jumplink.vouchers::lang.setting_tab.payment
+            type: number
+            span: left
+            default: 90
+            comment: jumplink.vouchers::lang.setting.ip_retention_days_comment
 
         #
         # Tab: Notification

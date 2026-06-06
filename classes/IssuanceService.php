@@ -27,8 +27,19 @@ class IssuanceService
         return Db::transaction(function () use ($order) {
             $order = VoucherOrder::lockForUpdate()->find($order->id);
 
-            if ($order->status === 'issued') {
-                return ['voucher' => $order->vouchers()->first(), 'created' => false];
+            // Idempotency keyed on "a voucher already exists for this order", not
+            // on the status flag — so resetting an issued order's status back to
+            // pending in the backend cannot mint a second voucher for one payment.
+            // A unique index on vouchers.order_id is the hard DB-level backstop.
+            $existing = $order->vouchers()->first();
+            if ($existing) {
+                // A voucher exists, so the order IS issued; self-heal a status
+                // that was edited away from 'issued'.
+                if ($order->status !== 'issued') {
+                    $order->status = 'issued';
+                    $order->save();
+                }
+                return ['voucher' => $existing, 'created' => false];
             }
 
             $number = VoucherNumberService::allocate(); // locks the auto-number range

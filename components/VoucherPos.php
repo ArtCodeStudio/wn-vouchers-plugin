@@ -136,7 +136,7 @@ class VoucherPos extends ComponentBase
     {
         return $this->renderPartial('@result', [
             'voucher' => $voucher,
-            'nonce'   => uniqid('pos', true),
+            'nonce'   => bin2hex(random_bytes(16)),
         ]);
     }
 

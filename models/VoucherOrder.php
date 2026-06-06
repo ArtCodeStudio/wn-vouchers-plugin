@@ -161,7 +161,7 @@ class VoucherOrder extends Model
         if (!$voucher || $voucher->type !== 'digital') {
             return null;
         }
-        return \URL::temporarySignedRoute('jumplink.vouchers.image', now()->addDays(30), ['voucher' => $voucher->id]);
+        return \URL::temporarySignedRoute('jumplink.vouchers.image', now()->addDays(7), ['voucher' => $voucher->id]);
     }
 
     //

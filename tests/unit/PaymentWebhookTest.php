@@ -22,17 +22,21 @@ class PaymentWebhookTest extends PluginTestCase
     }
 
     /** A fake Mollie client whose payments->get() returns a payment in $status. */
-    protected function fakeClient(string $status, $orderId, string $paymentId)
+    protected function fakeClient(string $status, $orderId, string $paymentId, string $amountValue = '50.00')
     {
-        $payment = new class($status, $orderId, $paymentId) {
+        $payment = new class($status, $orderId, $paymentId, $amountValue) {
             public $id;
             public $status;
             public $metadata;
-            public function __construct($status, $orderId, $paymentId)
+            public $amount;
+            public function __construct($status, $orderId, $paymentId, $amountValue)
             {
                 $this->status = $status;
                 $this->id = $paymentId;
                 $this->metadata = (object) ['order_id' => $orderId];
+                // Orders in this test are 5000 cents (= "50.00"); the webhook's
+                // amount check passes by default and a mismatch can be injected.
+                $this->amount = (object) ['value' => $amountValue, 'currency' => 'EUR'];
             }
             public function isPaid(): bool { return $this->status === 'paid'; }
             public function isCanceled(): bool { return $this->status === 'canceled'; }
@@ -98,6 +102,43 @@ class PaymentWebhookTest extends PluginTestCase
 
         $order = $order->fresh();
         $this->assertSame('failed', $order->status);
+        $this->assertSame(0, $order->vouchers()->count());
+    }
+
+    /**
+     * Resetting an issued order's status back to pending (a backend edit) must
+     * not let a re-run webhook mint a second voucher for the same payment —
+     * issuance is idempotent on "a voucher already exists", not on the status.
+     */
+    public function testReissueBlockedAfterStatusResetToPending()
+    {
+        Mail::fake();
+        $order = $this->makeOrder('tr_reissue');
+        PaymentService::setClientResolver(fn () => $this->fakeClient('paid', $order->id, 'tr_reissue'));
+
+        PaymentService::handleWebhook('tr_reissue'); // issues voucher #1
+
+        $reset = VoucherOrder::find($order->id);
+        $reset->status = 'pending';
+        $reset->save();
+
+        PaymentService::handleWebhook('tr_reissue'); // must not issue a second
+
+        $this->assertSame(1, VoucherOrder::find($order->id)->vouchers()->count());
+        $this->assertSame('issued', VoucherOrder::find($order->id)->status);
+    }
+
+    /** A paid payment whose amount does not match the order total issues nothing. */
+    public function testAmountMismatchDoesNotIssue()
+    {
+        Mail::fake();
+        $order = $this->makeOrder('tr_mismatch'); // total 5000 cents
+        PaymentService::setClientResolver(fn () => $this->fakeClient('paid', $order->id, 'tr_mismatch', '10.00'));
+
+        PaymentService::handleWebhook('tr_mismatch');
+
+        $order = $order->fresh();
+        $this->assertSame('pending', $order->status);
         $this->assertSame(0, $order->vouchers()->count());
     }
 }

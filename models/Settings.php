@@ -63,6 +63,11 @@ class Settings extends Model
         // Payment.
         $this->mollie_mode = 'test';
 
+        // Privacy / GDPR: the buyer IP is stored for abuse auditing, then nulled
+        // by jumplink:vouchers-prune-ips on orders older than this many days
+        // (0 disables pruning). The fiscal fields (amount, payment id) are kept.
+        $this->ip_retention_days = 90;
+
         // Till: the CMS page hosting the VoucherPos component (the QR scan
         // redirects here so a phone-camera scan lands on the staff till page).
         $this->pos_page_url = '/kasse/gutschein';

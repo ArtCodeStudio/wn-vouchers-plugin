@@ -119,16 +119,24 @@ class PaymentService
     {
         $payment = self::client()->payments->get($paymentId);
 
+        // Look up strictly by the payment id we stored at startPayment. We do NOT
+        // trust payment metadata (attacker-influenceable) to find the order.
         $order = VoucherOrder::where('payment_id', $paymentId)->first();
-        if (!$order && isset($payment->metadata->order_id)) {
-            $order = VoucherOrder::find($payment->metadata->order_id);
-        }
         if (!$order) {
             Log::warning('[vouchers] webhook: no order for payment ' . $paymentId);
             return;
         }
 
         if ($payment->isPaid()) {
+            // Defence in depth: a buyer cannot alter a Mollie payment's amount,
+            // but confirm the captured amount matches the order total in cents
+            // before issuing anything.
+            $paidCents = (int) round(((float) $payment->amount->value) * 100);
+            if ($paidCents !== (int) $order->total_cents) {
+                Log::warning("[vouchers] webhook: amount mismatch for payment {$paymentId} (paid {$paidCents} != total {$order->total_cents}); not issuing");
+                return;
+            }
+
             $result = IssuanceService::issueForOrder($order);
             if ($result['created']) {
                 NotificationService::sendPurchaseMails($order->fresh(), $result['voucher']);

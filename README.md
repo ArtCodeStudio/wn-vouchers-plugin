@@ -211,14 +211,35 @@ tests never touch the network.
 
 ## Security
 
-- Honeypot + server-side validation on the purchase endpoint; rate-limiting on
-  purchase and redemption.
-- The Mollie webhook never trusts the request body — it re-fetches the payment
-  by id and checks the order metadata.
-- Signed, time-limited URLs for PDF downloads.
-- Data minimization: digital vouchers need no postal address; the buyer IP is
-  kept only briefly for abuse auditing, with a retention/anonymization path.
-- Secrets stay in `.env`; nothing sensitive is committed.
+- **Rate limiting:** the purchase handler is throttled per IP (20/min); the public
+  API routes (webhook, status poll, PDF/PNG, scan) carry per-IP `throttle`
+  middleware. Redemption is gated by a backend login + permission and an
+  idempotency key.
+- **Honeypot + server-side validation** on the purchase endpoint; the server
+  always recomputes the total in integer cents.
+- **Mollie webhook** never trusts the request body — it re-fetches the payment by
+  id, verifies the captured amount equals the order total, and looks the order up
+  strictly by the stored payment id (no trust in payment metadata). One paid order
+  issues exactly one voucher: idempotent under a row lock, with a unique
+  `order_id` index as the database-level backstop.
+- **Signed, time-limited URLs** (7 days) for the voucher image/PDF download. The
+  QR encodes an HMAC token bound to the voucher id (per-voucher secret + an app
+  pepper), so a leaked code/number cannot be forged into a redemption link.
+- **Return page** is gated by an unguessable per-order access token (not the
+  enumerable id); the status poll sends that token in the POST body, not the URL.
+- **Data minimization (GDPR):** digital vouchers need no postal address; the buyer
+  IP is captured for abuse auditing and then deleted after a configurable window
+  (`ip_retention_days`, default 90) by the scheduled `jumplink:vouchers-prune-ips`
+  command.
+- **Secrets** stay in `.env` (`MOLLIE_API_KEY`, `VOUCHER_TOKEN_SECRET`); nothing
+  sensitive is committed.
+
+### Before going live
+
+Run `php artisan jumplink:vouchers-production-check`. It verifies the mandatory
+deployment config: `VOUCHER_TOKEN_SECRET` set (the QR-token pepper), a **live**
+Mollie key, `APP_DEBUG` off, and HTTPS. `VOUCHER_TOKEN_SECRET` is **required** —
+without it the redemption tokens run unpeppered (the plugin logs an error at boot).
 
 ## Contributing
 

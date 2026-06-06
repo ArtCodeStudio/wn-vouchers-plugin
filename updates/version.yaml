@@ -35,3 +35,11 @@
     - "i18n: Kauf-Formular-Validierung nutzt lokalisierte Feldnamen (z. B. „E-Mail wird benötigt.“ statt „email …“) — übersetzte Attributnamen für firstname/lastname/email/phone/street/zip/city."
 1.0.13:
     - "Fix: Einlösungs-Backend-Formular stürzte ab (HTTP 500, „Array to string conversion“), wenn eine Zeile eine MwSt-Aufteilung trug — das jsonable-Array wurde direkt in ein Textfeld gerendert. Das Formular zeigt die Aufteilung jetzt schreibgeschützt und lesbar formatiert (vat_breakdown_text-Accessor)."
+1.0.14:
+    - "Sicherheit (Produktionsreife): genau ein Gutschein pro bezahlter Bestellung — Ausgabe ist jetzt idempotent über „existiert bereits ein Gutschein“ statt nur über den Status, plus eindeutiger Index auf vouchers.order_id als DB-Schutz."
+    - "Sicherheit: Webhook prüft den bezahlten Betrag gegen die Bestellsumme und findet die Bestellung ausschließlich über die gespeicherte payment_id (kein Vertrauen in Mollie-Metadaten)."
+    - "Sicherheit: Rate-Limit pro IP auf dem Kauf-Handler (20/min) und Throttle auf allen öffentlichen API-Routen (Webhook, Status, PDF/Bild, Scan)."
+    - "Sicherheit/Datenschutz: order-status pollt jetzt per POST (Access-Token nicht mehr in URL/Logs); signierte Download-Links 7 statt 30 Tage gültig."
+    - "DSGVO: konfigurierbare IP-Speicherdauer (ip_retention_days, Default 90) + täglich geplanter Befehl jumplink:vouchers-prune-ips, der alte Käufer-IPs löscht."
+    - "Härtung: dompdf ohne Remote-/PHP-Ausführung, CSPRNG-Nonce an der Kasse, keine roh durchgereichten Exceptions, Boot-Warnung bei fehlendem VOUCHER_TOKEN_SECRET, neuer Befehl jumplink:vouchers-production-check (Go-Live-Checkliste)."
+    - add_unique_order_id_to_vouchers.php

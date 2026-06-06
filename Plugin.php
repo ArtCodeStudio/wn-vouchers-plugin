@@ -122,6 +122,14 @@ class Plugin extends PluginBase
             'jumplink.vouchers.check_payment',
             \JumpLink\Vouchers\Console\CheckPayment::class
         );
+        $this->registerConsoleCommand(
+            'jumplink.vouchers.prune_ips',
+            \JumpLink\Vouchers\Console\PruneIps::class
+        );
+        $this->registerConsoleCommand(
+            'jumplink.vouchers.production_check',
+            \JumpLink\Vouchers\Console\ProductionCheck::class
+        );
 
         // Winter does not run Laravel package auto-discovery, so the dompdf
         // service provider (binds `dompdf.wrapper`, used by PdfService) must be
@@ -132,6 +140,31 @@ class Plugin extends PluginBase
             // Winter has no `public/` web root, so dompdf's default chroot
             // (base_path('public')) does not resolve. Point it at the app root.
             \Config::set('dompdf.public_path', base_path());
+            // Harden dompdf: the voucher template embeds every asset as a data
+            // URI, so it needs no network or embedded-PHP execution. Disabling
+            // both removes any SSRF / local-file / code-exec surface regardless
+            // of the host app's dompdf config. Both key spellings are set so the
+            // override holds across barryvdh/laravel-dompdf versions.
+            \Config::set('dompdf.options.enable_remote', false);
+            \Config::set('dompdf.options.enable_php', false);
+            \Config::set('dompdf.options.isRemoteEnabled', false);
+            \Config::set('dompdf.options.isPhpEnabled', false);
+        }
+    }
+
+    /** Daily GDPR housekeeping: prune buyer IPs past the retention window. */
+    public function registerSchedule($schedule)
+    {
+        $schedule->command('jumplink:vouchers-prune-ips')->daily();
+    }
+
+    public function boot()
+    {
+        // The QR redemption token is HMAC-keyed by a per-voucher secret plus this
+        // app-wide pepper. Running without the pepper silently weakens every
+        // token, so make the misconfiguration loud rather than silent.
+        if ((string) env('VOUCHER_TOKEN_SECRET', '') === '') {
+            \Log::error('[vouchers] VOUCHER_TOKEN_SECRET is not set — QR redemption tokens are running unpeppered. Set it before going live (see jumplink:vouchers-production-check).');
         }
     }
 }

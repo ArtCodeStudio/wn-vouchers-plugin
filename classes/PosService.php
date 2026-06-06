@@ -83,7 +83,9 @@ class PosService
         try {
             $voucher->save();
         } catch (\Throwable $e) {
-            return ['success' => false, 'error' => trans('jumplink.vouchers::lang.error.save_failed', ['error' => $e->getMessage()])];
+            // Log the detail server-side; never surface raw DB/exception text.
+            \Log::error('[vouchers] POS sell save failed: ' . $e->getMessage());
+            return ['success' => false, 'error' => trans('jumplink.vouchers::lang.error.sell_failed')];
         }
 
         return ['success' => true, 'voucher' => $voucher];

@@ -47,7 +47,7 @@ class CreateVoucherOrdersTable extends Migration
             $table->string('accounting_ref')->nullable()->index();
             $table->dateTime('accounting_synced_at')->nullable();
 
-            $table->string('ip', 45)->nullable();                     // abuse audit; pruned per retention policy
+            $table->string('ip', 45)->nullable();                     // abuse audit; nulled by jumplink:vouchers-prune-ips after ip_retention_days
             $table->timestamps();
         });
     }

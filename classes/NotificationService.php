@@ -72,7 +72,7 @@ class NotificationService
 
         $downloadUrl = null;
         try {
-            $downloadUrl = URL::temporarySignedRoute('jumplink.vouchers.image', now()->addDays(30), ['voucher' => $voucher->id]);
+            $downloadUrl = URL::temporarySignedRoute('jumplink.vouchers.image', now()->addDays(7), ['voucher' => $voucher->id]);
         } catch (\Throwable $e) {
             // Link is optional; the image is attached anyway.
         }
@@ -137,7 +137,7 @@ class NotificationService
             return null;
         }
         try {
-            return URL::temporarySignedRoute('jumplink.vouchers.image', now()->addDays(30), ['voucher' => $voucher->id]);
+            return URL::temporarySignedRoute('jumplink.vouchers.image', now()->addDays(7), ['voucher' => $voucher->id]);
         } catch (\Throwable $e) {
             Log::error('[vouchers] could not sign download URL: ' . $e->getMessage());
             return null;

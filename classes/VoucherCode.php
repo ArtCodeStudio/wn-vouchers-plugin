@@ -79,6 +79,10 @@ class VoucherCode
 
     public static function b64urlDecode(string $s): string
     {
-        return base64_decode(strtr($s, '-_', '+/'));
+        $s = strtr($s, '-_', '+/');
+        if ($pad = strlen($s) % 4) {
+            $s .= str_repeat('=', 4 - $pad);
+        }
+        return base64_decode($s);
     }
 }

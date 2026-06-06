@@ -1,8 +1,10 @@
 <?php namespace JumpLink\Vouchers\Components;
 
 use Log;
+use Response;
 use Redirect;
 use Request;
+use Illuminate\Support\Facades\RateLimiter;
 use Cms\Classes\ComponentBase;
 use JumpLink\Vouchers\Models\Settings;
 use JumpLink\Vouchers\Classes\PurchaseService;
@@ -55,6 +57,18 @@ class VoucherPurchase extends ComponentBase
 
     public function onPurchase()
     {
+        // Rate-limit per IP: each accepted purchase starts a real Mollie payment,
+        // so cap floods before any order row or payment is created. 20/min/IP
+        // blocks automated floods while tolerating legitimate bursts (incl. a
+        // shared office/NAT during the Christmas rush).
+        $key = 'voucher-purchase:' . Request::ip();
+        if (RateLimiter::tooManyAttempts($key, 20)) {
+            // Proper 429 (not a 500) so monitoring stays clean; the AJAX
+            // framework shows the message to the buyer.
+            return Response::make(trans('jumplink.vouchers::lang.error.too_many_requests'), 429);
+        }
+        RateLimiter::hit($key, 60);
+
         $input = post();
         $input['ip'] = Request::ip();
 
