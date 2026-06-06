@@ -33,3 +33,5 @@
     - reset_default_validity_to_none.php
 1.0.12:
     - "i18n: Kauf-Formular-Validierung nutzt lokalisierte Feldnamen (z. B. „E-Mail wird benötigt.“ statt „email …“) — übersetzte Attributnamen für firstname/lastname/email/phone/street/zip/city."
+1.0.13:
+    - "Fix: Einlösungs-Backend-Formular stürzte ab (HTTP 500, „Array to string conversion“), wenn eine Zeile eine MwSt-Aufteilung trug — das jsonable-Array wurde direkt in ein Textfeld gerendert. Das Formular zeigt die Aufteilung jetzt schreibgeschützt und lesbar formatiert (vat_breakdown_text-Accessor)."

@@ -303,8 +303,9 @@ return [
         'amount_cents_label'    => 'Amount (cents)',
         'amount_cents_comment'  => 'Positive = redemption, negative = reversal/correction.',
         'balance_after_label'   => 'Balance after (cents)',
-        'vat_breakdown'         => 'VAT breakdown (JSON)',
-        'vat_breakdown_comment' => 'e.g. [{"rate":7,"net_cents":1308,"vat_cents":92,"gross_cents":1400}]',
+        'vat_breakdown'         => 'VAT breakdown',
+        'vat_breakdown_comment' => 'Split by tax rate, captured at redemption.',
+        'vat_breakdown_row'     => ':rate %: :gross (net :net · VAT :vat)',
     ],
 
     // Backend: shipping panel (order form)

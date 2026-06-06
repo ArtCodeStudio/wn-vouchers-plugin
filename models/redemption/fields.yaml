@@ -30,7 +30,7 @@ tabs:
             size: small
             span: full
             disabled: true
-        vat_breakdown:
+        vat_breakdown_text:
             label: jumplink.vouchers::lang.redeem.vat_breakdown
             tab: jumplink.vouchers::lang.tab.redemption
             type: textarea

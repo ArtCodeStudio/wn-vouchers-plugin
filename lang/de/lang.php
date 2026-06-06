@@ -303,8 +303,9 @@ return [
         'amount_cents_label'   => 'Betrag (Cent)',
         'amount_cents_comment' => 'Positiv = Einlösung, negativ = Storno/Korrektur.',
         'balance_after_label'  => 'Restguthaben danach (Cent)',
-        'vat_breakdown'        => 'MwSt-Aufteilung (JSON)',
-        'vat_breakdown_comment'=> 'z. B. [{"rate":7,"net_cents":1308,"vat_cents":92,"gross_cents":1400}]',
+        'vat_breakdown'        => 'MwSt-Aufteilung',
+        'vat_breakdown_comment'=> 'Aufgeschlüsselt nach Steuersatz, festgehalten bei der Einlösung.',
+        'vat_breakdown_row'    => ':rate %: :gross (Netto :net · MwSt :vat)',
     ],
 
     // Backend: Versand-Panel (Bestell-Formular)
