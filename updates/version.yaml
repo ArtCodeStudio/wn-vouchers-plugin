@@ -45,3 +45,5 @@
     - add_unique_order_id_to_vouchers.php
 1.0.15:
     - "Kasse: nicht autorisierte Zugriffe auf die Kassen-Handler (Lookup/Einlösen/Verkauf) liefern jetzt sauber HTTP 403 statt 500 — saubereres Monitoring, gleiche Meldung an der Kasse."
+1.0.16:
+    - "Sicherheit: Käufer-Freitext (Gruß, Nachricht, Name, Adresse) in der Restaurant-Benachrichtigungsmail wird neutralisiert (HTML entfernt, Markdown-Links und Auto-Links unschädlich gemacht) — kein Einschleusen klickbarer Phishing-Links mehr in den Posteingang des Restaurants."

@@ -6,10 +6,10 @@ subject = "{{ 'jumplink.vouchers::lang.mail.notification_subject'|trans({ total:
 - **{{ 'jumplink.vouchers::lang.mail.label_value'|trans }}** {{ order.face_value_euro }}
 - **{{ 'jumplink.vouchers::lang.mail.label_delivery'|trans }}** {{ ('jumplink.vouchers::lang.delivery.' ~ order.delivery_type)|trans }}{% if order.delivery_type == 'physical' %} {{ 'jumplink.vouchers::lang.mail.notification_physical_hint'|trans }}{% endif %}
 - **{{ 'jumplink.vouchers::lang.mail.label_total'|trans }}** {{ order.total_euro }}
-- **{{ 'jumplink.vouchers::lang.mail.label_buyer'|trans }}** {{ order.firstname }} {{ order.lastname }} <{{ order.email }}>
-{% if order.phone %}- **{{ 'jumplink.vouchers::lang.mail.label_phone'|trans }}** {{ order.phone }}{% endif %}
+- **{{ 'jumplink.vouchers::lang.mail.label_buyer'|trans }}** {{ safe.firstname }} {{ safe.lastname }} ({{ safe.email }})
+{% if order.phone %}- **{{ 'jumplink.vouchers::lang.mail.label_phone'|trans }}** {{ safe.phone }}{% endif %}
 {% if order.delivery_type == 'physical' %}
-- **{{ 'jumplink.vouchers::lang.mail.label_address'|trans }}** {{ order.street }}, {{ order.zip }} {{ order.city }}
+- **{{ 'jumplink.vouchers::lang.mail.label_address'|trans }}** {{ safe.street }}, {{ safe.zip }} {{ safe.city }}
 {% endif %}
-{% if order.recipient_name %}- **{{ 'jumplink.vouchers::lang.mail.label_recipient'|trans }}** {{ order.recipient_name }}{% endif %}
-{% if order.message %}- **{{ 'jumplink.vouchers::lang.mail.label_message'|trans }}** {{ order.message }}{% endif %}
+{% if order.recipient_name %}- **{{ 'jumplink.vouchers::lang.mail.label_recipient'|trans }}** {{ safe.recipient_name }}{% endif %}
+{% if order.message %}- **{{ 'jumplink.vouchers::lang.mail.label_message'|trans }}** {{ safe.message }}{% endif %}

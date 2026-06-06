@@ -30,6 +30,8 @@ class NotificationService
             'voucher'      => $voucher,
             'brand_name'   => $brandName,
             'download_url' => $downloadUrl,
+            // Buyer free-text, neutralised for the Markdown staff notification.
+            'safe'         => self::safeBuyer($order),
         ];
 
         // Buyer confirmation.
@@ -114,6 +116,32 @@ class NotificationService
         } catch (\Throwable $e) {
             Log::error('[vouchers] shipping mail failed: ' . $e->getMessage());
         }
+    }
+
+    /**
+     * Neutralise one piece of buyer free-text for a Markdown email: strip HTML and
+     * backslash-escape the Markdown punctuation that would otherwise turn the value
+     * into a link / image / emphasis. This stops a buyer from injecting clickable
+     * (phishing) links or markup into the staff notification inbox.
+     */
+    public static function mailText($value): string
+    {
+        $text = strip_tags((string) $value);
+        // Escape Markdown punctuation so links/images/emphasis render literally.
+        $text = preg_replace('/[\\\\`*_{}\[\]()#+!<>~|-]/', '\\\\$0', $text);
+        // Break URL autolinking (scheme://…) so no clickable link can be injected.
+        // `\:` renders as a plain colon, so the text stays readable.
+        return preg_replace('~(?<=\w):(?=//)~', '\\\\:', $text);
+    }
+
+    /** The buyer-controlled fields, each sanitised for safe Markdown rendering. */
+    protected static function safeBuyer(VoucherOrder $order): array
+    {
+        $safe = [];
+        foreach (['firstname', 'lastname', 'email', 'phone', 'street', 'zip', 'city', 'recipient_name', 'message'] as $field) {
+            $safe[$field] = self::mailText($order->$field);
+        }
+        return $safe;
     }
 
     /** Attach the voucher to a mail — as a PNG image where possible, else PDF. */
