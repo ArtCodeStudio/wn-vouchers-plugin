@@ -32,7 +32,7 @@ class PurchaseService
             $rules += ['street' => 'required', 'zip' => 'required', 'city' => 'required'];
         }
 
-        $validator = Validator::make($input, $rules);
+        $validator = Validator::make($input, $rules, [], self::attributeNames());
         if ($validator->fails()) {
             return ['success' => false, 'status' => 422, 'errors' => $validator->errors()->toArray()];
         }
@@ -72,6 +72,20 @@ class PurchaseService
         $order->save();
 
         return ['success' => true, 'status' => 200, 'order' => $order];
+    }
+
+    /**
+     * Localised display names for the validated fields, so a failed rule reads
+     * "E-Mail wird benötigt." rather than leaking the raw key ("email …"). Falls
+     * back to the field key for anything not listed.
+     */
+    protected static function attributeNames(): array
+    {
+        $names = [];
+        foreach (['firstname', 'lastname', 'email', 'phone', 'street', 'zip', 'city'] as $field) {
+            $names[$field] = trans("jumplink.vouchers::lang.field.$field");
+        }
+        return $names;
     }
 
     /** Accepts an int (already cents) or a "12,50"/"12.50" euro string. */

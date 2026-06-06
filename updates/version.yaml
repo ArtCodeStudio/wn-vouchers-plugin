@@ -31,3 +31,5 @@
     - "Gutschein-Bild im Hochformat (smartphone-freundlich) statt quer; zentriertes Layout."
     - "Standard-Gültigkeit auf 0 (kein Ablaufdatum) — die alte 3-Jahres-Voreinstellung wird einmalig auf 0 zurückgesetzt, individuelle Werte bleiben erhalten."
     - reset_default_validity_to_none.php
+1.0.12:
+    - "i18n: Kauf-Formular-Validierung nutzt lokalisierte Feldnamen (z. B. „E-Mail wird benötigt.“ statt „email …“) — übersetzte Attributnamen für firstname/lastname/email/phone/street/zip/city."
