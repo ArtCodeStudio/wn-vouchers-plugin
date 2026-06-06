@@ -43,3 +43,5 @@
     - "DSGVO: konfigurierbare IP-Speicherdauer (ip_retention_days, Default 90) + täglich geplanter Befehl jumplink:vouchers-prune-ips, der alte Käufer-IPs löscht."
     - "Härtung: dompdf ohne Remote-/PHP-Ausführung, CSPRNG-Nonce an der Kasse, keine roh durchgereichten Exceptions, Boot-Warnung bei fehlendem VOUCHER_TOKEN_SECRET, neuer Befehl jumplink:vouchers-production-check (Go-Live-Checkliste)."
     - add_unique_order_id_to_vouchers.php
+1.0.15:
+    - "Kasse: nicht autorisierte Zugriffe auf die Kassen-Handler (Lookup/Einlösen/Verkauf) liefern jetzt sauber HTTP 403 statt 500 — saubereres Monitoring, gleiche Meldung an der Kasse."

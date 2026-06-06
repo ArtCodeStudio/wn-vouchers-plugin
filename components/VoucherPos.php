@@ -1,6 +1,7 @@
 <?php namespace JumpLink\Vouchers\Components;
 
 use Flash;
+use Response;
 use BackendAuth;
 use Cms\Classes\ComponentBase;
 use JumpLink\Vouchers\Models\Voucher;
@@ -67,7 +68,9 @@ class VoucherPos extends ComponentBase
 
     public function onLookup()
     {
-        $this->ensureAuthorized();
+        if ($unauth = $this->denyUnlessAuthorized()) {
+            return $unauth;
+        }
 
         $voucher = PosService::resolveVoucher((string) post('q'));
         if (!$voucher) {
@@ -82,7 +85,9 @@ class VoucherPos extends ComponentBase
 
     public function onRedeem()
     {
-        $this->ensureAuthorized();
+        if ($unauth = $this->denyUnlessAuthorized()) {
+            return $unauth;
+        }
 
         $voucher = Voucher::find((int) post('voucher_id'));
         if (!$voucher) {
@@ -112,7 +117,9 @@ class VoucherPos extends ComponentBase
 
     public function onSell()
     {
-        $this->ensureAuthorized();
+        if ($unauth = $this->denyUnlessAuthorized()) {
+            return $unauth;
+        }
 
         $user = BackendAuth::getUser();
         $result = PosService::sell((array) post(), $user ? $user->id : null);
@@ -140,10 +147,16 @@ class VoucherPos extends ComponentBase
         ]);
     }
 
-    protected function ensureAuthorized(): void
+    /**
+     * Returns a 403 response when the visitor may not use the till, or null when
+     * authorised. Handlers must `return` the response so the AJAX call is refused
+     * with a clean 403 (not a 500) and the message is shown at the till.
+     */
+    protected function denyUnlessAuthorized()
     {
-        if (!$this->authorized()) {
-            throw new \ApplicationException(trans('jumplink.vouchers::lang.error.not_authorized'));
+        if ($this->authorized()) {
+            return null;
         }
+        return Response::make(trans('jumplink.vouchers::lang.error.not_authorized'), 403);
     }
 }
