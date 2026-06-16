@@ -4,7 +4,10 @@
     <div class="voucher-issued">
         <p>{{ 'jumplink.vouchers::lang.return.issued_thanks'|trans }}</p>
         <p class="voucher-download-wrap"{% if not __SELF__.downloadUrl %} hidden{% endif %}>
-            <a class="voucher-download" href="{{ __SELF__.downloadUrl ?: '#' }}">{{ 'jumplink.vouchers::lang.mail.download_image'|trans }}</a>
+            {# `download` triggers a real file download (the endpoint serves the
+               image inline) and keeps SPA routers (e.g. barba.js) from hijacking
+               the click to load the binary endpoint as a page. #}
+            <a class="voucher-download" href="{{ __SELF__.downloadUrl ?: '#' }}" download>{{ 'jumplink.vouchers::lang.mail.download_image'|trans }}</a>
         </p>
     </div>
 {% endset %}
@@ -25,7 +28,11 @@
             var tries = 0;
             function poll() {
                 if (tries++ > 75) { return; }
-                fetch('/api/jumplink/vouchers/order-status?order=' + order + '&t=' + encodeURIComponent(token), { headers: { Accept: 'application/json' } })
+                fetch('/api/jumplink/vouchers/order-status', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded', Accept: 'application/json' },
+                        body: 'order=' + encodeURIComponent(order) + '&t=' + encodeURIComponent(token)
+                    })
                     .then(function (r) { return r.json(); })
                     .then(function (d) {
                         if (!d || !d.issued) { setTimeout(poll, 4000); return; }
