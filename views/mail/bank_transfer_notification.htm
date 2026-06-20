@@ -1,0 +1,16 @@
+subject = "{{ 'jumplink.vouchers::lang.mail.bt_notification_subject'|trans({ amount: amount, reference: reference }) }}"
+==
+
+{{ 'jumplink.vouchers::lang.mail.greeting_plain'|trans }}
+
+{{ 'jumplink.vouchers::lang.mail.bt_notification_intro'|trans }}
+
+- **{{ 'jumplink.vouchers::lang.mail.label_total'|trans }}** {{ amount }}
+- **{{ 'jumplink.vouchers::lang.mail.bt_label_reference'|trans }}** {{ reference }}
+- **{{ 'jumplink.vouchers::lang.mail.label_buyer'|trans }}** {{ safe.firstname }} {{ safe.lastname }} ({{ safe.email }})
+{% if safe.phone %}- **{{ 'jumplink.vouchers::lang.mail.label_phone'|trans }}** {{ safe.phone }}
+{% endif %}
+{{ 'jumplink.vouchers::lang.mail.bt_notification_action'|trans }}
+
+{{ 'jumplink.vouchers::lang.mail.regards'|trans }}
+{{ 'jumplink.vouchers::lang.mail.team'|trans }}

@@ -84,16 +84,51 @@ tabs:
         #
         # Tab: Payment
         #
+        payment_mode:
+            label: jumplink.vouchers::lang.setting.payment_mode
+            tab: jumplink.vouchers::lang.setting_tab.payment
+            type: dropdown
+            span: left
+            default: both
+            comment: jumplink.vouchers::lang.setting.payment_mode_comment
         mollie_mode:
             label: jumplink.vouchers::lang.setting.mollie_mode
             tab: jumplink.vouchers::lang.setting_tab.payment
             type: dropdown
-            span: left
+            span: right
             default: test
             options:
                 test: Test
                 live: Live
             comment: jumplink.vouchers::lang.setting.mollie_mode_comment
+        bank_account_holder:
+            label: jumplink.vouchers::lang.setting.bank_account_holder
+            tab: jumplink.vouchers::lang.setting_tab.payment
+            type: text
+            span: left
+            comment: jumplink.vouchers::lang.setting.bank_details_comment
+        bank_iban:
+            label: jumplink.vouchers::lang.setting.bank_iban
+            tab: jumplink.vouchers::lang.setting_tab.payment
+            type: text
+            span: right
+        bank_bic:
+            label: jumplink.vouchers::lang.setting.bank_bic
+            tab: jumplink.vouchers::lang.setting_tab.payment
+            type: text
+            span: left
+        bank_name:
+            label: jumplink.vouchers::lang.setting.bank_name
+            tab: jumplink.vouchers::lang.setting_tab.payment
+            type: text
+            span: right
+        bank_transfer_note:
+            label: jumplink.vouchers::lang.setting.bank_transfer_note
+            tab: jumplink.vouchers::lang.setting_tab.payment
+            type: textarea
+            size: small
+            span: full
+            comment: jumplink.vouchers::lang.setting.bank_transfer_note_comment
         pos_page_url:
             label: jumplink.vouchers::lang.setting.pos_page_url
             tab: jumplink.vouchers::lang.setting_tab.payment
@@ -123,11 +158,55 @@ tabs:
             type: text
             span: right
             comment: jumplink.vouchers::lang.setting.notify_email_comment
-        send_customer_copy:
-            label: jumplink.vouchers::lang.setting.send_customer_copy
+        emails_team_section:
+            type: section
+            label: jumplink.vouchers::lang.setting.emails_team_section
+            comment: jumplink.vouchers::lang.setting.emails_team_section_comment
+            tab: jumplink.vouchers::lang.setting_tab.notification
+        notify_new_order:
+            label: jumplink.vouchers::lang.setting.notify_new_order
+            comment: jumplink.vouchers::lang.setting.notify_new_order_comment
             tab: jumplink.vouchers::lang.setting_tab.notification
             type: switch
             default: true
+            span: left
+        notify_fulfillment:
+            label: jumplink.vouchers::lang.setting.notify_fulfillment
+            comment: jumplink.vouchers::lang.setting.notify_fulfillment_comment
+            tab: jumplink.vouchers::lang.setting_tab.notification
+            type: switch
+            default: true
+            span: right
+        notify_bank_transfer:
+            label: jumplink.vouchers::lang.setting.notify_bank_transfer
+            comment: jumplink.vouchers::lang.setting.notify_bank_transfer_comment
+            tab: jumplink.vouchers::lang.setting_tab.notification
+            type: switch
+            default: true
+            span: left
+        emails_buyer_section:
+            type: section
+            label: jumplink.vouchers::lang.setting.emails_buyer_section
+            comment: jumplink.vouchers::lang.setting.emails_buyer_section_comment
+            tab: jumplink.vouchers::lang.setting_tab.notification
+        send_buyer_confirmation:
+            label: jumplink.vouchers::lang.setting.send_buyer_confirmation
+            tab: jumplink.vouchers::lang.setting_tab.notification
+            type: switch
+            default: true
+            span: left
+        send_buyer_bank_transfer:
+            label: jumplink.vouchers::lang.setting.send_buyer_bank_transfer
+            tab: jumplink.vouchers::lang.setting_tab.notification
+            type: switch
+            default: true
+            span: right
+        send_buyer_shipping:
+            label: jumplink.vouchers::lang.setting.send_buyer_shipping
+            tab: jumplink.vouchers::lang.setting_tab.notification
+            type: switch
+            default: true
+            span: left
         sender_name:
             label: jumplink.vouchers::lang.setting.sender_name
             tab: jumplink.vouchers::lang.setting_tab.notification

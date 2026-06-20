@@ -63,11 +63,23 @@ return [
         'unpaid' => 'Open / unpaid',
     ],
     'payment_method' => [
-        'cash'    => 'Cash',
-        'card'    => 'Card / EC',
-        'invoice' => 'Invoice',
-        'online'  => 'Online (Mollie)',
-        'other'   => 'Other',
+        'cash'         => 'Cash',
+        'card'         => 'Card / EC',
+        'invoice'      => 'Invoice',
+        'online'       => 'Online (Mollie)',
+        'banktransfer' => 'Bank transfer (prepayment)',
+        'other'        => 'Other',
+    ],
+    // Payment method chooser on the purchase form (frontend)
+    'payment_method_choice' => [
+        'mollie'       => 'Pay online now (card, PayPal …)',
+        'banktransfer' => 'Bank transfer (prepayment) – voucher after payment arrives',
+    ],
+    // Payment mode (setting)
+    'payment_mode_option' => [
+        'both'         => 'Both – customer chooses (online + bank transfer)',
+        'mollie'       => 'Online only (Mollie)',
+        'banktransfer' => 'Bank transfer only (prepayment)',
     ],
     'vat_mode_option' => [
         'multi_purpose'  => 'Multi-purpose voucher (VAT on redemption)',
@@ -194,16 +206,37 @@ return [
         'vat_rates'              => 'Selectable rates on redemption (%)',
         'vat_rates_prompt'       => 'Add rate',
         'rate'                   => 'Rate (%)',
+        'payment_mode'           => 'Payment methods',
+        'payment_mode_comment'   => 'Which payment methods the purchase form offers. “Both” = online (Mollie) + bank transfer, the customer chooses. Online is only offered when a Mollie key is configured — without a key only bank transfer is shown automatically.',
         'mollie_mode'            => 'Mollie mode',
         'mollie_mode_comment'    => 'The API key is read from the .env (MOLLIE_API_KEY), never stored here.',
+        'bank_account_holder'    => 'Account holder',
+        'bank_iban'              => 'IBAN',
+        'bank_bic'               => 'BIC (optional)',
+        'bank_name'              => 'Bank (optional)',
+        'bank_details_comment'   => 'Used for the bank-transfer (prepayment) instructions on the confirmation page and in the email.',
+        'bank_transfer_note'     => 'Additional note (optional)',
+        'bank_transfer_note_comment' => 'Optional extra text in the transfer instructions (e.g. processing time).',
         'pos_page_url'           => 'Till page (URL path)',
         'pos_page_url_comment'   => 'CMS page with the “Voucher till” component. The QR code scan redirects here.',
         'ip_retention_days'      => 'IP retention (days)',
         'ip_retention_days_comment' => 'The buyer IP stored for abuse detection is deleted automatically after this many days (0 = never). Requires the scheduled jumplink:vouchers-prune-ips command.',
         'notify_name'            => 'Default recipient name',
         'notify_email'           => 'Default recipient email',
-        'notify_email_comment'   => 'Recipient for order/shipping notifications.',
-        'send_customer_copy'     => 'Send confirmation to buyer',
+        'notify_email_comment'   => 'Recipient for all team notifications (new purchases, fulfillment, pending transfers).',
+        'emails_team_section'    => 'Team notifications',
+        'emails_team_section_comment' => 'Sent to the recipient address above (only when set).',
+        'notify_new_order'       => 'On a new (paid) purchase',
+        'notify_new_order_comment' => 'Email the team on every paid voucher purchase.',
+        'notify_fulfillment'     => 'Prepare for shipping (physical)',
+        'notify_fulfillment_comment' => 'Email the team when a physical card needs to be created and posted (with number + address).',
+        'notify_bank_transfer'   => 'New bank transfer (payment pending)',
+        'notify_bank_transfer_comment' => 'Email the team on a new bank-transfer order awaiting payment.',
+        'emails_buyer_section'   => 'Buyer emails',
+        'emails_buyer_section_comment' => 'Emails to the purchaser.',
+        'send_buyer_confirmation' => 'Voucher confirmation to buyer',
+        'send_buyer_bank_transfer' => 'Transfer instructions to buyer',
+        'send_buyer_shipping'    => 'Shipping notification to buyer',
         'sender_name'            => 'Sender name',
         'sender_email'           => 'Sender email',
         'sender_email_comment'   => 'Leave empty to use the global mail sender.',
@@ -251,7 +284,8 @@ return [
         'qr_hint'           => 'The QR code is scanned at the till; any remaining balance is kept.',
 
         // purchase_confirmation
-        'confirmation_subject'  => 'Your voucher for :brand',
+        'confirmation_subject'       => 'Your voucher :code worth :value',
+        'confirmation_subject_plain' => 'Your voucher for :brand',
         'confirmation_thanks'   => 'thank you for buying a voucher from **:brand**.',
         'confirmation_digital'  => 'Your voucher is attached as an image and can be printed or shown on a smartphone. The QR code is scanned at the till; any remaining balance is kept.',
         'confirmation_physical' => 'Your voucher card will be sent by post to the address you provided.',
@@ -274,10 +308,28 @@ return [
         'shipping_body_brand' => 'Your voucher card from **:brand** was sent by post today to the following address:',
 
         // voucher_delivery
-        'delivery_subject'       => 'Your voucher',
-        'delivery_subject_brand' => 'Your voucher from :brand',
+        'delivery_subject'       => 'Your voucher :code worth :value',
         'delivery_intro'         => 'please find your voucher attached.',
         'delivery_intro_brand'   => 'please find your voucher from **:brand** attached.',
+
+        // bank_transfer_instructions (buyer) + bank_transfer_notification (staff)
+        'bt_instructions_subject' => 'Voucher order: please transfer :amount (:reference)',
+        'bt_instructions_intro'   => 'thank you for your voucher order with **:brand**. Please transfer the amount using the details below — as soon as your payment arrives, you will receive the voucher by email.',
+        'bt_instructions_after'   => 'Please be sure to include the reference so we can match your payment.',
+        'bt_label_amount'         => 'Amount:',
+        'bt_label_holder'         => 'Account holder:',
+        'bt_label_iban'           => 'IBAN:',
+        'bt_label_bic'            => 'BIC:',
+        'bt_label_bank'           => 'Bank:',
+        'bt_label_reference'      => 'Reference:',
+        'bt_notification_subject' => 'Transfer pending: :amount · :reference',
+        'bt_notification_intro'   => 'a voucher order by bank transfer has come in and is awaiting payment.',
+        'bt_notification_action'  => 'Once the payment shows on the account, confirm it under “Orders” in the backend — the voucher is then issued and sent to the buyer.',
+
+        // fulfillment_notification (team, physical shipping)
+        'fulfillment_subject'     => 'Prepare for shipping: :code · :value → :zip :city',
+        'fulfillment_intro'       => 'a physical voucher has been paid for and needs to be prepared for shipping:',
+        'fulfillment_write_card'  => 'Write on the card (no.):',
     ],
 
     // Backend: redemption panel (voucher form)
@@ -342,6 +394,7 @@ return [
         'delivery_physical'   => 'Card by post (plus :fee shipping)',
         'recipient_optional'  => 'Recipient (optional)',
         'message_optional'    => 'Personal message (optional)',
+        'payment_legend'      => 'Payment method',
         'submit'              => 'Continue to payment',
         'thank_you'           => 'Thank you.',
         'payment_description' => 'Voucher #:id',
@@ -351,6 +404,15 @@ return [
     'return' => [
         'issued_thanks' => 'Thank you! Your voucher has been created and sent to your email address.',
         'processing'    => 'Your payment is being processed … one moment please.',
+        // Bank transfer (prepayment)
+        'bt_intro'      => 'Thank you for your order! Please transfer the amount using the following details:',
+        'bt_amount'     => 'Amount',
+        'bt_holder'     => 'Account holder',
+        'bt_iban'       => 'IBAN',
+        'bt_bic'        => 'BIC',
+        'bt_bank'       => 'Bank',
+        'bt_reference'  => 'Reference',
+        'bt_after'      => 'As soon as your payment arrives, you will receive the voucher by email.',
     ],
 
     // Frontend: till (POS)
@@ -396,6 +458,7 @@ return [
         'redeem_booked'  => 'Redemption booked. New balance: :balance',
         'sold'           => 'Voucher created: :code',
         'marked_shipped' => 'Marked as shipped. Shipping notification sent to the buyer.',
+        'marked_paid'    => 'Payment confirmed. Voucher issued and emailed to the buyer.',
     ],
 
     // Error / validation messages
@@ -418,5 +481,19 @@ return [
         'amount_out_of_range'     => 'The amount is outside the allowed range.',
         'order_not_found'         => 'Order not found.',
         'cannot_mark_shipped'     => 'This order cannot be marked as shipped (no shipping or already shipped).',
+        'not_bank_transfer'       => 'This order is not a bank-transfer order.',
+    ],
+
+    // Backend: payment panel (order form, bank transfer)
+    'payment_panel' => [
+        'only_transfer' => 'This section applies only to bank-transfer orders (prepayment). Online payments are booked automatically.',
+        'awaiting'      => 'Awaiting payment (bank transfer).',
+        'amount'        => 'Amount',
+        'reference'     => 'Reference',
+        'confirmed'     => '✓ Payment confirmed on :date – voucher issued.',
+        'confirm'       => 'Confirm the payment and issue the voucher now?',
+        'loading'       => 'Issuing voucher …',
+        'button'        => 'Payment confirmed → issue voucher',
+        'help'          => 'Issues the voucher (as after an online payment) and sends the buyer the confirmation with the voucher.',
     ],
 ];

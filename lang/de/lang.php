@@ -63,11 +63,23 @@ return [
         'unpaid' => 'Offen / unbezahlt',
     ],
     'payment_method' => [
-        'cash'    => 'Bar',
-        'card'    => 'Karte / EC',
-        'invoice' => 'Auf Rechnung',
-        'online'  => 'Online (Mollie)',
-        'other'   => 'Sonstiges',
+        'cash'         => 'Bar',
+        'card'         => 'Karte / EC',
+        'invoice'      => 'Auf Rechnung',
+        'online'       => 'Online (Mollie)',
+        'banktransfer' => 'Überweisung (Vorkasse)',
+        'other'        => 'Sonstiges',
+    ],
+    // Auswahl der Zahlart im Kaufformular (Frontend)
+    'payment_method_choice' => [
+        'mollie'       => 'Sofort online bezahlen (Karte, PayPal …)',
+        'banktransfer' => 'Überweisung (Vorkasse) – Gutschein nach Zahlungseingang',
+    ],
+    // Zahlart-Modus (Einstellung)
+    'payment_mode_option' => [
+        'both'         => 'Beides – Kunde wählt (Online + Überweisung)',
+        'mollie'       => 'Nur Online (Mollie)',
+        'banktransfer' => 'Nur Überweisung (Vorkasse)',
     ],
     'vat_mode_option' => [
         'multi_purpose'  => 'Mehrzweckgutschein (MwSt bei Einlösung)',
@@ -194,16 +206,37 @@ return [
         'vat_rates'              => 'Wählbare Sätze bei Einlösung (%)',
         'vat_rates_prompt'       => 'Satz hinzufügen',
         'rate'                   => 'Satz (%)',
+        'payment_mode'           => 'Zahlarten',
+        'payment_mode_comment'   => 'Welche Zahlarten im Kaufformular angeboten werden. „Beides“ = Online (Mollie) + Überweisung, der Kunde wählt. Online wird nur angeboten, wenn ein Mollie-Key hinterlegt ist – ohne Key erscheint automatisch nur Überweisung.',
         'mollie_mode'            => 'Mollie-Modus',
         'mollie_mode_comment'    => 'Der API-Key wird aus der .env (MOLLIE_API_KEY) gelesen, nie hier gespeichert.',
+        'bank_account_holder'    => 'Kontoinhaber',
+        'bank_iban'              => 'IBAN',
+        'bank_bic'               => 'BIC (optional)',
+        'bank_name'              => 'Bank (optional)',
+        'bank_details_comment'   => 'Für die Überweisungs-Anleitung (Vorkasse) auf der Bestätigungsseite und in der E-Mail.',
+        'bank_transfer_note'     => 'Zusätzlicher Hinweis (optional)',
+        'bank_transfer_note_comment' => 'Optionaler Zusatztext in der Überweisungs-Anleitung (z. B. Bearbeitungszeit).',
         'pos_page_url'           => 'Kassen-Seite (URL-Pfad)',
         'pos_page_url_comment'   => 'CMS-Seite mit der Komponente „Gutschein-Kasse“. Der QR-Code-Scan leitet hierher.',
         'ip_retention_days'      => 'IP-Speicherdauer (Tage)',
         'ip_retention_days_comment' => 'Die zur Missbrauchserkennung gespeicherte Käufer-IP wird nach so vielen Tagen automatisch gelöscht (0 = nie löschen). Erfordert den geplanten Befehl jumplink:vouchers-prune-ips.',
         'notify_name'            => 'Standard-Empfänger Name',
         'notify_email'           => 'Standard-Empfänger E-Mail',
-        'notify_email_comment'   => 'Empfänger für Bestell-/Versandbenachrichtigungen.',
-        'send_customer_copy'     => 'Bestätigung an Käufer senden',
+        'notify_email_comment'   => 'Empfänger für alle Team-Benachrichtigungen (neue Käufe, Versand-Vorbereitung, offene Überweisungen).',
+        'emails_team_section'    => 'Team-Benachrichtigungen',
+        'emails_team_section_comment' => 'Gehen an die oben angegebene Empfänger-Adresse (nur wenn gesetzt).',
+        'notify_new_order'       => 'Bei neuem (bezahltem) Kauf',
+        'notify_new_order_comment' => 'E-Mail an das Team bei jedem bezahlten Gutschein-Kauf.',
+        'notify_fulfillment'     => 'Versand vorbereiten (physisch)',
+        'notify_fulfillment_comment' => 'E-Mail an das Team, wenn eine physische Karte zu erstellen und zu versenden ist (mit Nummer + Adresse).',
+        'notify_bank_transfer'   => 'Neue Überweisung (Zahlung offen)',
+        'notify_bank_transfer_comment' => 'E-Mail an das Team bei einer neuen Überweisungs-Bestellung, die auf Zahlungseingang wartet.',
+        'emails_buyer_section'   => 'Käufer-E-Mails',
+        'emails_buyer_section_comment' => 'E-Mails an den Besteller.',
+        'send_buyer_confirmation' => 'Gutschein-Bestätigung an Käufer',
+        'send_buyer_bank_transfer' => 'Überweisungs-Anleitung an Käufer',
+        'send_buyer_shipping'    => 'Versandbenachrichtigung an Käufer',
         'sender_name'            => 'Absender-Name',
         'sender_email'           => 'Absender-E-Mail',
         'sender_email_comment'   => 'Leer lassen, um den globalen Mail-Absender zu verwenden.',
@@ -251,7 +284,8 @@ return [
         'qr_hint'           => 'Der QR-Code wird an der Kasse gescannt; ein Restguthaben bleibt erhalten.',
 
         // purchase_confirmation
-        'confirmation_subject'  => 'Ihr Gutschein für :brand',
+        'confirmation_subject'       => 'Ihr Gutschein :code über :value',
+        'confirmation_subject_plain' => 'Ihr Gutschein für :brand',
         'confirmation_thanks'   => 'vielen Dank für Ihren Gutschein-Kauf bei **:brand**.',
         'confirmation_digital'  => 'Ihr Gutschein liegt als Bild bei und kann ausgedruckt oder am Smartphone vorgezeigt werden. An der Kasse wird der QR-Code gescannt; ein Restguthaben bleibt erhalten.',
         'confirmation_physical' => 'Ihre Gutscheinkarte wird per Post an die angegebene Adresse versendet.',
@@ -274,10 +308,28 @@ return [
         'shipping_body_brand' => 'Ihre Gutscheinkarte von **:brand** wurde heute per Post an folgende Adresse versendet:',
 
         // voucher_delivery
-        'delivery_subject'       => 'Ihr Gutschein',
-        'delivery_subject_brand' => 'Ihr Gutschein von :brand',
+        'delivery_subject'       => 'Ihr Gutschein :code über :value',
         'delivery_intro'         => 'anbei Ihr Gutschein.',
         'delivery_intro_brand'   => 'anbei Ihr Gutschein von **:brand**.',
+
+        // bank_transfer_instructions (Käufer) + bank_transfer_notification (Team)
+        'bt_instructions_subject' => 'Gutschein-Bestellung: bitte :amount überweisen (:reference)',
+        'bt_instructions_intro'   => 'vielen Dank für Ihre Gutschein-Bestellung bei **:brand**. Bitte überweisen Sie den Betrag mit den folgenden Daten – sobald die Zahlung eingegangen ist, erhalten Sie den Gutschein per E-Mail.',
+        'bt_instructions_after'   => 'Bitte geben Sie unbedingt den Verwendungszweck an, damit wir Ihre Zahlung zuordnen können.',
+        'bt_label_amount'         => 'Betrag:',
+        'bt_label_holder'         => 'Kontoinhaber:',
+        'bt_label_iban'           => 'IBAN:',
+        'bt_label_bic'            => 'BIC:',
+        'bt_label_bank'           => 'Bank:',
+        'bt_label_reference'      => 'Verwendungszweck:',
+        'bt_notification_subject' => 'Überweisung ausstehend: :amount · :reference',
+        'bt_notification_intro'   => 'eine Gutschein-Bestellung per Überweisung ist eingegangen und wartet auf den Zahlungseingang.',
+        'bt_notification_action'  => 'Sobald die Zahlung auf dem Konto sichtbar ist, im Backend unter „Bestellungen“ die Zahlung bestätigen – dann wird der Gutschein ausgestellt und dem Käufer zugeschickt.',
+
+        // fulfillment_notification (Team, physischer Versand)
+        'fulfillment_subject'     => 'Versand vorbereiten: :code · :value → :zip :city',
+        'fulfillment_intro'       => 'ein physischer Gutschein wurde bezahlt und ist zum Versand vorzubereiten:',
+        'fulfillment_write_card'  => 'Auf die Karte schreiben (Nr.):',
     ],
 
     // Backend: Einlöse-Panel (Gutschein-Formular)
@@ -342,6 +394,7 @@ return [
         'delivery_physical'   => 'Karte per Post (zzgl. :fee Versand)',
         'recipient_optional'  => 'Empfänger (optional)',
         'message_optional'    => 'Persönliche Nachricht (optional)',
+        'payment_legend'      => 'Zahlart',
         'submit'              => 'Weiter zur Zahlung',
         'thank_you'           => 'Vielen Dank.',
         'payment_description' => 'Gutschein #:id',
@@ -351,6 +404,15 @@ return [
     'return' => [
         'issued_thanks' => 'Vielen Dank! Ihr Gutschein wurde erstellt und an Ihre E-Mail-Adresse gesendet.',
         'processing'    => 'Ihre Zahlung wird verarbeitet … einen Moment bitte.',
+        // Überweisung (Vorkasse)
+        'bt_intro'      => 'Vielen Dank für Ihre Bestellung! Bitte überweisen Sie den Betrag mit folgenden Daten:',
+        'bt_amount'     => 'Betrag',
+        'bt_holder'     => 'Kontoinhaber',
+        'bt_iban'       => 'IBAN',
+        'bt_bic'        => 'BIC',
+        'bt_bank'       => 'Bank',
+        'bt_reference'  => 'Verwendungszweck',
+        'bt_after'      => 'Sobald die Zahlung bei uns eingegangen ist, erhalten Sie den Gutschein per E-Mail.',
     ],
 
     // Frontend: Kasse (POS)
@@ -396,6 +458,7 @@ return [
         'redeem_booked'  => 'Einlösung gebucht. Neues Restguthaben: :balance',
         'sold'           => 'Gutschein angelegt: :code',
         'marked_shipped' => 'Als versendet markiert. Versandbenachrichtigung an den Käufer gesendet.',
+        'marked_paid'    => 'Zahlung bestätigt. Gutschein ausgestellt und dem Käufer per E-Mail gesendet.',
     ],
 
     // Fehler-/Validierungsmeldungen
@@ -418,5 +481,19 @@ return [
         'amount_out_of_range'     => 'Betrag liegt außerhalb der erlaubten Grenzen.',
         'order_not_found'         => 'Bestellung nicht gefunden.',
         'cannot_mark_shipped'     => 'Bestellung kann nicht als versendet markiert werden (kein Versand oder bereits versendet).',
+        'not_bank_transfer'       => 'Diese Bestellung ist keine Überweisungs-Bestellung.',
+    ],
+
+    // Backend: Zahlungs-Panel (Bestell-Formular, Überweisung)
+    'payment_panel' => [
+        'only_transfer' => 'Dieser Bereich gilt nur für Überweisungs-Bestellungen (Vorkasse). Online-Zahlungen werden automatisch verbucht.',
+        'awaiting'      => 'Warte auf Zahlungseingang (Überweisung).',
+        'amount'        => 'Betrag',
+        'reference'     => 'Verwendungszweck',
+        'confirmed'     => '✓ Zahlung bestätigt am :date – Gutschein ausgestellt.',
+        'confirm'       => 'Zahlungseingang bestätigen und den Gutschein jetzt ausstellen?',
+        'loading'       => 'Stelle Gutschein aus …',
+        'button'        => 'Zahlung bestätigt → Gutschein ausstellen',
+        'help'          => 'Stellt den Gutschein aus (wie nach einer Online-Zahlung) und schickt dem Käufer die Bestätigung mit dem Gutschein.',
     ],
 ];

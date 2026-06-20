@@ -2,6 +2,8 @@
 
 use Illuminate\Console\Command;
 use JumpLink\Vouchers\Classes\ImageService;
+use JumpLink\Vouchers\Classes\PaymentService;
+use JumpLink\Vouchers\Models\Settings;
 
 /**
  * Pre-go-live checklist. Verifies the security-critical deployment config so a
@@ -32,15 +34,33 @@ class ProductionCheck extends Command
             $this->info('[ OK ] VOUCHER_TOKEN_SECRET is set.');
         }
 
+        // Mollie is only required when online payment is actually offered. A
+        // bank-transfer-only site (payment_mode = banktransfer, or no key yet) is a
+        // valid go-live state, so a missing/test key is fine there.
+        $mollieOffered = PaymentService::isMethodAvailable(PaymentService::METHOD_MOLLIE);
         $mollie = (string) env('MOLLIE_API_KEY', '');
-        if ($mollie === '') {
-            $this->error('[FAIL] MOLLIE_API_KEY is not set — payments cannot be taken.');
+        if (!$mollieOffered) {
+            $this->info('[ OK ] Online payment (Mollie) is not offered — bank transfer only.');
+        } elseif ($mollie === '') {
+            $this->error('[FAIL] MOLLIE_API_KEY is not set — online payments cannot be taken.');
             $fail++;
         } elseif (str_starts_with($mollie, 'test_')) {
             $this->error('[FAIL] MOLLIE_API_KEY is a TEST key — no real payments will be captured in production.');
             $fail++;
         } else {
             $this->info('[ OK ] MOLLIE_API_KEY is a live key.');
+        }
+
+        // Bank transfer offered -> the buyer needs an account to send money to.
+        if (PaymentService::isMethodAvailable(PaymentService::METHOD_BANKTRANSFER)) {
+            $iban   = trim((string) Settings::get('bank_iban', ''));
+            $holder = trim((string) Settings::get('bank_account_holder', ''));
+            if ($iban === '' || $holder === '') {
+                $this->error('[FAIL] Bank transfer is offered but the bank details are incomplete — set the account holder + IBAN in Settings → Payment.');
+                $fail++;
+            } else {
+                $this->info('[ OK ] Bank transfer details are set.');
+            }
         }
 
         if ((bool) config('app.debug')) {

@@ -1,0 +1,29 @@
+<?php
+    $order = $formModel ?? null;
+?>
+<div id="voucherPaymentPanel">
+    <?php if (!$order || !$order->isBankTransfer()): ?>
+        <p class="text-muted"><?= e(trans('jumplink.vouchers::lang.payment_panel.only_transfer')) ?></p>
+    <?php elseif ($order->status === 'issued'): ?>
+        <p class="text-success"><?= e(trans('jumplink.vouchers::lang.payment_panel.confirmed', [
+            'date' => $order->paid_at ? $order->paid_at->format('d.m.Y H:i') : '',
+        ])) ?></p>
+    <?php else: ?>
+        <p>
+            <strong><?= e(trans('jumplink.vouchers::lang.payment_panel.awaiting')) ?></strong><br>
+            <?= e(trans('jumplink.vouchers::lang.payment_panel.amount')) ?>:
+            <?= e(\JumpLink\Vouchers\Models\VoucherOrder::formatEuro($order->total_cents)) ?><br>
+            <?= e(trans('jumplink.vouchers::lang.payment_panel.reference')) ?>: <?= e($order->transfer_reference) ?>
+        </p>
+        <input type="hidden" name="order_id" value="<?= e($order->id) ?>">
+        <button
+            type="button"
+            class="btn btn-primary"
+            data-request="onMarkPaid"
+            data-request-confirm="<?= e(trans('jumplink.vouchers::lang.payment_panel.confirm')) ?>"
+            data-load-indicator="<?= e(trans('jumplink.vouchers::lang.payment_panel.loading')) ?>">
+            <?= e(trans('jumplink.vouchers::lang.payment_panel.button')) ?>
+        </button>
+        <p class="help-block text-muted"><?= e(trans('jumplink.vouchers::lang.payment_panel.help')) ?></p>
+    <?php endif; ?>
+</div>

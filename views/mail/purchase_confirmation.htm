@@ -1,4 +1,4 @@
-subject = "{{ 'jumplink.vouchers::lang.mail.confirmation_subject'|trans({ brand: brand_name ?: 'jumplink.vouchers::lang.mail.brand_fallback'|trans }) }}"
+subject = "{% if voucher %}{{ 'jumplink.vouchers::lang.mail.confirmation_subject'|trans({ code: voucher.code, value: voucher.initial_value_euro }) }}{% else %}{{ 'jumplink.vouchers::lang.mail.confirmation_subject_plain'|trans({ brand: brand_name ?: 'jumplink.vouchers::lang.mail.brand_fallback'|trans }) }}{% endif %}"
 ==
 
 {{ 'jumplink.vouchers::lang.mail.greeting'|trans({ name: order.firstname }) }}

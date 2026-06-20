@@ -2,6 +2,7 @@
 
 use Cms\Classes\ComponentBase;
 use JumpLink\Vouchers\Models\VoucherOrder;
+use JumpLink\Vouchers\Models\Settings;
 
 /**
  * VoucherReturn – the post-payment landing component. Reads ?order=<id> and
@@ -45,6 +46,27 @@ class VoucherReturn extends ComponentBase
     {
         $order = $this->order();
         return $order && $order->status === 'issued';
+    }
+
+    /**
+     * A bank-transfer order still awaiting payment — the return page shows the
+     * transfer instructions (no status poll; the voucher is issued later, when
+     * staff confirm the incoming payment).
+     */
+    public function isBankTransfer()
+    {
+        $order = $this->order();
+        return $order && $order->awaitingTransfer();
+    }
+
+    /** Bank details + amount + the buyer's payment reference for the instructions. */
+    public function bankDetails()
+    {
+        $order = $this->order();
+        return Settings::bankTransferDetails() + [
+            'amount'    => $order ? VoucherOrder::formatEuro($order->total_cents) : null,
+            'reference' => $order ? $order->transfer_reference : null,
+        ];
     }
 
     /** Signed, time-limited download URL (image) once the voucher is issued. */

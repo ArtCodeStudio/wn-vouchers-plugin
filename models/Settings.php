@@ -31,6 +31,28 @@ class Settings extends Model
         ];
     }
 
+    /** Translated payment-mode labels for the settings dropdown. */
+    public function getPaymentModeOptions()
+    {
+        return [
+            'both'         => trans('jumplink.vouchers::lang.payment_mode_option.both'),
+            'mollie'       => trans('jumplink.vouchers::lang.payment_mode_option.mollie'),
+            'banktransfer' => trans('jumplink.vouchers::lang.payment_mode_option.banktransfer'),
+        ];
+    }
+
+    /** Bank account details for the "pay by transfer" (Vorkasse) instructions. */
+    public static function bankTransferDetails(): array
+    {
+        return [
+            'holder' => static::get('bank_account_holder'),
+            'iban'   => static::get('bank_iban'),
+            'bic'    => static::get('bank_bic'),
+            'bank'   => static::get('bank_name'),
+            'note'   => static::get('bank_transfer_note'),
+        ];
+    }
+
     public function initSettingsData()
     {
         // Numbering: auto numbers start here; must stay above the binder's
@@ -63,6 +85,20 @@ class Settings extends Model
         // Payment.
         $this->mollie_mode = 'test';
 
+        // Which payment methods the buy form offers. 'both' = Mollie (online) +
+        // bank transfer, buyer chooses; 'mollie' / 'banktransfer' force one. Mollie
+        // is only ever offered when an API key is configured, so a fresh live site
+        // with no key automatically shows bank transfer only — until the key is
+        // set, when both appear. See PaymentService::availableMethods().
+        $this->payment_mode = 'both';
+
+        // Bank details for the "pay by transfer" (Vorkasse) instructions.
+        $this->bank_account_holder = null;
+        $this->bank_iban           = null;
+        $this->bank_bic            = null;
+        $this->bank_name           = null;
+        $this->bank_transfer_note  = null;
+
         // Privacy / GDPR: the buyer IP is stored for abuse auditing, then nulled
         // by jumplink:vouchers-prune-ips on orders older than this many days
         // (0 disables pruning). The fiscal fields (amount, payment id) are kept.
@@ -77,7 +113,15 @@ class Settings extends Model
         $this->notify_email = null;
         $this->sender_name = null;
         $this->sender_email = null;
-        $this->send_customer_copy = true;
+
+        // Which emails to send (all on by default). Team mails additionally
+        // require a notify_email to be set.
+        $this->notify_new_order         = true;  // team: every paid purchase
+        $this->notify_fulfillment       = true;  // team: a physical card to prepare & post
+        $this->notify_bank_transfer     = true;  // team: a new transfer awaiting payment
+        $this->send_buyer_confirmation  = true;  // buyer: voucher confirmation
+        $this->send_buyer_bank_transfer = true;  // buyer: transfer instructions
+        $this->send_buyer_shipping      = true;  // buyer: "card on its way"
 
         // Branding (used on the voucher and in emails).
         $this->brand_name = null;

@@ -69,9 +69,18 @@ class PurchaseService
         $order->recipient_name    = $input['recipient_name'] ?? null;
         $order->message           = $input['message'] ?? null;
         $order->ip                = $input['ip'] ?? null;
+
+        // Pick the payment method: honour the buyer's choice when it is actually
+        // offered, else fall back to the first available one. availableMethods()
+        // already gates Mollie on a configured key, so we can never assign a
+        // method the site cannot fulfil.
+        $available = PaymentService::availableMethods();
+        $chosen = (string) ($input['payment_method'] ?? '');
+        $order->provider = in_array($chosen, $available, true) ? $chosen : $available[0];
+
         $order->save();
 
-        return ['success' => true, 'status' => 200, 'order' => $order];
+        return ['success' => true, 'status' => 200, 'order' => $order, 'method' => $order->provider];
     }
 
     /**

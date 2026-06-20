@@ -1,0 +1,20 @@
+subject = "{{ 'jumplink.vouchers::lang.mail.bt_instructions_subject'|trans({ amount: amount, reference: reference }) }}"
+==
+
+{{ 'jumplink.vouchers::lang.mail.greeting'|trans({ name: order.firstname }) }}
+
+{{ 'jumplink.vouchers::lang.mail.bt_instructions_intro'|trans({ brand: brand_name ?: 'jumplink.vouchers::lang.mail.brand_fallback'|trans }) }}
+
+- **{{ 'jumplink.vouchers::lang.mail.bt_label_amount'|trans }}** {{ amount }}
+- **{{ 'jumplink.vouchers::lang.mail.bt_label_holder'|trans }}** {{ bank.holder }}
+- **{{ 'jumplink.vouchers::lang.mail.bt_label_iban'|trans }}** {{ bank.iban }}
+{% if bank.bic %}- **{{ 'jumplink.vouchers::lang.mail.bt_label_bic'|trans }}** {{ bank.bic }}
+{% endif %}{% if bank.bank %}- **{{ 'jumplink.vouchers::lang.mail.bt_label_bank'|trans }}** {{ bank.bank }}
+{% endif %}- **{{ 'jumplink.vouchers::lang.mail.bt_label_reference'|trans }}** {{ reference }}
+
+{{ 'jumplink.vouchers::lang.mail.bt_instructions_after'|trans }}
+
+{% if bank.note %}{{ bank.note }}
+{% endif %}
+{{ 'jumplink.vouchers::lang.mail.regards'|trans }}
+{% if brand_name %}{{ 'jumplink.vouchers::lang.mail.team_with_brand'|trans({ brand: brand_name }) }}{% else %}{{ 'jumplink.vouchers::lang.mail.team'|trans }}{% endif %}

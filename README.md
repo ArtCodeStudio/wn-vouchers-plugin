@@ -31,6 +31,16 @@ numbering, ledger, payment, image/QR and fulfillment are all generic.
 - 💳 **Mollie payment** (Apple/Google Pay, cards, SEPA, PayPal via one
   integration). The webhook is the **sole** voucher-issuing authority — no
   voucher is created until the payment is confirmed server-side.
+- 🏦 **Bank transfer (prepayment)** as an alternative or fallback: offer Mollie,
+  bank transfer, or both (the buyer chooses). With no Mollie key configured the
+  form automatically shows bank transfer only — so a shop can go live before
+  Mollie onboarding is finished. Staff confirm the incoming payment in the
+  backend, which issues the voucher (same path as the webhook — never before
+  payment).
+- 📧 **Configurable emails**: per-email toggles for buyer mails (confirmation,
+  transfer instructions, shipping) and team notifications — including a dedicated
+  **“prepare for shipping”** alert (voucher number + delivery address) for physical
+  orders. Every subject carries the key facts (code, amount, reference, destination).
 - 🖼️ **Digital delivery**: a branded image (PNG) with a QR code, downloadable and emailed.
 - 📬 **Physical delivery**: a pre-printed card by post, with a configurable
   service fee and a shipping notification for staff.
@@ -69,7 +79,8 @@ follow in M2/M3.
 ## Requirements
 
 - WinterCMS **1.2+** (Laravel 9 era), PHP **8.1+**
-- A [Mollie](https://www.mollie.com) account (test key works for development)
+- A [Mollie](https://www.mollie.com) account for online payments (test key works
+  for development) — *optional*: the plugin can run bank-transfer-only without it
 - Payment/PDF/QR rely on `mollie/mollie-api-php`, `barryvdh/laravel-dompdf` and
   `endroid/qr-code` — declared as dependencies of this plugin.
 
@@ -101,7 +112,8 @@ VOUCHER_TOKEN_SECRET=change-me                         # HMAC pepper for QR toke
 
 Everything else is configured in the backend under **Settings → Vouchers**:
 starting number, service fee, min/max value, denominations, default validity,
-VAT mode, Mollie mode (test/live), sender/notification addresses and PDF
+VAT mode, **payment mode (Mollie / bank transfer / both) and the bank details
+for transfers**, Mollie mode (test/live), sender/notification addresses and PDF
 branding.
 
 ## How it works

@@ -109,6 +109,9 @@ class Plugin extends PluginBase
             'jumplink.vouchers::mail.purchase_notification',
             'jumplink.vouchers::mail.shipping_notification',
             'jumplink.vouchers::mail.voucher_delivery',
+            'jumplink.vouchers::mail.bank_transfer_instructions',
+            'jumplink.vouchers::mail.bank_transfer_notification',
+            'jumplink.vouchers::mail.fulfillment_notification',
         ];
     }
 

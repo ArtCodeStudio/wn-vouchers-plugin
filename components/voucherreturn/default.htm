@@ -14,6 +14,23 @@
 <div class="voucher-return">
     {% if __SELF__.isIssued %}
         {{ issued }}
+    {% elseif __SELF__.isBankTransfer %}
+        {# Bank transfer (Vorkasse): show how to pay; no poll — the voucher is
+           issued later, when staff confirm the incoming payment. #}
+        {% set bank = __SELF__.bankDetails %}
+        <div class="voucher-banktransfer">
+            <p>{{ 'jumplink.vouchers::lang.return.bt_intro'|trans }}</p>
+            <dl>
+                <dt>{{ 'jumplink.vouchers::lang.return.bt_amount'|trans }}</dt><dd>{{ bank.amount }}</dd>
+                <dt>{{ 'jumplink.vouchers::lang.return.bt_holder'|trans }}</dt><dd>{{ bank.holder }}</dd>
+                <dt>{{ 'jumplink.vouchers::lang.return.bt_iban'|trans }}</dt><dd>{{ bank.iban }}</dd>
+                {% if bank.bic %}<dt>{{ 'jumplink.vouchers::lang.return.bt_bic'|trans }}</dt><dd>{{ bank.bic }}</dd>{% endif %}
+                {% if bank.bank %}<dt>{{ 'jumplink.vouchers::lang.return.bt_bank'|trans }}</dt><dd>{{ bank.bank }}</dd>{% endif %}
+                <dt>{{ 'jumplink.vouchers::lang.return.bt_reference'|trans }}</dt><dd>{{ bank.reference }}</dd>
+            </dl>
+            <p>{{ 'jumplink.vouchers::lang.return.bt_after'|trans }}</p>
+            {% if bank.note %}<p class="voucher-bt-note">{{ bank.note }}</p>{% endif %}
+        </div>
     {% elseif __SELF__.order %}
         <div class="voucher-pending" data-voucher-pending>
             <p>{{ 'jumplink.vouchers::lang.return.processing'|trans }}</p>

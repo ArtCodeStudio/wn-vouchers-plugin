@@ -20,9 +20,6 @@ class NotificationService
     public static function sendPurchaseMails(VoucherOrder $order, ?Voucher $voucher): void
     {
         $brandName   = Settings::get('brand_name') ?: config('app.name');
-        $senderEmail = Settings::get('sender_email');
-        $senderName  = Settings::get('sender_name');
-
         $downloadUrl = self::downloadUrl($order, $voucher);
 
         $data = [
@@ -34,30 +31,48 @@ class NotificationService
             'safe'         => self::safeBuyer($order),
         ];
 
-        // Buyer confirmation.
-        try {
-            Mail::send('jumplink.vouchers::mail.purchase_confirmation', $data, function ($message) use ($order, $voucher, $senderEmail, $senderName) {
-                $message->to($order->email, trim($order->firstname . ' ' . $order->lastname));
-                if ($senderEmail) {
-                    $message->from($senderEmail, $senderName ?: null);
-                }
-                if ($voucher && $order->delivery_type === 'digital') {
-                    self::attachVoucher($message, $voucher);
-                }
-            });
-        } catch (\Throwable $e) {
-            Log::error('[vouchers] buyer mail failed: ' . $e->getMessage());
-        }
-
-        // Staff notification (mainly for physical fulfillment).
-        $notifyEmail = Settings::get('notify_email');
-        if ($notifyEmail) {
+        // Buyer confirmation (toggleable).
+        if ((bool) Settings::get('send_buyer_confirmation', true)) {
             try {
-                Mail::send('jumplink.vouchers::mail.purchase_notification', $data, function ($message) use ($notifyEmail) {
-                    $message->to($notifyEmail, Settings::get('notify_name') ?: null);
+                Mail::send('jumplink.vouchers::mail.purchase_confirmation', $data, function ($message) use ($order, $voucher) {
+                    $message->to($order->email, trim($order->firstname . ' ' . $order->lastname));
+                    self::applySender($message);
+                    if ($voucher && $order->delivery_type === 'digital') {
+                        self::attachVoucher($message, $voucher);
+                    }
                 });
             } catch (\Throwable $e) {
-                Log::error('[vouchers] staff mail failed: ' . $e->getMessage());
+                Log::error('[vouchers] buyer mail failed: ' . $e->getMessage());
+            }
+        }
+
+        // Team notifications need a configured recipient.
+        $notifyEmail = Settings::get('notify_email');
+        if (!$notifyEmail) {
+            return;
+        }
+        $notifyName = Settings::get('notify_name') ?: null;
+
+        // Team: a new paid purchase (toggleable).
+        if ((bool) Settings::get('notify_new_order', true)) {
+            try {
+                Mail::send('jumplink.vouchers::mail.purchase_notification', $data, function ($message) use ($notifyEmail, $notifyName) {
+                    $message->to($notifyEmail, $notifyName);
+                });
+            } catch (\Throwable $e) {
+                Log::error('[vouchers] staff new-order mail failed: ' . $e->getMessage());
+            }
+        }
+
+        // Team: a physical card to prepare & post (toggleable). Carries the
+        // voucher number/code + the delivery address so staff can fulfil it.
+        if ($voucher && $order->delivery_type === 'physical' && (bool) Settings::get('notify_fulfillment', true)) {
+            try {
+                Mail::send('jumplink.vouchers::mail.fulfillment_notification', $data, function ($message) use ($notifyEmail, $notifyName) {
+                    $message->to($notifyEmail, $notifyName);
+                });
+            } catch (\Throwable $e) {
+                Log::error('[vouchers] staff fulfillment mail failed: ' . $e->getMessage());
             }
         }
     }
@@ -69,9 +84,6 @@ class NotificationService
     public static function sendVoucherImage(Voucher $voucher, string $email, ?string $recipientName = null): void
     {
         $brandName   = Settings::get('brand_name') ?: config('app.name');
-        $senderEmail = Settings::get('sender_email');
-        $senderName  = Settings::get('sender_name');
-
         $downloadUrl = null;
         try {
             $downloadUrl = URL::temporarySignedRoute('jumplink.vouchers.image', now()->addDays(7), ['voucher' => $voucher->id]);
@@ -87,11 +99,9 @@ class NotificationService
         ];
 
         try {
-            Mail::send('jumplink.vouchers::mail.voucher_delivery', $data, function ($message) use ($email, $recipientName, $voucher, $senderEmail, $senderName) {
+            Mail::send('jumplink.vouchers::mail.voucher_delivery', $data, function ($message) use ($email, $recipientName, $voucher) {
                 $message->to($email, $recipientName ?: null);
-                if ($senderEmail) {
-                    $message->from($senderEmail, $senderName ?: null);
-                }
+                self::applySender($message);
                 self::attachVoucher($message, $voucher);
             });
         } catch (\Throwable $e) {
@@ -99,22 +109,66 @@ class NotificationService
         }
     }
 
-    /** Tell the buyer their physical voucher card is on its way. */
+    /** Tell the buyer their physical voucher card is on its way (toggleable). */
     public static function sendShippingMail(VoucherOrder $order): void
     {
-        $brandName   = Settings::get('brand_name') ?: config('app.name');
-        $senderEmail = Settings::get('sender_email');
-        $senderName  = Settings::get('sender_name');
+        if (!(bool) Settings::get('send_buyer_shipping', true)) {
+            return;
+        }
+
+        $brandName = Settings::get('brand_name') ?: config('app.name');
 
         try {
-            Mail::send('jumplink.vouchers::mail.shipping_notification', ['order' => $order, 'brand_name' => $brandName], function ($message) use ($order, $senderEmail, $senderName) {
+            Mail::send('jumplink.vouchers::mail.shipping_notification', ['order' => $order, 'brand_name' => $brandName], function ($message) use ($order) {
                 $message->to($order->email, trim($order->firstname . ' ' . $order->lastname));
-                if ($senderEmail) {
-                    $message->from($senderEmail, $senderName ?: null);
-                }
+                self::applySender($message);
             });
         } catch (\Throwable $e) {
             Log::error('[vouchers] shipping mail failed: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Bank transfer (Vorkasse): email the buyer the bank details + payment
+     * reference so they can transfer, and notify staff of the new pending order so
+     * they can watch for the incoming payment and then confirm it in the backend.
+     * No voucher is issued here — that happens on confirmation.
+     */
+    public static function sendBankTransferMails(VoucherOrder $order): void
+    {
+        $brandName = Settings::get('brand_name') ?: config('app.name');
+
+        $data = [
+            'order'      => $order,
+            'brand_name' => $brandName,
+            'bank'       => Settings::bankTransferDetails(),
+            'amount'     => VoucherOrder::formatEuro($order->total_cents),
+            'reference'  => $order->transfer_reference,
+            'safe'       => self::safeBuyer($order),
+        ];
+
+        // Buyer: how to pay (toggleable).
+        if ((bool) Settings::get('send_buyer_bank_transfer', true)) {
+            try {
+                Mail::send('jumplink.vouchers::mail.bank_transfer_instructions', $data, function ($message) use ($order) {
+                    $message->to($order->email, trim($order->firstname . ' ' . $order->lastname));
+                    self::applySender($message);
+                });
+            } catch (\Throwable $e) {
+                Log::error('[vouchers] bank-transfer buyer mail failed: ' . $e->getMessage());
+            }
+        }
+
+        // Staff: a new order is awaiting payment (toggleable).
+        $notifyEmail = Settings::get('notify_email');
+        if ($notifyEmail && (bool) Settings::get('notify_bank_transfer', true)) {
+            try {
+                Mail::send('jumplink.vouchers::mail.bank_transfer_notification', $data, function ($message) use ($notifyEmail) {
+                    $message->to($notifyEmail, Settings::get('notify_name') ?: null);
+                });
+            } catch (\Throwable $e) {
+                Log::error('[vouchers] bank-transfer staff mail failed: ' . $e->getMessage());
+            }
         }
     }
 
@@ -142,6 +196,15 @@ class NotificationService
             $safe[$field] = self::mailText($order->$field);
         }
         return $safe;
+    }
+
+    /** Apply the configured sender (Settings) to an outgoing message, if set. */
+    protected static function applySender($message): void
+    {
+        $senderEmail = Settings::get('sender_email');
+        if ($senderEmail) {
+            $message->from($senderEmail, Settings::get('sender_name') ?: null);
+        }
     }
 
     /** Attach the voucher to a mail — as a PNG image where possible, else PDF. */

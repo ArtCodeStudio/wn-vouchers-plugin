@@ -1,0 +1,22 @@
+subject = "{{ 'jumplink.vouchers::lang.mail.fulfillment_subject'|trans({ code: voucher.code, value: voucher.initial_value_euro, zip: order.zip, city: order.city }) }}"
+==
+
+{{ 'jumplink.vouchers::lang.mail.greeting_plain'|trans }}
+
+{{ 'jumplink.vouchers::lang.mail.fulfillment_intro'|trans }}
+
+- **{{ 'jumplink.vouchers::lang.mail.label_code'|trans }}** {{ voucher.code }}
+- **{{ 'jumplink.vouchers::lang.mail.label_value'|trans }}** {{ voucher.initial_value_euro }}
+- **{{ 'jumplink.vouchers::lang.mail.fulfillment_write_card'|trans }}** {{ voucher.number }}
+{% if order.recipient_name %}- **{{ 'jumplink.vouchers::lang.mail.label_recipient'|trans }}** {{ safe.recipient_name }}
+{% endif %}
+
+**{{ 'jumplink.vouchers::lang.mail.label_address'|trans }}**
+{{ safe.firstname }} {{ safe.lastname }}
+{{ safe.street }}
+{{ safe.zip }} {{ safe.city }}
+
+{% if order.message %}**{{ 'jumplink.vouchers::lang.mail.label_message'|trans }}** {{ safe.message }}
+{% endif %}
+{{ 'jumplink.vouchers::lang.mail.regards'|trans }}
+{{ 'jumplink.vouchers::lang.mail.team'|trans }}

@@ -216,4 +216,22 @@ class VoucherOrder extends Model
         $this->save();
         return true;
     }
+
+    /** Was this order placed for payment by bank transfer (Vorkasse)? */
+    public function isBankTransfer(): bool
+    {
+        return $this->provider === 'banktransfer';
+    }
+
+    /** A bank-transfer order still awaiting its incoming payment (no voucher yet). */
+    public function awaitingTransfer(): bool
+    {
+        return $this->isBankTransfer() && $this->status !== 'issued';
+    }
+
+    /** Human payment reference for the bank transfer ("Verwendungszweck"). */
+    public function getTransferReferenceAttribute(): string
+    {
+        return 'GS-' . $this->id;
+    }
 }

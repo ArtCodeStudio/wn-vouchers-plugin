@@ -42,6 +42,15 @@
         <label>{{ 'jumplink.vouchers::lang.purchase.recipient_optional'|trans }} <input type="text" name="recipient_name"></label>
         <label>{{ 'jumplink.vouchers::lang.purchase.message_optional'|trans }} <textarea name="message" rows="3"></textarea></label>
 
+        {% if __SELF__.showPaymentChooser %}
+        <fieldset class="voucher-payment">
+            <legend>{{ 'jumplink.vouchers::lang.purchase.payment_legend'|trans }}</legend>
+            {% for m in __SELF__.paymentMethods %}
+                <label><input type="radio" name="payment_method" value="{{ m }}"{% if loop.first %} checked{% endif %}> {{ ('jumplink.vouchers::lang.payment_method_choice.' ~ m)|trans }}</label>
+            {% endfor %}
+        </fieldset>
+        {% endif %}
+
         {# Honeypot: hidden from humans; bots fill it and get a benign success. #}
         <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true"
             style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;">

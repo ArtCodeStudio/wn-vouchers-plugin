@@ -9,6 +9,7 @@ use Cms\Classes\ComponentBase;
 use JumpLink\Vouchers\Models\Settings;
 use JumpLink\Vouchers\Classes\PurchaseService;
 use JumpLink\Vouchers\Classes\PaymentService;
+use JumpLink\Vouchers\Classes\NotificationService;
 
 /**
  * VoucherPurchase – the customer-facing buy form that replaces the static
@@ -55,6 +56,18 @@ class VoucherPurchase extends ComponentBase
             ->all();
     }
 
+    /** Payment methods offered on the form ('mollie' / 'banktransfer'), gated by config. */
+    public function paymentMethods()
+    {
+        return PaymentService::availableMethods();
+    }
+
+    /** Show a method chooser only when more than one method is offered. */
+    public function showPaymentChooser()
+    {
+        return count($this->paymentMethods()) > 1;
+    }
+
     public function onPurchase()
     {
         // Rate-limit per IP: each accepted purchase starts a real Mollie payment,
@@ -83,14 +96,23 @@ class VoucherPurchase extends ComponentBase
             throw new \ValidationException($result['errors'] ?? ['face_value' => trans('jumplink.vouchers::lang.error.check_input')]);
         }
 
-        if (!PaymentService::isConfigured()) {
-            throw new \ApplicationException(trans('jumplink.vouchers::lang.error.payment_unavailable'));
-        }
-
         $order = $result['order'];
         // The return page authorizes by the unguessable token, not the id.
         $returnUrl = url()->current() . '?order=' . $order->id . '&t=' . $order->access_token;
 
+        // Bank transfer (Vorkasse): no online payment. Email the buyer the bank
+        // details + reference and land them on the return page (which shows the
+        // same instructions). The voucher is issued later, when staff confirm the
+        // incoming payment in the backend.
+        if ($order->isBankTransfer()) {
+            NotificationService::sendBankTransferMails($order);
+            return Redirect::to($returnUrl);
+        }
+
+        // Online payment via Mollie.
+        if (!PaymentService::isConfigured()) {
+            throw new \ApplicationException(trans('jumplink.vouchers::lang.error.payment_unavailable'));
+        }
         try {
             $checkoutUrl = PaymentService::startPayment($order, $returnUrl);
         } catch (\Throwable $e) {

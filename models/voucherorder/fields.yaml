@@ -108,6 +108,12 @@ tabs:
             mode: datetime
             span: right
             disabled: true
+        payment_action:
+            type: partial
+            path: payment
+            tab: jumplink.vouchers::lang.tab.payment
+            span: full
+            context: [update]
 
         shipping:
             type: partial

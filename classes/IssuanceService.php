@@ -55,8 +55,10 @@ class IssuanceService
             $voucher->currency            = $order->currency ?: 'EUR';
             $voucher->vat_mode            = $order->vat_mode;
             $voucher->status              = 'active';
-            $voucher->payment_status      = 'paid';   // paid online before issuance
-            $voucher->payment_method      = 'online';
+            $voucher->payment_status      = 'paid';   // confirmed paid before issuance
+            // Online (Mollie) vs. bank transfer confirmed by staff — both are paid
+            // by the time a voucher is issued.
+            $voucher->payment_method      = $order->isBankTransfer() ? 'banktransfer' : 'online';
             $voucher->token_secret        = bin2hex(random_bytes(16));
             $voucher->recipient_name      = $order->recipient_name;
             $voucher->issued_at           = Carbon::now();

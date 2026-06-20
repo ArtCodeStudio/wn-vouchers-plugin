@@ -2,6 +2,7 @@
 
 use Log;
 use JumpLink\Vouchers\Models\VoucherOrder;
+use JumpLink\Vouchers\Models\Settings;
 
 /**
  * Mollie payment wrapper. Implemented behind this seam so the rest of the plugin
@@ -38,6 +39,40 @@ class PaymentService
     public static function isConfigured(): bool
     {
         return self::apiKey() !== '';
+    }
+
+    public const METHOD_MOLLIE = 'mollie';
+    public const METHOD_BANKTRANSFER = 'banktransfer';
+
+    /**
+     * The payment methods the buy form should offer, honouring the payment_mode
+     * setting AND gated by real availability: Mollie is only offered when an API
+     * key is configured. So a live site with no key yet automatically shows bank
+     * transfer only, and both appear once the key is set (mode 'both').
+     *
+     * @return string[] e.g. ['mollie','banktransfer'] | ['banktransfer'] | ['mollie']
+     */
+    public static function availableMethods(): array
+    {
+        $mode = (string) Settings::get('payment_mode', 'both');
+        $methods = [];
+        if (($mode === 'both' || $mode === self::METHOD_MOLLIE) && self::isConfigured()) {
+            $methods[] = self::METHOD_MOLLIE;
+        }
+        if ($mode === 'both' || $mode === self::METHOD_BANKTRANSFER) {
+            $methods[] = self::METHOD_BANKTRANSFER;
+        }
+        // Never leave the form with no method (e.g. mode 'mollie' but no key set).
+        if (empty($methods)) {
+            $methods[] = self::METHOD_BANKTRANSFER;
+        }
+        return $methods;
+    }
+
+    /** Whether a given method is currently offered. */
+    public static function isMethodAvailable(string $method): bool
+    {
+        return in_array($method, self::availableMethods(), true);
     }
 
     /** A configured Mollie client, or the injected test double. */
