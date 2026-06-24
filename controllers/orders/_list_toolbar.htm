@@ -1,0 +1,19 @@
+<div data-control="toolbar">
+    <a
+        href="<?= Backend::url('jumplink/vouchers/orders/datev') ?>"
+        class="btn btn-default oc-icon-download">
+        <?= e(trans('jumplink.vouchers::lang.orders.datev_export')) ?>
+    </a>
+
+    <button
+        type="button"
+        class="btn btn-default oc-icon-user-secret"
+        data-request="index_onAnonymizeSelected"
+        data-request-confirm="<?= e(trans('jumplink.vouchers::lang.orders.anonymize_confirm')) ?>"
+        data-list-checked-trigger
+        data-list-checked-request
+        data-stripe-load-indicator
+        disabled>
+        <?= e(trans('jumplink.vouchers::lang.orders.anonymize_selected')) ?>
+    </button>
+</div>

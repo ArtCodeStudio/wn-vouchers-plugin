@@ -47,3 +47,17 @@
     - "Kasse: nicht autorisierte Zugriffe auf die Kassen-Handler (Lookup/Einlösen/Verkauf) liefern jetzt sauber HTTP 403 statt 500 — saubereres Monitoring, gleiche Meldung an der Kasse."
 1.0.16:
     - "Sicherheit: Käufer-Freitext (Gruß, Nachricht, Name, Adresse) in der Restaurant-Benachrichtigungsmail wird neutralisiert (HTML entfernt, Markdown-Links und Auto-Links unschädlich gemacht) — kein Einschleusen klickbarer Phishing-Links mehr in den Posteingang des Restaurants."
+1.0.17:
+    - "Vereinfachung: MwSt-Aufteilung (vat_breakdown) aus dem Einlöse-Ledger entfernt — sie wurde nie erfasst. Die USt bei Einlösung eines Mehrzweckgutscheins bucht die (TSE-)Kasse des Restaurants, der Gutschein ist nur Zahlungsmittel; das Ledger führt nur noch den Saldo."
+    - "Backend: Der Bestellungen-Zähler erfasst jetzt auch Überweisungen, die auf Zahlungseingang warten (nicht nur zu versendende Karten) — offene Vorgänge (Zahlung bestätigen / versenden) auf einen Blick."
+    - "Aufräumen: ungenutzte Einstellungen entfernt (vat_rates „wählbare Sätze bei Einlösung“ und mollie_mode — der Mollie-Key kommt aus der .env), tote Übersetzungs-Keys und das nicht mehr verdrahtete Feld pdf_generated_at; Cent-Parser (toCents), Einlöse-Fehlertexte und Betrags-Vorschläge an je einer Stelle zusammengeführt; Hinweis zum Hintergrundbild auf Hochformat korrigiert."
+    - drop_vat_breakdown_from_redemptions.php
+1.0.18:
+    - "Beleg: Käufer erhält zu jedem Online-Kauf einen Kaufbeleg als PDF — beim Mehrzweckgutschein bewusst ohne USt-Ausweis und mit dem Hinweis nach § 3 Abs. 15 UStG (USt entsteht erst bei Einlösung), beim Einzweckgutschein mit Netto-/USt-/Brutto-Aufteilung. Verkäufer-Identität (Firma, Anschrift, Steuernr./USt-IdNr.) neu unter Einstellungen → Beleg; Beleg-Nr. = GS-<Bestellnr.>."
+    - "Buchhaltung: optionale automatische Belegkopie per E-Mail (Einstellung „Belegkopie an“) als neutrale Mail mit dem Beleg-PDF im Anhang — für DATEV-Belegtransfer, Steuerberater oder Paperless."
+    - "Go-Live: production-check warnt, wenn Belege aktiviert sind, aber die Verkäufer-Identität fehlt."
+    - "Hinweis: Klassifizierung (Mehr-/Einzweckgutschein), Belegwortlaut und USt-Behandlung der Versandpauschale sind final mit dem Steuerberater abzustimmen."
+1.0.19:
+    - "Buchhaltung: DATEV-Format-Export (Buchungsstapel EXTF v700) der Gutschein-Verkäufe — Button „DATEV-Export“ in den Bestellungen + Befehl jumplink:vouchers-datev-export. Betreiber-/banken-neutral: Beleg = Geldkonto (Soll) an Gutschein-Verbindlichkeit (Haben), ohne USt (Mehrzweckgutschein); Konten/Berater-/Mandantennummer in Einstellungen → Beleg → DATEV (mit dem Steuerberater abzustimmen)."
+    - "DSGVO: Bestellungen anonymisieren (Art. 17) — Backend-Aktion „Anonymisieren“ (Mehrfachauswahl) entfernt Name/E-Mail/Adresse, behält fiskalische Felder; neuer Befehl jumplink:vouchers-anonymize-orders + Einstellung „Personendaten anonymisieren nach (Tagen)“ (täglich geplant, Default aus)."
+    - add_anonymized_at_to_voucher_orders.php

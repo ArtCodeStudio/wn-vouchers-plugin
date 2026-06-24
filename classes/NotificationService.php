@@ -31,19 +31,48 @@ class NotificationService
             'safe'         => self::safeBuyer($order),
         ];
 
-        // Buyer confirmation (toggleable).
-        if ((bool) Settings::get('send_buyer_confirmation', true)) {
+        // Purchase receipt (Beleg): rendered once here — but only when it will be
+        // used (the PDF is ~MB-sized) — then attached to the buyer confirmation
+        // and/or copied to the bookkeeping inbox. Best-effort: a receipt failure
+        // must never roll back an issued voucher.
+        $buyerWantsReceipt = (bool) Settings::get('send_buyer_confirmation', true)
+            && (bool) Settings::get('send_buyer_receipt', true);
+        $accountingEmail   = trim((string) Settings::get('accounting_copy_email', ''));
+        $receiptName       = 'beleg-' . $order->receipt_number . '.pdf';
+
+        $receiptPdf = null;
+        if (($buyerWantsReceipt || $accountingEmail !== '') && ReceiptService::isConfigured()) {
             try {
-                Mail::send('jumplink.vouchers::mail.purchase_confirmation', $data, function ($message) use ($order, $voucher) {
+                $receiptPdf = ReceiptService::render($order);
+            } catch (\Throwable $e) {
+                Log::error('[vouchers] receipt render failed: ' . $e->getMessage());
+            }
+        }
+
+        // Buyer confirmation (toggleable). Carries the voucher image (digital)
+        // and the purchase receipt PDF (when enabled + a seller identity is set).
+        if ((bool) Settings::get('send_buyer_confirmation', true)) {
+            $attachReceipt = $receiptPdf !== null && $buyerWantsReceipt;
+            try {
+                Mail::send('jumplink.vouchers::mail.purchase_confirmation', $data, function ($message) use ($order, $voucher, $receiptPdf, $receiptName, $attachReceipt) {
                     $message->to($order->email, trim($order->firstname . ' ' . $order->lastname));
                     self::applySender($message);
                     if ($voucher && $order->delivery_type === 'digital') {
                         self::attachVoucher($message, $voucher);
                     }
+                    if ($attachReceipt) {
+                        $message->attachData($receiptPdf, $receiptName, ['mime' => 'application/pdf']);
+                    }
                 });
             } catch (\Throwable $e) {
                 Log::error('[vouchers] buyer mail failed: ' . $e->getMessage());
             }
+        }
+
+        // Bookkeeping copy: a neutral mail with just the receipt PDF, for a DATEV
+        // Belegtransfer inbox / the tax advisor / a Paperless mailbox.
+        if ($receiptPdf !== null && $accountingEmail !== '') {
+            self::sendAccountingCopy($order, $accountingEmail, $receiptPdf, $receiptName);
         }
 
         // Team notifications need a configured recipient.
@@ -169,6 +198,33 @@ class NotificationService
             } catch (\Throwable $e) {
                 Log::error('[vouchers] bank-transfer staff mail failed: ' . $e->getMessage());
             }
+        }
+    }
+
+    /**
+     * Send the purchase receipt to the bookkeeping inbox (DATEV Belegtransfer /
+     * tax advisor / Paperless) as a neutral mail with the receipt PDF attached.
+     * Best-effort; a failure is logged, never thrown.
+     */
+    protected static function sendAccountingCopy(VoucherOrder $order, string $email, string $receiptPdf, string $receiptName): void
+    {
+        $brandName = Settings::get('brand_name') ?: config('app.name');
+
+        $data = [
+            'order'      => $order,
+            'brand_name' => $brandName,
+            'number'     => $order->receipt_number,
+            'amount'     => VoucherOrder::formatEuro($order->total_cents),
+        ];
+
+        try {
+            Mail::send('jumplink.vouchers::mail.receipt_copy', $data, function ($message) use ($email, $receiptPdf, $receiptName) {
+                $message->to($email);
+                self::applySender($message);
+                $message->attachData($receiptPdf, $receiptName, ['mime' => 'application/pdf']);
+            });
+        } catch (\Throwable $e) {
+            Log::error('[vouchers] accounting copy mail failed: ' . $e->getMessage());
         }
     }
 

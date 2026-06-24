@@ -32,10 +32,10 @@ class Voucher extends Model
         'initial_value_cents', 'value_euro', 'balance_cents', 'currency', 'vat_mode',
         'status', 'payment_status', 'payment_method', 'token_secret',
         'recipient_name', 'street', 'zip', 'city',
-        'valid_until', 'issued_at', 'pdf_generated_at', 'created_by',
+        'valid_until', 'issued_at', 'created_by',
     ];
 
-    protected $dates = ['valid_until', 'issued_at', 'pdf_generated_at'];
+    protected $dates = ['valid_until', 'issued_at'];
 
     public $belongsTo = [
         'order' => [\JumpLink\Vouchers\Models\VoucherOrder::class, 'key' => 'order_id'],
@@ -193,8 +193,7 @@ class Voucher extends Model
         if ($value === null || $value === '') {
             return;
         }
-        $normalized = str_replace(',', '.', trim((string) $value));
-        $this->initial_value_cents = (int) round(((float) $normalized) * 100);
+        $this->initial_value_cents = \JumpLink\Vouchers\Classes\PosService::toCents($value);
     }
 
     //

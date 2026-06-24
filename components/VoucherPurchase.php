@@ -48,12 +48,7 @@ class VoucherPurchase extends ComponentBase
     /** Quick-pick amounts in cents, e.g. [2500, 5000, 10000]. */
     public function denominations()
     {
-        return collect(Settings::get('denominations', []))
-            ->pluck('value_cents')
-            ->filter()
-            ->map(fn ($c) => (int) $c)
-            ->values()
-            ->all();
+        return Settings::denominationCents();
     }
 
     /** Payment methods offered on the form ('mollie' / 'banktransfer'), gated by config. */

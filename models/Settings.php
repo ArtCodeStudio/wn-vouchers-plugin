@@ -53,6 +53,17 @@ class Settings extends Model
         ];
     }
 
+    /** Quick-pick amounts in cents, e.g. [2500, 5000, 10000] — for the buy form + till. */
+    public static function denominationCents(): array
+    {
+        return collect(static::get('denominations', []))
+            ->pluck('value_cents')
+            ->filter()
+            ->map(fn ($c) => (int) $c)
+            ->values()
+            ->all();
+    }
+
     public function initSettingsData()
     {
         // Numbering: auto numbers start here; must stay above the binder's
@@ -77,13 +88,6 @@ class Settings extends Model
         // VAT: Mehrzweckgutschein by default (no VAT at sale; due on redemption).
         $this->vat_mode = 'multi_purpose';
         $this->vat_rate = 19.0;           // used only in single_purpose mode
-        $this->vat_rates = [
-            ['rate' => 7.0],
-            ['rate' => 19.0],
-        ];
-
-        // Payment.
-        $this->mollie_mode = 'test';
 
         // Which payment methods the buy form offers. 'both' = Mollie (online) +
         // bank transfer, buyer chooses; 'mollie' / 'banktransfer' force one. Mollie
@@ -99,10 +103,36 @@ class Settings extends Model
         $this->bank_name           = null;
         $this->bank_transfer_note  = null;
 
+        // Receipt (Beleg): the seller identity printed on the buyer's purchase
+        // receipt, plus an optional bookkeeping copy. A receipt is only emitted
+        // once a legal name is set (ReceiptService::isConfigured). For a
+        // multi-purpose voucher the receipt is a GoBD Beleg, deliberately NOT a
+        // VAT invoice — see ReceiptService.
+        $this->seller_legal_name     = null;
+        $this->seller_address        = null;
+        $this->seller_tax_number     = null;
+        $this->receipt_note          = null;
+        $this->send_buyer_receipt    = true;  // attach the receipt PDF to the buyer confirmation
+        $this->accounting_copy_email = null;  // BCC the receipt to DATEV Belegtransfer / tax advisor / Paperless
+
+        // DATEV export (operator/StB-specific; no tie to any bank). The account
+        // numbers come from the tax advisor — see docs/umsatzsteuerliche-behandlung.md.
+        $this->datev_consultant_number        = null; // Beraternummer
+        $this->datev_client_number            = null; // Mandantennummer
+        $this->datev_account_length           = 4;    // Sachkontenlänge
+        $this->datev_money_account            = null; // Geldkonto/Verrechnungskonto (Konto)
+        $this->datev_voucher_liability_account = null; // Gutschein-Verbindlichkeiten (Gegenkonto)
+
         // Privacy / GDPR: the buyer IP is stored for abuse auditing, then nulled
         // by jumplink:vouchers-prune-ips on orders older than this many days
         // (0 disables pruning). The fiscal fields (amount, payment id) are kept.
         $this->ip_retention_days = 90;
+
+        // GDPR: anonymise the buyer's personal data on orders older than this many
+        // days (0 = disabled). Default off — the fiscal retention obligation
+        // usually means keeping the record ~10 years, so the operator/DPO sets
+        // this deliberately. On-demand erasure runs from the backend regardless.
+        $this->personal_data_retention_days = 0;
 
         // Till: the CMS page hosting the VoucherPos component (the QR scan
         // redirects here so a phone-camera scan lands on the staff till page).

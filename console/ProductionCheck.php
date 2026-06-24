@@ -3,6 +3,7 @@
 use Illuminate\Console\Command;
 use JumpLink\Vouchers\Classes\ImageService;
 use JumpLink\Vouchers\Classes\PaymentService;
+use JumpLink\Vouchers\Classes\ReceiptService;
 use JumpLink\Vouchers\Models\Settings;
 
 /**
@@ -61,6 +62,17 @@ class ProductionCheck extends Command
             } else {
                 $this->info('[ OK ] Bank transfer details are set.');
             }
+        }
+
+        // Purchase receipts need a seller identity. Not a hard blocker (a site
+        // may run without receipts), but warn loudly if they are switched on yet
+        // cannot be issued.
+        $wantsReceipt = (bool) Settings::get('send_buyer_receipt', true)
+            || trim((string) Settings::get('accounting_copy_email', '')) !== '';
+        if (ReceiptService::isConfigured()) {
+            $this->info('[ OK ] Seller identity for purchase receipts is set.');
+        } elseif ($wantsReceipt) {
+            $this->warn('[WARN] Purchase receipts are enabled but the seller identity is incomplete — set the legal name (+ address, tax number) in Settings → Receipt, otherwise no receipt is issued.');
         }
 
         if ((bool) config('app.debug')) {

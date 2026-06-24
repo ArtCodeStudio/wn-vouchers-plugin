@@ -33,7 +33,17 @@ class VoucherOrder extends Model
         'accounting_ref', 'ip', 'shipped_at', 'shipped_by',
     ];
 
-    protected $dates = ['paid_at', 'accounting_synced_at', 'shipped_at'];
+    protected $dates = ['paid_at', 'accounting_synced_at', 'shipped_at', 'anonymized_at'];
+
+    /**
+     * Buyer-controlled personal data, nulled by anonymize(). The fiscal fields
+     * (amounts, vat, provider, payment_id, paid_at, status, accounting_ref) are
+     * deliberately NOT listed — they must survive for the statutory retention.
+     */
+    const PERSONAL_FIELDS = [
+        'firstname', 'lastname', 'email', 'phone',
+        'street', 'zip', 'city', 'recipient_name', 'message', 'ip',
+    ];
 
     /**
      * Mint the per-order access token. The return page is reached with an
@@ -194,6 +204,29 @@ class VoucherOrder extends Model
             ->count();
     }
 
+    /**
+     * Counter for the backend menu: bank-transfer (Vorkasse) orders still
+     * awaiting their incoming payment — the staff action is to watch for the
+     * transfer and confirm it ("Zahlung bestätigt").
+     */
+    public static function awaitingPaymentCount()
+    {
+        return (int) self::where('provider', 'banktransfer')
+            ->where('status', 'pending')
+            ->count();
+    }
+
+    /**
+     * Total orders needing staff action, for the Orders menu badge: bank
+     * transfers awaiting payment + physical cards awaiting posting. The two sets
+     * are disjoint — an order awaiting payment is still `pending`, while one
+     * awaiting shipping is already `paid`/`issued`.
+     */
+    public static function openActionCount()
+    {
+        return self::awaitingPaymentCount() + self::openFulfillmentCount();
+    }
+
     /** A physical order that is paid/issued and not yet posted. */
     public function needsShipping(): bool
     {
@@ -229,9 +262,44 @@ class VoucherOrder extends Model
         return $this->isBankTransfer() && $this->status !== 'issued';
     }
 
+    /**
+     * Stable per-order document number, used both as the bank-transfer reference
+     * ("Verwendungszweck") and as the purchase-receipt (Beleg) number.
+     */
+    public function getReceiptNumberAttribute(): string
+    {
+        return 'GS-' . $this->id;
+    }
+
     /** Human payment reference for the bank transfer ("Verwendungszweck"). */
     public function getTransferReferenceAttribute(): string
     {
-        return 'GS-' . $this->id;
+        return $this->receipt_number;
+    }
+
+    /**
+     * GDPR erasure (Art. 17 DSGVO): null the buyer's personal data while keeping
+     * the fiscal record (amounts, vat, payment id, paid date, status) for the
+     * statutory retention period (§ 147 AO / § 257 HGB; Art. 17 Abs. 3 lit. b
+     * DSGVO). Idempotent — returns false if already anonymised. Uses forceSave()
+     * so the "email/firstname required" rules cannot block the erasure.
+     */
+    public function anonymize(): bool
+    {
+        if ($this->anonymized_at) {
+            return false;
+        }
+        foreach (self::PERSONAL_FIELDS as $field) {
+            $this->$field = null;
+        }
+        $this->anonymized_at = Carbon::now();
+        $this->forceSave();
+        return true;
+    }
+
+    /** Has this order's personal data already been anonymised? */
+    public function isAnonymized(): bool
+    {
+        return (bool) $this->anonymized_at;
     }
 }

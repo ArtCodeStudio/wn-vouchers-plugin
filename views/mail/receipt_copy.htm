@@ -1,0 +1,4 @@
+subject = "{{ 'jumplink.vouchers::lang.mail.receipt_copy_subject'|trans({ number: number, brand: brand_name ?: 'jumplink.vouchers::lang.mail.brand_fallback'|trans }) }}"
+==
+
+{{ 'jumplink.vouchers::lang.mail.receipt_copy_intro'|trans({ number: number, amount: amount }) }}

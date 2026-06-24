@@ -157,4 +157,47 @@ class BankTransferTest extends PluginTestCase
         $this->assertTrue($order->isBankTransfer());
         $this->assertTrue($order->awaitingTransfer());
     }
+
+    //
+    // Backend menu counter: bank transfers awaiting payment
+    //
+    public function testAwaitingPaymentCounterCountsPendingTransfersAndClearsOnIssue()
+    {
+        $this->assertSame(0, VoucherOrder::awaitingPaymentCount());
+
+        $order = VoucherOrder::create([
+            'delivery_type'    => 'digital',
+            'face_value_cents' => 5000,
+            'total_cents'      => 5000,
+            'status'           => 'pending',
+            'firstname'        => 'Test',
+            'email'            => 'bt-count@example.test',
+            'provider'         => 'banktransfer',
+        ]);
+
+        // A pending transfer is an open task...
+        $this->assertSame(1, VoucherOrder::awaitingPaymentCount());
+        $this->assertSame(1, VoucherOrder::openActionCount());
+
+        // ...and drops out once the payment is confirmed (voucher issued).
+        IssuanceService::issueForOrder($order);
+        $this->assertSame(0, VoucherOrder::awaitingPaymentCount());
+        $this->assertSame(0, VoucherOrder::openActionCount());
+    }
+
+    public function testMolliePendingOrderIsNotAnAwaitingPaymentTask()
+    {
+        // An unpaid Mollie order is not a manual task — the webhook handles it.
+        VoucherOrder::create([
+            'delivery_type'    => 'digital',
+            'face_value_cents' => 5000,
+            'total_cents'      => 5000,
+            'status'           => 'pending',
+            'firstname'        => 'Test',
+            'email'            => 'mollie-pending@example.test',
+            'provider'         => 'mollie',
+        ]);
+
+        $this->assertSame(0, VoucherOrder::awaitingPaymentCount());
+    }
 }

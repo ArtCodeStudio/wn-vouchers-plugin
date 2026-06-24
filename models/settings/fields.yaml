@@ -69,17 +69,90 @@ tabs:
                 field: vat_mode
                 condition: value[single_purpose]
             comment: jumplink.vouchers::lang.setting.vat_rate_comment
-        vat_rates:
-            label: jumplink.vouchers::lang.setting.vat_rates
-            tab: jumplink.vouchers::lang.setting_tab.vat
-            type: repeater
+
+        #
+        # Tab: Receipt (Beleg)
+        #
+        seller_legal_name:
+            label: jumplink.vouchers::lang.setting.seller_legal_name
+            tab: jumplink.vouchers::lang.setting_tab.receipt
+            type: text
+            span: left
+            comment: jumplink.vouchers::lang.setting.seller_legal_name_comment
+        seller_tax_number:
+            label: jumplink.vouchers::lang.setting.seller_tax_number
+            tab: jumplink.vouchers::lang.setting_tab.receipt
+            type: text
+            span: right
+            comment: jumplink.vouchers::lang.setting.seller_tax_number_comment
+        seller_address:
+            label: jumplink.vouchers::lang.setting.seller_address
+            tab: jumplink.vouchers::lang.setting_tab.receipt
+            type: textarea
+            size: small
             span: full
-            prompt: jumplink.vouchers::lang.setting.vat_rates_prompt
-            form:
-                fields:
-                    rate:
-                        label: jumplink.vouchers::lang.setting.rate
-                        type: number
+            comment: jumplink.vouchers::lang.setting.seller_address_comment
+        receipt_section:
+            type: section
+            label: jumplink.vouchers::lang.setting.receipt_section
+            comment: jumplink.vouchers::lang.setting.receipt_section_comment
+            tab: jumplink.vouchers::lang.setting_tab.receipt
+        send_buyer_receipt:
+            label: jumplink.vouchers::lang.setting.send_buyer_receipt
+            comment: jumplink.vouchers::lang.setting.send_buyer_receipt_comment
+            tab: jumplink.vouchers::lang.setting_tab.receipt
+            type: switch
+            default: true
+            span: left
+        accounting_copy_email:
+            label: jumplink.vouchers::lang.setting.accounting_copy_email
+            tab: jumplink.vouchers::lang.setting_tab.receipt
+            type: text
+            span: right
+            comment: jumplink.vouchers::lang.setting.accounting_copy_email_comment
+        receipt_note:
+            label: jumplink.vouchers::lang.setting.receipt_note
+            tab: jumplink.vouchers::lang.setting_tab.receipt
+            type: textarea
+            size: small
+            span: full
+            comment: jumplink.vouchers::lang.setting.receipt_note_comment
+        datev_section:
+            type: section
+            label: jumplink.vouchers::lang.setting.datev_section
+            comment: jumplink.vouchers::lang.setting.datev_section_comment
+            tab: jumplink.vouchers::lang.setting_tab.receipt
+        datev_consultant_number:
+            label: jumplink.vouchers::lang.setting.datev_consultant_number
+            tab: jumplink.vouchers::lang.setting_tab.receipt
+            type: text
+            span: left
+            comment: jumplink.vouchers::lang.setting.datev_consultant_number_comment
+        datev_client_number:
+            label: jumplink.vouchers::lang.setting.datev_client_number
+            tab: jumplink.vouchers::lang.setting_tab.receipt
+            type: text
+            span: right
+            comment: jumplink.vouchers::lang.setting.datev_client_number_comment
+        datev_money_account:
+            label: jumplink.vouchers::lang.setting.datev_money_account
+            tab: jumplink.vouchers::lang.setting_tab.receipt
+            type: text
+            span: left
+            comment: jumplink.vouchers::lang.setting.datev_money_account_comment
+        datev_voucher_liability_account:
+            label: jumplink.vouchers::lang.setting.datev_voucher_liability_account
+            tab: jumplink.vouchers::lang.setting_tab.receipt
+            type: text
+            span: right
+            comment: jumplink.vouchers::lang.setting.datev_voucher_liability_account_comment
+        datev_account_length:
+            label: jumplink.vouchers::lang.setting.datev_account_length
+            tab: jumplink.vouchers::lang.setting_tab.receipt
+            type: number
+            span: left
+            default: 4
+            comment: jumplink.vouchers::lang.setting.datev_account_length_comment
 
         #
         # Tab: Payment
@@ -91,16 +164,6 @@ tabs:
             span: left
             default: both
             comment: jumplink.vouchers::lang.setting.payment_mode_comment
-        mollie_mode:
-            label: jumplink.vouchers::lang.setting.mollie_mode
-            tab: jumplink.vouchers::lang.setting_tab.payment
-            type: dropdown
-            span: right
-            default: test
-            options:
-                test: Test
-                live: Live
-            comment: jumplink.vouchers::lang.setting.mollie_mode_comment
         bank_account_holder:
             label: jumplink.vouchers::lang.setting.bank_account_holder
             tab: jumplink.vouchers::lang.setting_tab.payment
@@ -143,6 +206,13 @@ tabs:
             span: left
             default: 90
             comment: jumplink.vouchers::lang.setting.ip_retention_days_comment
+        personal_data_retention_days:
+            label: jumplink.vouchers::lang.setting.personal_data_retention_days
+            tab: jumplink.vouchers::lang.setting_tab.payment
+            type: number
+            span: right
+            default: 0
+            comment: jumplink.vouchers::lang.setting.personal_data_retention_days_comment
 
         #
         # Tab: Notification

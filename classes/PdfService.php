@@ -46,7 +46,7 @@ class PdfService
     }
 
     /** Read an attached image (logo/background) as a base64 data URI, or null. */
-    protected static function imageDataUri($file): ?string
+    public static function imageDataUri($file): ?string
     {
         if (!$file) {
             return null;

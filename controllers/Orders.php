@@ -1,12 +1,15 @@
 <?php namespace JumpLink\Vouchers\Controllers;
 
 use Flash;
+use Response;
 use BackendAuth;
 use BackendMenu;
+use Carbon\Carbon;
 use Backend\Classes\Controller;
 use JumpLink\Vouchers\Models\VoucherOrder;
 use JumpLink\Vouchers\Classes\NotificationService;
 use JumpLink\Vouchers\Classes\IssuanceService;
+use JumpLink\Vouchers\Classes\DatevExportService;
 
 /**
  * Orders Backend Controller – purchase/payment records and physical fulfillment.
@@ -76,5 +79,47 @@ class Orders extends Controller
         Flash::success(trans('jumplink.vouchers::lang.flash.marked_paid'));
 
         return ['#voucherPaymentPanel' => $this->makePartial('payment', ['formModel' => $order->fresh()])];
+    }
+
+    /**
+     * Stream a DATEV-Format booking batch (EXTF) of the year's voucher sales as a
+     * CSV download. Year defaults to the current one; ?year=YYYY selects another.
+     * Operator-agnostic — the account numbers come from Settings → Beleg → DATEV.
+     */
+    public function datev()
+    {
+        $year = (int) (input('year') ?: Carbon::now()->format('Y'));
+        $from = Carbon::create($year, 1, 1)->startOfDay();
+        $to   = Carbon::create($year, 12, 31)->endOfDay();
+
+        $csv = DatevExportService::export(DatevExportService::bookableOrders($from, $to), $from, $to);
+
+        return Response::make($csv, 200, [
+            'Content-Type'        => 'text/csv; charset=Windows-1252',
+            'Content-Disposition' => 'attachment; filename="datev-gutscheine-' . $year . '.csv"',
+        ]);
+    }
+
+    /**
+     * GDPR bulk erasure from the orders list: anonymise the checked orders'
+     * personal data, keeping the fiscal record. Idempotent per order.
+     */
+    public function index_onAnonymizeSelected()
+    {
+        $ids = array_filter((array) post('checked'));
+        if (empty($ids)) {
+            Flash::error(trans('jumplink.vouchers::lang.orders.anonymize_none'));
+            return;
+        }
+
+        $count = 0;
+        foreach (VoucherOrder::whereIn('id', $ids)->get() as $order) {
+            if ($order->anonymize()) {
+                $count++;
+            }
+        }
+
+        Flash::success(trans('jumplink.vouchers::lang.flash.anonymized', ['count' => $count]));
+        return $this->listRefresh();
     }
 }

@@ -91,9 +91,12 @@ class PosService
         return ['success' => true, 'voucher' => $voucher];
     }
 
-    /** "12,50" / "12.50" euro string -> integer cents. */
+    /** Accepts an int (already cents) or a "12,50"/"12.50" euro string -> integer cents. */
     public static function toCents($value): int
     {
+        if (is_int($value)) {
+            return $value;
+        }
         $normalized = str_replace(',', '.', trim((string) $value));
         return (int) round(((float) $normalized) * 100);
     }

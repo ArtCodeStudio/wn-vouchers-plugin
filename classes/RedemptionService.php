@@ -60,7 +60,6 @@ class RedemptionService
             $redemption->amount_cents         = $amountCents;
             $redemption->balance_after_cents  = $newBalance;
             $redemption->kind                 = $opts['kind'] ?? 'redeem';
-            $redemption->vat_breakdown        = $opts['vat_breakdown'] ?? null;
             $redemption->note                 = $opts['note'] ?? null;
             $redemption->redeemed_by          = $opts['redeemed_by'] ?? null;
             $redemption->source               = $opts['source'] ?? 'backend';

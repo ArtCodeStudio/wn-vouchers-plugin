@@ -8,6 +8,7 @@ use Backend\Classes\Controller;
 use JumpLink\Vouchers\Models\Voucher;
 use JumpLink\Vouchers\Models\VoucherOrder;
 use JumpLink\Vouchers\Classes\RedemptionService;
+use JumpLink\Vouchers\Classes\PosService;
 use JumpLink\Vouchers\Classes\ImageService;
 use JumpLink\Vouchers\Classes\PdfService;
 
@@ -47,7 +48,7 @@ class Vouchers extends Controller
         }
 
         $id = (int) post('voucher_id');
-        $amountCents = self::toCents(post('amount'));
+        $amountCents = PosService::toCents(post('amount'));
         if ($amountCents <= 0) {
             throw new \ApplicationException(trans('jumplink.vouchers::lang.error.invalid_amount'));
         }
@@ -60,7 +61,7 @@ class Vouchers extends Controller
         ]);
 
         if (empty($result['success'])) {
-            throw new \ApplicationException(self::redeemError($result['error'] ?? 'error', $result['balance_cents'] ?? null));
+            throw new \ApplicationException(PosService::redeemError($result['error'] ?? 'error', $result['balance_cents'] ?? null));
         }
 
         Flash::success(trans('jumplink.vouchers::lang.flash.redeem_booked', ['balance' => VoucherOrder::formatEuro($result['balance_cents'])]));
@@ -97,26 +98,4 @@ class Vouchers extends Controller
         ]);
     }
 
-    /** "12,50" / "12.50" euro string -> integer cents. */
-    protected static function toCents($value): int
-    {
-        $normalized = str_replace(',', '.', trim((string) $value));
-        return (int) round(((float) $normalized) * 100);
-    }
-
-    protected static function redeemError(string $code, $balanceCents): string
-    {
-        switch ($code) {
-            case 'insufficient_balance':
-                return trans('jumplink.vouchers::lang.error.insufficient_balance', ['balance' => VoucherOrder::formatEuro((int) $balanceCents)]);
-            case 'voucher_void':
-                return trans('jumplink.vouchers::lang.error.voucher_void');
-            case 'voucher_expired':
-                return trans('jumplink.vouchers::lang.error.voucher_expired');
-            case 'voucher_not_found':
-                return trans('jumplink.vouchers::lang.error.voucher_not_found_short');
-            default:
-                return trans('jumplink.vouchers::lang.error.redeem_failed');
-        }
-    }
 }

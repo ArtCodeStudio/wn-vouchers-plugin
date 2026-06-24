@@ -52,12 +52,7 @@ class VoucherPos extends ComponentBase
     /** Quick-pick amounts in cents for the sell form, e.g. [2500, 5000, 10000]. */
     public function denominations(): array
     {
-        return collect(Settings::get('denominations', []))
-            ->pluck('value_cents')
-            ->filter()
-            ->map(fn ($c) => (int) $c)
-            ->values()
-            ->all();
+        return Settings::denominationCents();
     }
 
     /** Distinct recipient names for the till's recipient autocomplete (staff-only). */

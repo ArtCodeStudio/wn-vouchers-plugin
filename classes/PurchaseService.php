@@ -37,7 +37,7 @@ class PurchaseService
             return ['success' => false, 'status' => 422, 'errors' => $validator->errors()->toArray()];
         }
 
-        $faceCents = self::toCents($input['face_value'] ?? ($input['face_value_cents'] ?? 0));
+        $faceCents = PosService::toCents($input['face_value'] ?? ($input['face_value_cents'] ?? 0));
         $min = (int) Settings::get('min_value_cents', 1000);
         $max = (int) Settings::get('max_value_cents', 50000);
         if ($faceCents < $min || $faceCents > $max) {
@@ -95,15 +95,5 @@ class PurchaseService
             $names[$field] = trans("jumplink.vouchers::lang.field.$field");
         }
         return $names;
-    }
-
-    /** Accepts an int (already cents) or a "12,50"/"12.50" euro string. */
-    protected static function toCents($value): int
-    {
-        if (is_int($value)) {
-            return $value;
-        }
-        $normalized = str_replace(',', '.', trim((string) $value));
-        return (int) round(((float) $normalized) * 100);
     }
 }

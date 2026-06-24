@@ -55,7 +55,7 @@ class Plugin extends PluginBase
                         'icon'         => 'icon-shopping-cart',
                         'url'          => Backend::url('jumplink/vouchers/orders'),
                         'permissions'  => ['jumplink.vouchers.manage_orders'],
-                        'counter'      => [VoucherOrder::class, 'openFulfillmentCount'],
+                        'counter'      => [VoucherOrder::class, 'openActionCount'],
                         'counterLabel' => 'jumplink.vouchers::lang.orders.counter_label',
                     ],
                     'redemptions' => [
@@ -112,6 +112,7 @@ class Plugin extends PluginBase
             'jumplink.vouchers::mail.bank_transfer_instructions',
             'jumplink.vouchers::mail.bank_transfer_notification',
             'jumplink.vouchers::mail.fulfillment_notification',
+            'jumplink.vouchers::mail.receipt_copy',
         ];
     }
 
@@ -132,6 +133,14 @@ class Plugin extends PluginBase
         $this->registerConsoleCommand(
             'jumplink.vouchers.production_check',
             \JumpLink\Vouchers\Console\ProductionCheck::class
+        );
+        $this->registerConsoleCommand(
+            'jumplink.vouchers.datev_export',
+            \JumpLink\Vouchers\Console\DatevExport::class
+        );
+        $this->registerConsoleCommand(
+            'jumplink.vouchers.anonymize_orders',
+            \JumpLink\Vouchers\Console\AnonymizeOrders::class
         );
 
         // Winter does not run Laravel package auto-discovery, so the dompdf
@@ -155,10 +164,12 @@ class Plugin extends PluginBase
         }
     }
 
-    /** Daily GDPR housekeeping: prune buyer IPs past the retention window. */
+    /** Daily GDPR housekeeping: prune buyer IPs + anonymise old orders (each
+     * self-disables when its retention window is 0). */
     public function registerSchedule($schedule)
     {
         $schedule->command('jumplink:vouchers-prune-ips')->daily();
+        $schedule->command('jumplink:vouchers-anonymize-orders')->daily();
     }
 
     public function boot()
