@@ -9,6 +9,7 @@
         @media (prefers-color-scheme: dark) {
             html, body { background: #0f172a !important; }
         }
+        html, body { overflow-x: hidden; } /* safety net against any sideways scroll */
         .voucher-pos {
             /* Light theme (default). */
             --pos-fg: #1a3a5a; --pos-text: #1f2937; --pos-muted: #64748b;
@@ -17,7 +18,7 @@
             --pos-error-bg: #fef2f2; --pos-error-fg: #b91c1c; --pos-warn-bg: #fffbeb;
             --pos-ok-bg: #ecfdf5; --pos-panel-bg: #f8fafc;
             color-scheme: light dark;
-            max-width: 640px; margin: 0 auto; font-size: 18px; line-height: 1.4; color: var(--pos-text);
+            max-width: 640px; width: 100%; margin: 0 auto; padding: 0 16px; box-sizing: border-box; font-size: 18px; line-height: 1.4; color: var(--pos-text);
         }
         @media (prefers-color-scheme: dark) {
             .voucher-pos {
@@ -28,7 +29,7 @@
                 --pos-ok-bg: #10241a; --pos-panel-bg: #1e293b;
             }
         }
-        .voucher-pos input, .voucher-pos select, .voucher-pos button { font-size: 18px; padding: 12px 14px; border-radius: 10px; border: 1px solid var(--pos-border); box-sizing: border-box; background: var(--pos-input-bg); color: var(--pos-text); }
+        .voucher-pos input, .voucher-pos select, .voucher-pos button { font-size: 18px; padding: 12px 14px; border-radius: 10px; border: 1px solid var(--pos-border); box-sizing: border-box; background: var(--pos-input-bg); color: var(--pos-text); max-width: 100%; min-width: 0; }
         .voucher-pos button { background: var(--pos-accent); color: var(--pos-accent-text); border: 0; cursor: pointer; font-weight: 600; }
         .voucher-pos button#posScanBtn { background: var(--pos-secondary-bg); color: var(--pos-fg); }
 
@@ -54,8 +55,8 @@
         .voucher-pos .pos-denied { background: var(--pos-warn-bg); padding: 22px; border-radius: 10px; }
 
         /* Sell form — labelled fields, quick amounts, segmented toggles. */
-        .voucher-pos .pos-sell { display: grid; gap: 16px; }
-        .voucher-pos .pos-field { display: grid; gap: 6px; }
+        .voucher-pos .pos-sell { display: grid; gap: 16px; grid-template-columns: minmax(0, 1fr); }
+        .voucher-pos .pos-field { display: grid; gap: 6px; grid-template-columns: minmax(0, 1fr); min-width: 0; }
         .voucher-pos .pos-field > label { font-weight: 600; font-size: 15px; color: var(--pos-muted); }
         .voucher-pos .pos-amounts { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
         .voucher-pos .pos-amount-btn { background: var(--pos-secondary-bg); color: var(--pos-fg); font-weight: 700; }
@@ -67,6 +68,14 @@
         .voucher-pos #posSold:not(:empty) { margin-top: 16px; }
         .voucher-pos .pos-sold { background: var(--pos-ok-bg); padding: 14px; border-radius: 10px; }
         .voucher-pos #posReader { margin: 14px auto; }
+
+        /* Mobile: panels go edge-to-edge (full width), only vertical gaps between
+           them; desktop keeps the centered, rounded cards. */
+        @media (max-width: 640px) {
+            .voucher-pos { padding: 0; }
+            .voucher-pos .pos-toolbar { padding: 12px 16px 0; }
+            .voucher-pos .pos-card { border-radius: 0; border-left: 0; border-right: 0; }
+        }
     </style>
     {% if not __SELF__.authorized %}
         <div class="pos-denied">
@@ -163,6 +172,21 @@
             var reader = root.querySelector('#posReader');
             var scanner = null;
 
+            // A scanned QR carries the scan URL (…/scan?t=<token>). Search by the
+            // token, not the raw URL; and once a voucher is found, show its readable
+            // code in the field instead of the URL/token.
+            function scanToQuery(v) {
+                try { var u = new URL(v); return u.searchParams.get('t') || u.searchParams.get('code') || v; }
+                catch (e) { return v; }
+            }
+            var result = root.querySelector('#posResult');
+            if (result && window.MutationObserver) {
+                new MutationObserver(function () {
+                    var codeEl = result.querySelector('.pos-code');
+                    if (codeEl) { input.value = codeEl.textContent.trim(); }
+                }).observe(result, { childList: true, subtree: true });
+            }
+
             function lookup() {
                 var submit = root.querySelector('.pos-search [type="submit"]');
                 if (submit) submit.click();
@@ -177,7 +201,7 @@
                 reader.style.display = 'block';
                 scanner = new Html5QrcodeScanner('posReader', { fps: 10, qrbox: 240 }, false);
                 scanner.render(function (decoded) {
-                    input.value = decoded;
+                    input.value = scanToQuery(decoded);
                     stopScan();
                     lookup();
                 });
