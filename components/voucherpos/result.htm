@@ -18,5 +18,15 @@
         {% else %}
             <p class="pos-note">{{ 'jumplink.vouchers::lang.pos.no_redeem'|trans({ status: voucher.status_label }) }}</p>
         {% endif %}
+
+        {# Physical card: mark it as posted right from the till (same as the backend). #}
+        {% if voucher.order and voucher.order.needsShipping %}
+            <form class="pos-ship" data-request="{{ __SELF__ }}::onMarkSent" data-request-flash>
+                <input type="hidden" name="voucher_id" value="{{ voucher.id }}">
+                <button type="submit">{{ 'jumplink.vouchers::lang.pos.mark_sent'|trans }}</button>
+            </form>
+        {% elseif voucher.order and voucher.order.delivery_type == 'physical' and voucher.order.shipped_at %}
+            <p class="pos-note pos-shipped">{{ 'jumplink.vouchers::lang.pos.sent_on'|trans({ date: voucher.order.shipped_at|date('d.m.Y') }) }}</p>
+        {% endif %}
     </div>
 {% endif %}

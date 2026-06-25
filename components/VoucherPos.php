@@ -110,6 +110,33 @@ class VoucherPos extends ComponentBase
         return ['#posResult' => $this->renderResult($voucher->fresh())];
     }
 
+    /**
+     * Mark the looked-up voucher's order as posted (physical card shipped) — the
+     * same action as the backend's "mark shipped", available at the till. Stamps
+     * the shipping date + clerk, emails the buyer, and re-renders the result.
+     */
+    public function onMarkSent()
+    {
+        if ($unauth = $this->denyUnlessAuthorized()) {
+            return $unauth;
+        }
+
+        $voucher = Voucher::find((int) post('voucher_id'));
+        if (!$voucher || !$voucher->order) {
+            throw new \ApplicationException(trans('jumplink.vouchers::lang.error.voucher_not_found_short'));
+        }
+
+        $user = BackendAuth::getUser();
+        if (!$voucher->order->markShipped($user ? $user->id : null)) {
+            throw new \ApplicationException(trans('jumplink.vouchers::lang.error.cannot_mark_shipped'));
+        }
+
+        NotificationService::sendShippingMail($voucher->order);
+        Flash::success(trans('jumplink.vouchers::lang.flash.marked_shipped'));
+
+        return ['#posResult' => $this->renderResult($voucher->fresh())];
+    }
+
     public function onSell()
     {
         if ($unauth = $this->denyUnlessAuthorized()) {

@@ -501,6 +501,8 @@ return [
         'valid_until_short' => 'gültig bis :date',
         'redeem_amount_ph'  => 'Betrag €',
         'no_redeem'         => 'Keine Einlösung möglich (Status: :status).',
+        'mark_sent'         => 'Als versendet markieren',
+        'sent_on'           => 'Versendet am :date',
         'sold_created'      => 'Neuer Gutschein :code über :value angelegt.',
         'sold_write_number' => 'Bitte die Nummer :number auf die Karte schreiben.',
         'sold_emailed'      => 'Der Gutschein wurde per E-Mail versendet.',

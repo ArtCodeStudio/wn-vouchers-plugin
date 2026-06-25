@@ -1,24 +1,23 @@
 <div class="voucher-pos">
     <style>
-        /* The till is a full-page staff tool, so opt the page into OS dark mode
-           (the page background follows the OS theme, not just the form fields). */
+        /* ── Page: full-screen staff tool ─────────────────────────────────
+           Opt the page into OS dark mode; in dark mode force a dark body (the
+           site's light theme otherwise shows white behind the panels) and never
+           scroll sideways on a phone. Scoped here — this partial only renders on
+           the till page. */
         :root { color-scheme: light dark; }
-        /* In dark mode the page background must be dark too — the site's (light)
-           theme otherwise forces a white body behind the dark panels. Light mode
-           keeps the theme's default. Scoped to this page (partial only renders here). */
-        @media (prefers-color-scheme: dark) {
-            html, body { background: #0f172a !important; }
-        }
-        html, body { overflow-x: hidden; } /* safety net against any sideways scroll */
+        html, body { overflow-x: hidden; }
+        @media (prefers-color-scheme: dark) { html, body { background: #0f172a !important; } }
+
+        /* ── Design tokens (light default; dark via prefers-color-scheme) ─── */
         .voucher-pos {
-            /* Light theme (default). */
             --pos-fg: #1a3a5a; --pos-text: #1f2937; --pos-muted: #64748b;
             --pos-border: #cbd5e1; --pos-card-bg: transparent; --pos-input-bg: #ffffff;
             --pos-accent: #1a3a5a; --pos-accent-text: #ffffff; --pos-secondary-bg: #e2e8f0;
             --pos-error-bg: #fef2f2; --pos-error-fg: #b91c1c; --pos-warn-bg: #fffbeb;
             --pos-ok-bg: #ecfdf5; --pos-panel-bg: #f8fafc;
-            color-scheme: light dark;
-            max-width: 640px; width: 100%; margin: 0 auto; padding: 0 16px; box-sizing: border-box; font-size: 18px; line-height: 1.4; color: var(--pos-text);
+            max-width: 640px; width: 100%; margin: 0 auto; padding: 0 16px;
+            box-sizing: border-box; font-size: 18px; line-height: 1.4; color: var(--pos-text);
         }
         @media (prefers-color-scheme: dark) {
             .voucher-pos {
@@ -50,6 +49,8 @@
         .voucher-pos .pos-meta { color: var(--pos-muted); font-size: 15px; margin-bottom: 14px; }
         .voucher-pos .pos-redeem { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
         .voucher-pos .pos-redeem input { flex: 0 1 180px; text-align: right; }
+        .voucher-pos .pos-ship { margin-top: 14px; }
+        .voucher-pos .pos-shipped { margin-top: 14px; }
         .voucher-pos .pos-error { color: var(--pos-error-fg); background: var(--pos-error-bg); padding: 16px; border-radius: 10px; text-align: center; }
         .voucher-pos .pos-note { color: var(--pos-muted); font-weight: 400; }
         .voucher-pos .pos-denied { background: var(--pos-warn-bg); padding: 22px; border-radius: 10px; }
