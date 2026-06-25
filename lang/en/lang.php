@@ -79,6 +79,15 @@ return [
         'mollie'       => 'Pay online now (card, PayPal …)',
         'banktransfer' => 'Bank transfer (prepayment) – voucher after payment arrives',
     ],
+    // Short labels + hint lines for the segmented (pill) payment chooser.
+    'payment_method_short' => [
+        'mollie'       => 'Pay online',
+        'banktransfer' => 'Bank transfer',
+    ],
+    'payment_method_hint' => [
+        'mollie'       => 'Card, PayPal …',
+        'banktransfer' => 'Prepayment – voucher after payment arrives',
+    ],
     // Payment mode (setting)
     'payment_mode_option' => [
         'both'         => 'Both – customer chooses (online + bank transfer)',
@@ -446,6 +455,11 @@ return [
         'delivery_legend'     => 'Delivery',
         'delivery_digital'    => 'Digital (image with QR code, instantly by email)',
         'delivery_physical'   => 'Card by post (plus :fee shipping)',
+        // Short labels + hint lines for the segmented (pill) delivery chooser.
+        'delivery_digital_short'  => 'Digital',
+        'delivery_physical_short' => 'Card by post',
+        'delivery_digital_hint'   => 'Image with QR code, instantly by email',
+        'delivery_physical_hint'  => 'plus :fee shipping',
         'recipient_optional'  => 'Recipient (optional)',
         'message_optional'    => 'Personal message (optional)',
         'payment_legend'      => 'Payment method',

@@ -79,6 +79,15 @@ return [
         'mollie'       => 'Sofort online bezahlen (Karte, PayPal …)',
         'banktransfer' => 'Überweisung (Vorkasse) – Gutschein nach Zahlungseingang',
     ],
+    // Kurzlabels + Hinweiszeilen für die Segment-Auswahl (Pille) der Zahlart.
+    'payment_method_short' => [
+        'mollie'       => 'Online bezahlen',
+        'banktransfer' => 'Überweisung',
+    ],
+    'payment_method_hint' => [
+        'mollie'       => 'Karte, PayPal …',
+        'banktransfer' => 'Vorkasse – Gutschein nach Zahlungseingang',
+    ],
     // Zahlart-Modus (Einstellung)
     'payment_mode_option' => [
         'both'         => 'Beides – Kunde wählt (Online + Überweisung)',
@@ -446,6 +455,11 @@ return [
         'delivery_legend'     => 'Zustellung',
         'delivery_digital'    => 'Digital (Bild mit QR-Code, sofort per E-Mail)',
         'delivery_physical'   => 'Karte per Post (zzgl. :fee Versand)',
+        // Kurzlabels + Hinweiszeilen für die Segment-Auswahl (Pille) der Zustellung.
+        'delivery_digital_short'  => 'Digital',
+        'delivery_physical_short' => 'Karte per Post',
+        'delivery_digital_hint'   => 'Bild mit QR-Code, sofort per E-Mail',
+        'delivery_physical_hint'  => 'zzgl. :fee Versand',
         'recipient_optional'  => 'Empfänger (optional)',
         'message_optional'    => 'Persönliche Nachricht (optional)',
         'payment_legend'      => 'Zahlart',
