@@ -75,6 +75,14 @@ class ImageService
         $numSize = self::fitRotatedSize($voucher->code, $bold, 40, (int) round($H * 0.30));
         self::verticalText($img, $numSize, $bold, self::GOLD, (int) round($W * 0.752), (int) round($H * 0.313), $voucher->code);
 
+        // Recipient name (gift personalisation) in gold, centred in the dark sky
+        // below the QR — a nicer, personal touch for the gifted person.
+        $recipient = trim((string) $voucher->recipient_name);
+        if ($recipient !== '') {
+            $gold = imagecolorallocate($img, self::GOLD[0], self::GOLD[1], self::GOLD[2]);
+            self::centered($img, self::fitSize($recipient, $bold, 60, (int) ($W * 0.84)), $bold, $gold, (int) round($H * 0.51), $recipient, $W);
+        }
+
         // Value in the bottom strip: "<amount> EUR" gold + " <label>" white, centered.
         $amount = self::valueAmount($voucher) . ' EUR ';
         $label  = trans('jumplink.vouchers::lang.voucher_card.amount_label');
