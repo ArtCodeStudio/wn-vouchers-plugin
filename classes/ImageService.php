@@ -71,9 +71,11 @@ class ImageService
             imagedestroy($qr);
         }
 
-        // Voucher number: rotated 90° (reads bottom-to-top), gold, right of the QR.
-        $numSize = self::fitRotatedSize($voucher->code, $bold, 40, (int) round($H * 0.30));
-        self::verticalText($img, $numSize, $bold, self::GOLD, (int) round($W * 0.752), (int) round($H * 0.313), $voucher->code);
+        // Voucher number: rotated 90° (reads bottom-to-top), gold, vertically centred
+        // on the QR and horizontally centred in the gap between the QR and the
+        // address column (≈ 0.80 W).
+        $numSize = self::fitRotatedSize($voucher->code, $bold, 40, (int) round($H * 0.256));
+        self::verticalText($img, $numSize, $bold, self::GOLD, (int) round($W * 0.800), (int) round($H * 0.288), $voucher->code);
 
         // Recipient name (gift personalisation) in gold, centred in the dark sky
         // below the QR — a nicer, personal touch for the gifted person.
@@ -87,7 +89,8 @@ class ImageService
         $amount = self::valueAmount($voucher) . ' EUR ';
         $label  = trans('jumplink.vouchers::lang.voucher_card.amount_label');
         $vSize  = self::fitSize($amount . $label, $bold, 52, (int) ($W * 0.82));
-        self::twoColorCentered($img, $vSize, $bold, self::GOLD, [255, 255, 255], $amount, $label, $W, (int) round($H * 0.978));
+        // Baseline so the caps sit centred in the bottom bar (bar centre ≈ 0.973 H).
+        self::twoColorCentered($img, $vSize, $bold, self::GOLD, [255, 255, 255], $amount, $label, $W, (int) round($H * 0.973 + $vSize * 0.36));
 
         ob_start();
         imagepng($img);
