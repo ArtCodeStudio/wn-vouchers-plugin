@@ -290,10 +290,11 @@ return [
 
     // Text auf dem Gutschein (Bild + PDF)
     'voucher_card' => [
-        'value_over'  => 'Gutschein über :value',
-        'for'         => 'Für: :name',
-        'valid_until' => 'Gültig bis :date',
-        'till_hint'   => 'An der Kasse vorzeigen – ein Restguthaben bleibt erhalten.',
+        'value_over'   => 'Gutschein über :value',
+        'amount_label' => 'Gutschein',
+        'for'          => 'Für: :name',
+        'valid_until'  => 'Gültig bis :date',
+        'till_hint'    => 'An der Kasse vorzeigen – ein Restguthaben bleibt erhalten.',
     ],
 
     // Text auf dem Kaufbeleg (PDF)

@@ -290,10 +290,11 @@ return [
 
     // Text on the voucher (image + PDF)
     'voucher_card' => [
-        'value_over'  => 'Voucher worth :value',
-        'for'         => 'For: :name',
-        'valid_until' => 'Valid until :date',
-        'till_hint'   => 'Present at the till – any remaining balance is kept.',
+        'value_over'   => 'Voucher worth :value',
+        'amount_label' => 'Voucher',
+        'for'          => 'For: :name',
+        'valid_until'  => 'Valid until :date',
+        'till_hint'    => 'Present at the till – any remaining balance is kept.',
     ],
 
     // Text on the purchase receipt (PDF)
