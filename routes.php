@@ -10,7 +10,7 @@
  *   POST  api/jumplink/vouchers/webhook        Mollie callback (re-fetches the payment)
  *   POST  api/jumplink/vouchers/order-status   token-authorised return-page status poll
  *   GET   api/jumplink/vouchers/pdf/{voucher}   signed, time-limited PDF download
- *   GET   api/jumplink/vouchers/image/{voucher} signed, time-limited PNG download
+ *   GET   api/jumplink/vouchers/image/{voucher} signed, time-limited JPEG download
  *   GET   api/jumplink/vouchers/scan            QR target -> redirect to the till page
  *
  * The purchase itself is handled by the VoucherPurchase component's AJAX handler

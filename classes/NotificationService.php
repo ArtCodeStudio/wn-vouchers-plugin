@@ -263,12 +263,12 @@ class NotificationService
         }
     }
 
-    /** Attach the voucher to a mail — as a PNG image where possible, else PDF. */
+    /** Attach the voucher to a mail — as a JPEG image where possible, else PDF. */
     protected static function attachVoucher($message, Voucher $voucher): void
     {
         try {
             if (ImageService::isAvailable()) {
-                $message->attachData(ImageService::render($voucher), 'gutschein-' . $voucher->code . '.png', ['mime' => 'image/png']);
+                $message->attachData(ImageService::render($voucher), 'gutschein-' . $voucher->code . '.jpg', ['mime' => 'image/jpeg']);
             } else {
                 $message->attachData(PdfService::render($voucher), 'gutschein-' . $voucher->code . '.pdf', ['mime' => 'application/pdf']);
             }

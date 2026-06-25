@@ -25,14 +25,21 @@ class ImageService
     /** Brand gold used for the number + value amount in the overlay layout. */
     const GOLD = [197, 166, 119]; // #C5A677
 
-    /** Whether PNG rendering is possible on this host. */
+    /**
+     * JPEG quality for the rendered voucher. The voucher is photographic (a
+     * full-bleed background), so JPEG is ~10x smaller than PNG while staying
+     * universally viewable; 90 keeps the QR crisp enough to scan.
+     */
+    const JPEG_QUALITY = 90;
+
+    /** Whether JPEG rendering is possible on this host. */
     public static function isAvailable(): bool
     {
-        if (!function_exists('imagettftext') || !function_exists('imagepng')) {
+        if (!function_exists('imagettftext') || !function_exists('imagejpeg')) {
             return false;
         }
         $gd = gd_info();
-        return !empty($gd['FreeType Support']) && !empty($gd['PNG Support']);
+        return !empty($gd['FreeType Support']) && !empty($gd['JPEG Support']);
     }
 
     /** Render the voucher as PNG bytes. Overlay layout if a background is set, else classic. */
@@ -93,7 +100,7 @@ class ImageService
         self::twoColorCentered($img, $vSize, $bold, self::GOLD, [255, 255, 255], $amount, $label, $W, (int) round($H * 0.973 + $vSize * 0.36));
 
         ob_start();
-        imagepng($img);
+        imagejpeg($img, null, self::JPEG_QUALITY);
         $blob = ob_get_clean();
         imagedestroy($img);
         return $blob;
@@ -162,7 +169,7 @@ class ImageService
         }
 
         ob_start();
-        imagepng($img);
+        imagejpeg($img, null, self::JPEG_QUALITY);
         $blob = ob_get_clean();
         imagedestroy($img);
         return $blob;

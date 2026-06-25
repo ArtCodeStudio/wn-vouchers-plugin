@@ -82,8 +82,8 @@ class Api
         }
         if (ImageService::isAvailable()) {
             return Response::make(ImageService::render($voucher), 200, [
-                'Content-Type'        => 'image/png',
-                'Content-Disposition' => 'inline; filename="gutschein-' . $voucher->code . '.png"',
+                'Content-Type'        => 'image/jpeg',
+                'Content-Disposition' => 'inline; filename="gutschein-' . $voucher->code . '.jpg"',
             ]);
         }
         return Response::make(PdfService::render($voucher), 200, [

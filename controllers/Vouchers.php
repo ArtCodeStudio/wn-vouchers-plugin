@@ -87,8 +87,8 @@ class Vouchers extends Controller
 
         if (ImageService::isAvailable()) {
             return Response::make(ImageService::render($voucher), 200, [
-                'Content-Type'        => 'image/png',
-                'Content-Disposition' => $disposition . '; filename="gutschein-' . $voucher->code . '.png"',
+                'Content-Type'        => 'image/jpeg',
+                'Content-Disposition' => $disposition . '; filename="gutschein-' . $voucher->code . '.jpg"',
             ]);
         }
 
