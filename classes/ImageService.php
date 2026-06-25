@@ -79,10 +79,10 @@ class ImageService
         }
 
         // Voucher number: rotated 90° (reads bottom-to-top), gold, vertically centred
-        // on the QR and horizontally centred in the gap between the QR and the
-        // address column (≈ 0.80 W).
+        // on the QR and sitting just right of the QR's edge (QR ends at ≈ 0.675 W),
+        // so the number hugs the code rather than floating in the gap (≈ 0.72 W).
         $numSize = self::fitRotatedSize($voucher->code, $bold, 40, (int) round($H * 0.256));
-        self::verticalText($img, $numSize, $bold, self::GOLD, (int) round($W * 0.800), (int) round($H * 0.288), $voucher->code);
+        self::verticalText($img, $numSize, $bold, self::GOLD, (int) round($W * 0.720), (int) round($H * 0.288), $voucher->code);
 
         // Recipient name (gift personalisation) in gold, centred in the dark sky
         // below the QR — a nicer, personal touch for the gifted person.
