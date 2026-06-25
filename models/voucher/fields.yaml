@@ -23,6 +23,10 @@ tabs:
             tab: jumplink.vouchers::lang.tab.voucher
             type: number
             span: right
+            # Only required for manual numbers (server rule required_if). Set
+            # explicitly so the backend form doesn't derive an unconditional
+            # "required" from the rule string and mark it required for auto too.
+            required: false
             comment: jumplink.vouchers::lang.field.number_comment
         type:
             label: jumplink.vouchers::lang.field.type
