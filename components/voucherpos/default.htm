@@ -3,6 +3,12 @@
         /* The till is a full-page staff tool, so opt the page into OS dark mode
            (the page background follows the OS theme, not just the form fields). */
         :root { color-scheme: light dark; }
+        /* In dark mode the page background must be dark too — the site's (light)
+           theme otherwise forces a white body behind the dark panels. Light mode
+           keeps the theme's default. Scoped to this page (partial only renders here). */
+        @media (prefers-color-scheme: dark) {
+            html, body { background: #0f172a !important; }
+        }
         .voucher-pos {
             /* Light theme (default). */
             --pos-fg: #1a3a5a; --pos-text: #1f2937; --pos-muted: #64748b;
@@ -53,8 +59,8 @@
         .voucher-pos .pos-field > label { font-weight: 600; font-size: 15px; color: var(--pos-muted); }
         .voucher-pos .pos-amounts { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
         .voucher-pos .pos-amount-btn { background: var(--pos-secondary-bg); color: var(--pos-fg); font-weight: 700; }
-        .voucher-pos .pos-segment { display: flex; gap: 8px; }
-        .voucher-pos .pos-segment label { flex: 1; margin: 0; text-align: center; padding: 12px 10px; border: 1px solid var(--pos-border); border-radius: 10px; background: var(--pos-input-bg); color: var(--pos-text); cursor: pointer; font-weight: 600; }
+        .voucher-pos .pos-segment { display: flex; gap: 8px; flex-wrap: wrap; }
+        .voucher-pos .pos-segment label { flex: 1 1 120px; min-width: 0; margin: 0; text-align: center; padding: 12px 10px; border: 1px solid var(--pos-border); border-radius: 10px; background: var(--pos-input-bg); color: var(--pos-text); cursor: pointer; font-weight: 600; }
         .voucher-pos .pos-segment input { position: absolute; opacity: 0; width: 0; height: 0; }
         .voucher-pos .pos-segment label:has(input:checked) { background: var(--pos-accent); color: var(--pos-accent-text); border-color: var(--pos-accent); }
         .voucher-pos .pos-sell button[type="submit"] { width: 100%; padding: 16px; font-size: 20px; margin-top: 4px; }
