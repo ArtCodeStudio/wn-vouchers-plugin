@@ -69,20 +69,24 @@ class ImageService
         $dir  = self::fontDir();
         $bold = $dir . 'DejaVuSans-Bold.ttf';
 
-        // QR: square, upper-left block (matches the 1197x2048 design at ~0.44 W).
+        // QR: square, horizontally centred on the canvas. The number beside it is
+        // NOT counted here — the QR carries the visual weight, so centring it as a
+        // unit with the number would read as left-shifted. Size matches the
+        // 1197x2048 design at ~0.44 W.
+        $side = (int) round($W * 0.438);
+        $qx   = (int) round(($W - $side) / 2);
+        $qy   = (int) round($H * 0.160);
         if ($qr = self::voucherQr($voucher)) {
-            $side = (int) round($W * 0.438);
-            $qx   = (int) round($W * 0.237);
-            $qy   = (int) round($H * 0.160);
             imagecopyresampled($img, $qr, $qx, $qy, 0, 0, $side, $side, imagesx($qr), imagesy($qr));
             imagedestroy($qr);
         }
 
         // Voucher number: rotated 90° (reads bottom-to-top), gold, vertically centred
-        // on the QR and sitting just right of the QR's edge (QR ends at ≈ 0.675 W),
-        // so the number hugs the code rather than floating in the gap (≈ 0.72 W).
+        // on the QR and sitting a fixed gap right of the QR's right edge, so it keeps
+        // hugging the code while the QR itself stays centred.
         $numSize = self::fitRotatedSize($voucher->code, $bold, 40, (int) round($H * 0.256));
-        self::verticalText($img, $numSize, $bold, self::GOLD, (int) round($W * 0.720), (int) round($H * 0.288), $voucher->code);
+        $numX    = $qx + $side + (int) round($W * 0.045);
+        self::verticalText($img, $numSize, $bold, self::GOLD, $numX, (int) round($H * 0.288), $voucher->code);
 
         // Recipient name (gift personalisation) in gold, centred in the dark sky
         // below the QR — a nicer, personal touch for the gifted person.
