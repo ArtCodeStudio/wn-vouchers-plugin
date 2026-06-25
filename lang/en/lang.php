@@ -214,6 +214,8 @@ return [
         'denominations'          => 'Suggested amounts',
         'denominations_prompt'   => 'Add amount',
         'amount_cents'           => 'Amount (cents)',
+        'amount_label'           => 'Label (optional)',
+        'amount_label_comment'   => 'Optional name for this amount, e.g. "Breakfast buffet". Shown above the amount on the quick-pick button.',
         'vat_mode_comment'       => 'Multi-purpose = recommended for a restaurant with 7%/19% redemptions. Confirm with your tax advisor.',
         'vat_rate'               => 'VAT rate on sale (%)',
         'vat_rate_comment'       => 'Relevant only for single-purpose vouchers.',

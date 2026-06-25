@@ -45,10 +45,10 @@ class VoucherPurchase extends ComponentBase
         return (int) Settings::get('service_fee_cents', 250);
     }
 
-    /** Quick-pick amounts in cents, e.g. [2500, 5000, 10000]. */
+    /** Quick-pick amounts with optional labels, e.g. [['cents'=>2100,'label'=>'…'], …]. */
     public function denominations()
     {
-        return Settings::denominationCents();
+        return Settings::denominationList();
     }
 
     /** Payment methods offered on the form ('mollie' / 'banktransfer'), gated by config. */

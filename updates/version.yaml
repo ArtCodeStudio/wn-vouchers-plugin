@@ -61,3 +61,5 @@
     - "Buchhaltung: DATEV-Format-Export (Buchungsstapel EXTF v700) der Gutschein-Verkäufe — Button „DATEV-Export“ in den Bestellungen + Befehl jumplink:vouchers-datev-export. Betreiber-/banken-neutral: Beleg = Geldkonto (Soll) an Gutschein-Verbindlichkeit (Haben), ohne USt (Mehrzweckgutschein); Konten/Berater-/Mandantennummer in Einstellungen → Beleg → DATEV (mit dem Steuerberater abzustimmen)."
     - "DSGVO: Bestellungen anonymisieren (Art. 17) — Backend-Aktion „Anonymisieren“ (Mehrfachauswahl) entfernt Name/E-Mail/Adresse, behält fiskalische Felder; neuer Befehl jumplink:vouchers-anonymize-orders + Einstellung „Personendaten anonymisieren nach (Tagen)“ (täglich geplant, Default aus)."
     - add_anonymized_at_to_voucher_orders.php
+1.0.20:
+    - "Schnellauswahl: optionale Bezeichnung je vorgeschlagenem Betrag (z. B. ein fester Menüpreis) — erscheint über dem Betrag auf der Kauf- und Kassen-Schnellauswahl. Rein optional; Beträge ohne Bezeichnung bleiben unverändert."

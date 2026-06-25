@@ -8,9 +8,10 @@
         autocomplete="on">
 
         <div class="voucher-amounts">
-            {% for cents in __SELF__.denominations %}
-                <button type="button" class="voucher-quick" data-amount="{{ (cents / 100)|number_format(2, '.', '') }}">
-                    {{ (cents / 100)|number_format(2, ',', '.') }} €
+            {% for d in __SELF__.denominations %}
+                <button type="button" class="voucher-quick" data-amount="{{ (d.cents / 100)|number_format(2, '.', '') }}">
+                    {% if d.label %}<span class="voucher-quick-label">{{ d.label }}</span>{% endif %}
+                    {{ (d.cents / 100)|number_format(2, ',', '.') }} €
                 </button>
             {% endfor %}
         </div>

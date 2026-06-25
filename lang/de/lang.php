@@ -214,6 +214,8 @@ return [
         'denominations'          => 'Vorgeschlagene Beträge',
         'denominations_prompt'   => 'Betrag hinzufügen',
         'amount_cents'           => 'Betrag (Cent)',
+        'amount_label'           => 'Bezeichnung (optional)',
+        'amount_label_comment'   => 'Optionaler Name für diesen Betrag, z. B. „Frühstücksbuffet". Erscheint über dem Betrag auf der Schnellauswahl.',
         'vat_mode_comment'       => 'Mehrzweck = empfohlen für ein Restaurant mit 7%/19%-Einlösungen. Final mit dem Steuerberater abstimmen.',
         'vat_rate'               => 'MwSt-Satz Verkauf (%)',
         'vat_rate_comment'       => 'Nur für Einzweckgutschein relevant.',

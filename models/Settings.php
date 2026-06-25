@@ -56,10 +56,24 @@ class Settings extends Model
     /** Quick-pick amounts in cents, e.g. [2500, 5000, 10000] — for the buy form + till. */
     public static function denominationCents(): array
     {
+        return array_map(fn ($d) => $d['cents'], static::denominationList());
+    }
+
+    /**
+     * Quick-pick amounts with an optional label, e.g.
+     * [['cents' => 2100, 'label' => 'Breakfast buffet'], ['cents' => 5000, 'label' => null]].
+     * The label lets an operator name a preset amount (e.g. a fixed menu price) so
+     * the buy form / till button reads more than just a number. Rows without a
+     * positive amount are dropped; an empty label becomes null.
+     */
+    public static function denominationList(): array
+    {
         return collect(static::get('denominations', []))
-            ->pluck('value_cents')
-            ->filter()
-            ->map(fn ($c) => (int) $c)
+            ->map(fn ($row) => [
+                'cents' => (int) ($row['value_cents'] ?? 0),
+                'label' => trim((string) ($row['label'] ?? '')) ?: null,
+            ])
+            ->filter(fn ($row) => $row['cents'] > 0)
             ->values()
             ->all();
     }

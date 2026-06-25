@@ -49,10 +49,10 @@ class VoucherPos extends ComponentBase
         return (new Voucher)->getPaymentMethodOptions();
     }
 
-    /** Quick-pick amounts in cents for the sell form, e.g. [2500, 5000, 10000]. */
+    /** Quick-pick amounts with optional labels for the sell form. */
     public function denominations(): array
     {
-        return Settings::denominationCents();
+        return Settings::denominationList();
     }
 
     /** Distinct recipient names for the till's recipient autocomplete (staff-only). */

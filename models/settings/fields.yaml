@@ -47,6 +47,12 @@ tabs:
                     value_cents:
                         label: jumplink.vouchers::lang.setting.amount_cents
                         type: number
+                        span: left
+                    label:
+                        label: jumplink.vouchers::lang.setting.amount_label
+                        type: text
+                        span: right
+                        comment: jumplink.vouchers::lang.setting.amount_label_comment
 
         #
         # Tab: VAT

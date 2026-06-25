@@ -61,6 +61,8 @@
         .voucher-pos .pos-field > label { font-weight: 600; font-size: 15px; color: var(--pos-muted); }
         .voucher-pos .pos-amounts { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
         .voucher-pos .pos-amount-btn { background: var(--pos-secondary-bg); color: var(--pos-fg); font-weight: 700; }
+        .voucher-pos .pos-amount-btn--labeled { display: inline-flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.15; }
+        .voucher-pos .pos-amount-label { font-size: .72em; font-weight: 600; opacity: .85; }
         .voucher-pos .pos-segment { display: flex; gap: 8px; flex-wrap: wrap; }
         .voucher-pos .pos-segment label { flex: 1 1 120px; min-width: 0; margin: 0; text-align: center; padding: 12px 10px; border: 1px solid var(--pos-border); border-radius: 10px; background: var(--pos-input-bg); color: var(--pos-text); cursor: pointer; font-weight: 600; }
         .voucher-pos .pos-segment input { position: absolute; opacity: 0; width: 0; height: 0; }
@@ -104,8 +106,8 @@
                     <label>{{ 'jumplink.vouchers::lang.pos.amount'|trans }}</label>
                     {% if __SELF__.denominations %}
                         <div class="pos-amounts">
-                            {% for cents in __SELF__.denominations %}
-                                <button type="button" class="pos-amount-btn" data-amount="{{ (cents / 100)|number_format(2, '.', '') }}">{{ (cents / 100)|number_format(2, ',', '.') }} €</button>
+                            {% for d in __SELF__.denominations %}
+                                <button type="button" class="pos-amount-btn{% if d.label %} pos-amount-btn--labeled{% endif %}" data-amount="{{ (d.cents / 100)|number_format(2, '.', '') }}">{% if d.label %}<span class="pos-amount-label">{{ d.label }}</span>{% endif %}<span class="pos-amount-value">{{ (d.cents / 100)|number_format(2, ',', '.') }} €</span></button>
                             {% endfor %}
                         </div>
                     {% endif %}
