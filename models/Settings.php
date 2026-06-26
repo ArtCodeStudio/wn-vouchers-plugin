@@ -53,7 +53,11 @@ class Settings extends Model
         ];
     }
 
-    /** Quick-pick amounts in cents, e.g. [2500, 5000, 10000] — for the buy form + till. */
+    /**
+     * Quick-pick amounts as bare cents, e.g. [2500, 5000, 10000] — a label-less
+     * convenience over denominationList() for callers that only need the values.
+     * (The buy form and till themselves use denominationList() to show labels.)
+     */
     public static function denominationCents(): array
     {
         return array_map(fn ($d) => $d['cents'], static::denominationList());
