@@ -42,8 +42,12 @@ class Vouchers extends Controller
      */
     public function onRedeem()
     {
-        if (!BackendAuth::userHasAccess('jumplink.vouchers.redeem_vouchers')
-            && !BackendAuth::userHasAccess('jumplink.vouchers.manage_vouchers')) {
+        // Permission is checked on the backend user — the AuthManager facade has no
+        // userHasAccess(); hasAccess() lives on the user (and is true for superusers).
+        $user = BackendAuth::getUser();
+        if (!$user
+            || (!$user->hasAccess('jumplink.vouchers.redeem_vouchers')
+                && !$user->hasAccess('jumplink.vouchers.manage_vouchers'))) {
             throw new \ApplicationException(trans('jumplink.vouchers::lang.redeem.no_permission'));
         }
 
@@ -53,7 +57,6 @@ class Vouchers extends Controller
             throw new \ApplicationException(trans('jumplink.vouchers::lang.error.invalid_amount'));
         }
 
-        $user = BackendAuth::getUser();
         $result = RedemptionService::redeem($id, $amountCents, [
             'source'      => 'backend',
             'redeemed_by' => $user ? $user->id : null,

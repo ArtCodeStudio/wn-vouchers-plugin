@@ -63,3 +63,5 @@
     - add_anonymized_at_to_voucher_orders.php
 1.0.20:
     - "Schnellauswahl: optionale Bezeichnung je vorgeschlagenem Betrag (z. B. ein fester Menüpreis) — erscheint über dem Betrag auf der Kauf- und Kassen-Schnellauswahl. Rein optional; Beträge ohne Bezeichnung bleiben unverändert."
+1.0.21:
+    - "Fix: Backend-Einlösung schlug fehl (Call to undefined method AuthManager::userHasAccess). Die Berechtigungsprüfung im Einlöse-Handler läuft jetzt über den Backend-Benutzer (hasAccess) statt fälschlich über den AuthManager."
