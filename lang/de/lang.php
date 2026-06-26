@@ -76,7 +76,7 @@ return [
     ],
     // Auswahl der Zahlart im Kaufformular (Frontend)
     'payment_method_choice' => [
-        'mollie'       => 'Sofort online bezahlen (Karte, PayPal …)',
+        'mollie'       => 'Sofort online bezahlen (Karte, Klarna …)',
         'banktransfer' => 'Überweisung (Vorkasse) – Gutschein nach Zahlungseingang',
     ],
     // Kurzlabels + Hinweiszeilen für die Segment-Auswahl (Pille) der Zahlart.
@@ -85,7 +85,7 @@ return [
         'banktransfer' => 'Überweisung',
     ],
     'payment_method_hint' => [
-        'mollie'       => 'Karte, PayPal …',
+        'mollie'       => 'Karte, Klarna u. a.',
         'banktransfer' => 'Vorkasse – Gutschein nach Zahlungseingang',
     ],
     // Zahlart-Modus (Einstellung)

@@ -76,7 +76,7 @@ return [
     ],
     // Payment method chooser on the purchase form (frontend)
     'payment_method_choice' => [
-        'mollie'       => 'Pay online now (card, PayPal …)',
+        'mollie'       => 'Pay online now (card, Klarna …)',
         'banktransfer' => 'Bank transfer (prepayment) – voucher after payment arrives',
     ],
     // Short labels + hint lines for the segmented (pill) payment chooser.
@@ -85,7 +85,7 @@ return [
         'banktransfer' => 'Bank transfer',
     ],
     'payment_method_hint' => [
-        'mollie'       => 'Card, PayPal …',
+        'mollie'       => 'Card, Klarna and more',
         'banktransfer' => 'Prepayment – voucher after payment arrives',
     ],
     // Payment mode (setting)

@@ -65,3 +65,5 @@
     - "Schnellauswahl: optionale Bezeichnung je vorgeschlagenem Betrag (z. B. ein fester Menüpreis) — erscheint über dem Betrag auf der Kauf- und Kassen-Schnellauswahl. Rein optional; Beträge ohne Bezeichnung bleiben unverändert."
 1.0.21:
     - "Fix: Backend-Einlösung schlug fehl (Call to undefined method AuthManager::userHasAccess). Die Berechtigungsprüfung im Einlöse-Handler läuft jetzt über den Backend-Benutzer (hasAccess) statt fälschlich über den AuthManager."
+1.0.22:
+    - "Text: Beispiel-Zahlmethoden bei der Online-Zahlung auf gängige aktive Methoden umgestellt (Karte, Klarna u. a.) statt PayPal — passt zu typischen Mollie-Profilen. Welche Methoden tatsächlich erscheinen, bestimmt das Mollie-Profil."
