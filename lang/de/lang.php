@@ -204,7 +204,7 @@ return [
     // Einstellungen → Felder (Labels, Kommentare, Repeater-Prompts)
     'setting' => [
         'start_number'           => 'Startnummer (automatisch)',
-        'start_number_comment'   => 'Ab dieser Nummer werden digitale Gutscheine automatisch nummeriert. Muss über dem handschriftlichen Ordner-Bereich liegen.',
+        'start_number_comment'   => 'Untergrenze für die automatische Nummerierung digitaler Gutscheine. Die nächste Nummer ist die höhere aus „zuletzt vergeben + 1" und dieser Startnummer — sie kann also nach vorn springen, aber nie auf eine bereits vergebene Nummer zurück. Greift nur, solange noch kein höher nummerierter Gutschein existiert. Muss über dem handschriftlichen Ordner-Bereich liegen.',
         'validity_years'         => 'Gültigkeit (Jahre)',
         'validity_years_comment' => 'Jahre bis zum gedruckten Ablaufdatum (zum Jahresende gerundet, entspricht der 3-Jahres-Verjährung §§195/199 BGB). 0 = kein Ablaufdatum (Standard).',
         'min_value'              => 'Mindestbetrag (Cent)',

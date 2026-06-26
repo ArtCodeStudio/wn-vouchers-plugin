@@ -204,7 +204,7 @@ return [
     // Settings → fields (labels, comments, repeater prompts)
     'setting' => [
         'start_number'           => 'Start number (automatic)',
-        'start_number_comment'   => 'Digital vouchers are numbered automatically from this number on. It must lie above the handwritten binder range.',
+        'start_number_comment'   => 'Floor for the automatic numbering of digital vouchers. The next number is the higher of (last issued + 1) and this start number — so it can jump forward, but never back onto an already-issued number. Only takes effect while no higher-numbered voucher exists yet. Must lie above the handwritten binder range.',
         'validity_years'         => 'Validity (years)',
         'validity_years_comment' => 'Years until the printed expiry (rounded to year-end, matches the 3-year limitation §§195/199 BGB). 0 = no expiry date (default).',
         'min_value'              => 'Minimum amount (cents)',

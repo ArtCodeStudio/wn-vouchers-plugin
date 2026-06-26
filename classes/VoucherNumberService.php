@@ -22,6 +22,12 @@ class VoucherNumberService
             ->lockForUpdate()
             ->max('number');
 
-        return $max ? ((int) $max + 1) : $start;
+        // The start number is a floor, not just a one-off seed for the very first
+        // voucher: the next number is the higher of (highest issued auto number + 1)
+        // and the configured start. So an operator can raise the start to jump the
+        // sequence forward to a new range at any time, while it can never move
+        // backward onto an already-issued number (which would collide).
+        $next = $max !== null ? ((int) $max + 1) : $start;
+        return max($start, $next);
     }
 }

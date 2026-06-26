@@ -67,3 +67,5 @@
     - "Fix: Backend-Einlösung schlug fehl (Call to undefined method AuthManager::userHasAccess). Die Berechtigungsprüfung im Einlöse-Handler läuft jetzt über den Backend-Benutzer (hasAccess) statt fälschlich über den AuthManager."
 1.0.22:
     - "Text: Beispiel-Zahlmethoden bei der Online-Zahlung auf gängige aktive Methoden umgestellt (Karte, Klarna u. a.) statt PayPal — passt zu typischen Mollie-Profilen. Welche Methoden tatsächlich erscheinen, bestimmt das Mollie-Profil."
+1.0.23:
+    - "Nummerierung: Startnummer wirkt jetzt als Untergrenze — die nächste automatische Gutscheinnummer ist das Maximum aus zuletzt-vergeben+1 und der Startnummer. Damit lässt sich die Sequenz nach vorn springen (neuer Bereich), während sie nie auf eine bereits vergebene Nummer zurückfällt. Eine niedrigere Startnummer greift weiterhin nur, solange noch kein höher nummerierter Gutschein existiert."
