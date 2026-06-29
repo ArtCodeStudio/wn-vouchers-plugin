@@ -526,9 +526,15 @@ return [
         'no_redeem'         => 'Keine Einlösung möglich (Status: :status).',
         'mark_sent'         => 'Als versendet markieren',
         'sent_on'           => 'Versendet am :date',
-        'sold_created'      => 'Neuer Gutschein :code über :value angelegt.',
-        'sold_write_number' => 'Bitte die Nummer :number auf die Karte schreiben.',
-        'sold_emailed'      => 'Der Gutschein wurde per E-Mail versendet.',
+        'sold_title'             => 'Gutschein verkauft',
+        'sold_write_number_lead' => 'Diese Nummer auf die Karte schreiben:',
+        'detail_code'            => 'Code',
+        'detail_value'           => 'Wert',
+        'detail_valid'           => 'Gültig bis',
+        'detail_type'            => 'Art',
+        'close'                  => 'Schließen',
+        'done'                   => 'Fertig',
+        'sold_emailed'           => 'Der Gutschein wurde per E-Mail versendet.',
     ],
 
     // Erfolgs-Flashes

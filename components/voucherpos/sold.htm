@@ -1,10 +1,36 @@
 {% if voucher %}
-    <div class="pos-sold">
-        <p>{{ 'jumplink.vouchers::lang.pos.sold_created'|trans({ code: '<strong>' ~ voucher.code ~ '</strong>', value: voucher.initial_value_euro })|raw }}</p>
-        {% if voucher.type == 'physical' %}
-            <p>{{ 'jumplink.vouchers::lang.pos.sold_write_number'|trans({ number: '<strong>' ~ voucher.number ~ '</strong>' })|raw }}</p>
-        {% else %}
-            <p>{{ 'jumplink.vouchers::lang.pos.sold_emailed'|trans }}</p>
-        {% endif %}
+    {# Post-sale dialog. Injected into #posSold by VoucherPos::onSell and shown as
+       a centred overlay so it stays put until the staff dismiss it — the toast
+       alone was too brief to copy the number onto the physical card. The close
+       controls carry data-pos-close; the script in default.htm clears #posSold
+       (button, backdrop or Esc) and resets the sell form for the next sale. #}
+    <div class="pos-modal" role="dialog" aria-modal="true" aria-labelledby="posSoldTitle">
+        <div class="pos-modal-box" role="document">
+            <button type="button" class="pos-modal-x" data-pos-close aria-label="{{ 'jumplink.vouchers::lang.pos.close'|trans }}">&times;</button>
+            <h3 id="posSoldTitle" class="pos-modal-title">{{ 'jumplink.vouchers::lang.pos.sold_title'|trans }}</h3>
+
+            {% if voucher.type == 'physical' %}
+                <p class="pos-modal-lead">{{ 'jumplink.vouchers::lang.pos.sold_write_number_lead'|trans }}</p>
+                <div class="pos-modal-number">{{ voucher.number }}</div>
+            {% endif %}
+
+            <dl class="pos-modal-details">
+                <div><dt>{{ 'jumplink.vouchers::lang.pos.detail_code'|trans }}</dt><dd>{{ voucher.code }}</dd></div>
+                <div><dt>{{ 'jumplink.vouchers::lang.pos.detail_value'|trans }}</dt><dd>{{ voucher.initial_value_euro }}</dd></div>
+                {% if voucher.valid_until %}
+                    <div><dt>{{ 'jumplink.vouchers::lang.pos.detail_valid'|trans }}</dt><dd>{{ voucher.valid_until|date('d.m.Y') }}</dd></div>
+                {% endif %}
+                {% if voucher.recipient_name %}
+                    <div><dt>{{ 'jumplink.vouchers::lang.pos.recipient'|trans }}</dt><dd>{{ voucher.recipient_name }}</dd></div>
+                {% endif %}
+                <div><dt>{{ 'jumplink.vouchers::lang.pos.detail_type'|trans }}</dt><dd>{{ voucher.type_label }}</dd></div>
+            </dl>
+
+            {% if voucher.type == 'digital' %}
+                <p class="pos-modal-note">{{ 'jumplink.vouchers::lang.pos.sold_emailed'|trans }}</p>
+            {% endif %}
+
+            <button type="button" class="pos-modal-done" data-pos-close>{{ 'jumplink.vouchers::lang.pos.done'|trans }}</button>
+        </div>
     </div>
 {% endif %}

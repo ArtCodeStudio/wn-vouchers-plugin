@@ -68,9 +68,22 @@
         .voucher-pos .pos-segment input { position: absolute; opacity: 0; width: 0; height: 0; }
         .voucher-pos .pos-segment label:has(input:checked) { background: var(--pos-accent); color: var(--pos-accent-text); border-color: var(--pos-accent); }
         .voucher-pos .pos-sell button[type="submit"] { width: 100%; padding: 16px; font-size: 20px; margin-top: 4px; }
-        .voucher-pos #posSold:not(:empty) { margin-top: 16px; }
-        .voucher-pos .pos-sold { background: var(--pos-ok-bg); padding: 14px; border-radius: 10px; }
         .voucher-pos #posReader { margin: 14px auto; }
+
+        /* Post-sale dialog: a real overlay so the voucher number stays on screen
+           until the staff dismiss it (they copy it onto the physical card). */
+        .voucher-pos .pos-modal { position: fixed; inset: 0; z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 20px; background: rgba(15, 23, 42, .55); }
+        .voucher-pos .pos-modal-box { position: relative; width: 100%; max-width: 460px; max-height: calc(100vh - 40px); overflow: auto; background: var(--pos-panel-bg); color: var(--pos-text); border: 1px solid var(--pos-border); border-radius: 16px; padding: 28px 24px 24px; box-shadow: 0 20px 60px rgba(0, 0, 0, .35); text-align: center; }
+        .voucher-pos .pos-modal-x { position: absolute; top: 8px; right: 10px; width: 42px; height: 42px; padding: 0; font-size: 26px; line-height: 1; background: transparent; color: var(--pos-muted); border: 0; }
+        .voucher-pos .pos-modal-title { margin: 0 0 14px; font-size: 22px; font-weight: 700; color: var(--pos-fg); }
+        .voucher-pos .pos-modal-lead { margin: 0 0 6px; font-size: 15px; color: var(--pos-muted); }
+        .voucher-pos .pos-modal-number { font-size: 56px; font-weight: 800; letter-spacing: 4px; color: var(--pos-fg); margin: 0 0 18px; font-variant-numeric: tabular-nums; }
+        .voucher-pos .pos-modal-details { display: grid; gap: 8px; margin: 0 0 20px; text-align: left; }
+        .voucher-pos .pos-modal-details > div { display: flex; justify-content: space-between; gap: 16px; border-bottom: 1px solid var(--pos-border); padding-bottom: 6px; }
+        .voucher-pos .pos-modal-details dt { color: var(--pos-muted); font-size: 15px; margin: 0; }
+        .voucher-pos .pos-modal-details dd { margin: 0; font-weight: 700; text-align: right; }
+        .voucher-pos .pos-modal-note { margin: 0 0 18px; color: var(--pos-muted); font-size: 15px; }
+        .voucher-pos .pos-modal-done { width: 100%; padding: 16px; font-size: 18px; }
 
         /* Mobile: panels go edge-to-edge (full width), only vertical gaps between
            them; desktop keeps the centered, rounded cards. */
@@ -237,6 +250,35 @@
                 r.addEventListener('change', syncSellType);
             });
             syncSellType();
+
+            // Post-sale dialog: onSell injects the modal into #posSold. Keep it up
+            // until the staff dismiss it (× / "Fertig" / backdrop / Esc), then clear
+            // it and reset the sell form so the next sale starts clean.
+            var sold = root.querySelector('#posSold');
+            var sellForm = root.querySelector('.pos-sell');
+            function closeSold() {
+                if (!sold || !sold.querySelector('.pos-modal')) { return; }
+                sold.innerHTML = '';
+                if (sellForm) { sellForm.reset(); }
+                syncSellType();
+            }
+            if (sold) {
+                sold.addEventListener('click', function (e) {
+                    // Close on the × / Fertig buttons, or a click on the backdrop itself.
+                    if (e.target.closest('[data-pos-close]') || e.target.classList.contains('pos-modal')) {
+                        closeSold();
+                    }
+                });
+                if (window.MutationObserver) {
+                    new MutationObserver(function () {
+                        var done = sold.querySelector('.pos-modal-done');
+                        if (done) { done.focus(); }
+                    }).observe(sold, { childList: true });
+                }
+            }
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') { closeSold(); }
+            });
 
             if (input.value) { lookup(); } // arrived from a scanned QR (?t=…)
         })();

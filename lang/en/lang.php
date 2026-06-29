@@ -526,9 +526,15 @@ return [
         'no_redeem'         => 'No redemption possible (status: :status).',
         'mark_sent'         => 'Mark as sent',
         'sent_on'           => 'Sent on :date',
-        'sold_created'      => 'New voucher :code worth :value created.',
-        'sold_write_number' => 'Please write the number :number on the card.',
-        'sold_emailed'      => 'The voucher was sent by email.',
+        'sold_title'             => 'Voucher sold',
+        'sold_write_number_lead' => 'Write this number on the card:',
+        'detail_code'            => 'Code',
+        'detail_value'           => 'Value',
+        'detail_valid'           => 'Valid until',
+        'detail_type'            => 'Type',
+        'close'                  => 'Close',
+        'done'                   => 'Done',
+        'sold_emailed'           => 'The voucher was sent by email.',
     ],
 
     // Success flashes
