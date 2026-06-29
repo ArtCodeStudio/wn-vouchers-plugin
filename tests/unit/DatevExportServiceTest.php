@@ -79,6 +79,74 @@ class DatevExportServiceTest extends PluginTestCase
         $this->assertStringContainsString('Mehrzweckgutschein', $cells[13]); // Buchungstext
     }
 
+    public function testPhysicalOrderSplitsShippingFeeToItsOwnTaxedLineWhenConfigured()
+    {
+        Settings::set([
+            'datev_money_account'             => '1200',
+            'datev_voucher_liability_account' => '1604',
+            'datev_shipping_revenue_account'  => '8400',
+            'datev_shipping_vat_key'          => '3',
+        ]);
+        $order = $this->issuedOrder([
+            'delivery_type'     => 'physical',
+            'face_value_cents'  => 5000,
+            'service_fee_cents' => 250,
+            'total_cents'       => 5250,
+            'street'            => 'Hauptstr. 1',
+            'zip'               => '27472',
+            'city'              => 'Cuxhaven',
+        ]);
+
+        $from = Carbon::create(2026, 1, 1)->startOfDay();
+        $to   = Carbon::create(2026, 12, 31)->endOfDay();
+        $rows = explode("\r\n", trim($this->decode(DatevExportService::export([$order], $from, $to, Carbon::create(2026, 6, 24)))));
+
+        $this->assertCount(4, $rows); // header + captions + 2 bookings
+        $voucher = explode(';', $rows[2]);
+        $fee     = explode(';', $rows[3]);
+
+        // Voucher value only (50,00 — NOT the 52,50 total) → liability, no VAT.
+        $this->assertSame('50,00', $voucher[0]);
+        $this->assertSame('1604', $voucher[7]);
+        $this->assertSame('', $voucher[8]);
+
+        // Shipping fee gross (2,50) → shipping revenue, 19 % VAT key.
+        $this->assertSame('2,50', $fee[0]);
+        $this->assertSame('"S"', $fee[1]);
+        $this->assertSame('1200', $fee[6]);
+        $this->assertSame('8400', $fee[7]);
+        $this->assertSame('3', $fee[8]);
+        $this->assertStringContainsString('Versandkosten', $fee[13]);
+    }
+
+    public function testShippingFeeStaysOnLiabilityLineWhenNoRevenueAccountConfigured()
+    {
+        Settings::set([
+            'datev_money_account'             => '1200',
+            'datev_voucher_liability_account' => '1604',
+            'datev_shipping_revenue_account'  => '',   // not configured → no split
+        ]);
+        $order = $this->issuedOrder([
+            'delivery_type'     => 'physical',
+            'face_value_cents'  => 5000,
+            'service_fee_cents' => 250,
+            'total_cents'       => 5250,
+            'street'            => 'Hauptstr. 1',
+            'zip'               => '27472',
+            'city'              => 'Cuxhaven',
+        ]);
+
+        $from = Carbon::create(2026, 1, 1)->startOfDay();
+        $to   = Carbon::create(2026, 12, 31)->endOfDay();
+        $rows = explode("\r\n", trim($this->decode(DatevExportService::export([$order], $from, $to, Carbon::create(2026, 6, 24)))));
+
+        $this->assertCount(3, $rows); // header + captions + 1 booking (whole total)
+        $cells = explode(';', $rows[2]);
+        $this->assertSame('52,50', $cells[0]); // whole total stays on the liability line
+        $this->assertSame('1604', $cells[7]);
+        $this->assertSame('', $cells[8]);
+    }
+
     public function testOnlyPaidIssuedOrdersInRangeAreBookable()
     {
         Settings::set(['datev_money_account' => '1200', 'datev_voucher_liability_account' => '1604']);

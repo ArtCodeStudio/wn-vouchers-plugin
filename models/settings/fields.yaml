@@ -152,6 +152,18 @@ tabs:
             type: text
             span: right
             comment: jumplink.vouchers::lang.setting.datev_voucher_liability_account_comment
+        datev_shipping_revenue_account:
+            label: jumplink.vouchers::lang.setting.datev_shipping_revenue_account
+            tab: jumplink.vouchers::lang.setting_tab.receipt
+            type: text
+            span: left
+            comment: jumplink.vouchers::lang.setting.datev_shipping_revenue_account_comment
+        datev_shipping_vat_key:
+            label: jumplink.vouchers::lang.setting.datev_shipping_vat_key
+            tab: jumplink.vouchers::lang.setting_tab.receipt
+            type: text
+            span: right
+            comment: jumplink.vouchers::lang.setting.datev_shipping_vat_key_comment
         datev_account_length:
             label: jumplink.vouchers::lang.setting.datev_account_length
             tab: jumplink.vouchers::lang.setting_tab.receipt

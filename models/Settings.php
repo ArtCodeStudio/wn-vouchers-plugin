@@ -140,6 +140,12 @@ class Settings extends Model
         $this->datev_account_length           = 4;    // Sachkontenlänge
         $this->datev_money_account            = null; // Geldkonto/Verrechnungskonto (Konto)
         $this->datev_voucher_liability_account = null; // Gutschein-Verbindlichkeiten (Gegenkonto)
+        // Shipping fee (always 19 % USt) bookkeeping: revenue account (Gegenkonto)
+        // + its BU-Schlüssel. Leave the account empty to keep the fee on the
+        // liability line (advisor splits it); the key stays empty for an
+        // Automatik-Erlöskonto. See DatevExportService + ReceiptService.
+        $this->datev_shipping_revenue_account = null; // Erlöse Versand 19 % (Gegenkonto)
+        $this->datev_shipping_vat_key         = null; // BU-Schlüssel 19 % (SKR-spezifisch)
 
         // Privacy / GDPR: the buyer IP is stored for abuse auditing, then nulled
         // by jumplink:vouchers-prune-ips on orders older than this many days

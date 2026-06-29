@@ -46,6 +46,14 @@ class VoucherOrder extends Model
     ];
 
     /**
+     * Shipping/postage is its own taxable supply, always standard-rated at 19 %
+     * (§ 12 Abs. 1 UStG) — independent of the voucher's multi-/single-purpose VAT
+     * treatment. The fee is stored and charged gross ("im Preis enthalten"), i.e.
+     * net + 19 % USt = service_fee_cents.
+     */
+    const SHIPPING_VAT_RATE = 19.0;
+
+    /**
      * Mint the per-order access token. The return page is reached with an
      * enumerable id, so it must additionally present this token (see
      * findForReturn) before exposing order state or a signed PDF link.
@@ -190,6 +198,30 @@ class VoucherOrder extends Model
     public static function formatEuro($cents)
     {
         return number_format(((int) $cents) / 100, 2, ',', '.') . ' €';
+    }
+
+    /**
+     * The 19 % VAT contained in the (gross) shipping service fee, or null when the
+     * order carries no fee. Single source of truth for the receipt and the DATEV
+     * export so both agree on the split. Net is derived from the stored gross fee
+     * (net = gross / 1.19), VAT is the remainder so the parts always re-sum to the
+     * exact gross cents.
+     *
+     * @return array{rate: float, net_cents: int, vat_cents: int, gross_cents: int}|null
+     */
+    public function shippingFeeVat(): ?array
+    {
+        $gross = (int) $this->service_fee_cents;
+        if ($gross <= 0) {
+            return null;
+        }
+        $net = (int) round($gross / (1 + self::SHIPPING_VAT_RATE / 100));
+        return [
+            'rate'        => self::SHIPPING_VAT_RATE,
+            'net_cents'   => $net,
+            'vat_cents'   => $gross - $net,
+            'gross_cents' => $gross,
+        ];
     }
 
     /**

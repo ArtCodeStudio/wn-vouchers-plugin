@@ -81,6 +81,17 @@
                 </tr>
             @endif
 
+            @if($r['fee_vat'])
+                <tr class="sub">
+                    <td>{{ trans('jumplink.vouchers::lang.receipt.fee_net_label') }}</td>
+                    <td class="amount">{{ $euro($r['fee_vat']['net_cents']) }}</td>
+                </tr>
+                <tr class="sub">
+                    <td>{{ trans('jumplink.vouchers::lang.receipt.fee_vat_label', ['rate' => $r['fee_vat']['rate'] == (int) $r['fee_vat']['rate'] ? (int) $r['fee_vat']['rate'] : $r['fee_vat']['rate']]) }}</td>
+                    <td class="amount">{{ $euro($r['fee_vat']['vat_cents']) }}</td>
+                </tr>
+            @endif
+
             <tr class="total">
                 <td>{{ trans('jumplink.vouchers::lang.receipt.total_label') }}</td>
                 <td class="amount">{{ $euro($r['total_cents']) }}</td>
@@ -95,7 +106,7 @@
     </div>
 
     <div class="note">
-        {{ trans($r['note_key']) }}
+        {{ trans($r['note_key']) }}@if($r['fee_vat']) {{ trans('jumplink.vouchers::lang.receipt.note_fee_vat') }}@endif
         @if($r['extra_note'])<br><br>{{ $r['extra_note'] }}@endif
     </div>
 </body>

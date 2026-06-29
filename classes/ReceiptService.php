@@ -9,21 +9,22 @@ use JumpLink\Vouchers\Models\Settings;
  * Purchase receipt ("Kaufbeleg") for an online voucher order — a GoBD-suitable
  * document for the buyer's records and the shop's bookkeeping.
  *
- * For a multi-purpose voucher (the default) the sale is NOT a taxable supply
- * (§ 3 Abs. 15 UStG): the receipt deliberately shows NO VAT and carries the
- * statutory note that VAT arises only on redemption. This avoids the § 14c trap
- * (any VAT shown on the sale would then be owed). For a single-purpose voucher
- * (§ 3 Abs. 14 UStG) the sale is taxed when sold, so the receipt splits
+ * For a multi-purpose voucher (the default) the voucher VALUE is NOT a taxable
+ * supply (§ 3 Abs. 15 UStG): no VAT is shown on it and the statutory note says
+ * VAT arises only on redemption. This avoids the § 14c trap (any VAT shown on
+ * the voucher value would then be owed). For a single-purpose voucher
+ * (§ 3 Abs. 14 UStG) the voucher value is taxed when sold, so it is split into
  * net / VAT / gross at the configured rate.
+ *
+ * The shipping service fee, however, is its own supply and is ALWAYS standard-
+ * rated at 19 % (gross-inclusive), whatever the voucher's mode — so a receipt
+ * that carries a fee always discloses the fee's 19 % VAT (see fee_vat and
+ * VoucherOrder::shippingFeeVat()). On a multi-purpose receipt that VAT therefore
+ * relates solely to the shipping fee, never to the voucher value.
  *
  * Renders views/pdf/receipt.blade.php via barryvdh/laravel-dompdf, like
  * PdfService. The seller identity (legal name, address, tax number) comes from
  * Settings — without a legal name no receipt is emitted (isConfigured()).
- *
- * NOTE: the exact wording, the Mehr-/Einzweckgutschein classification and the
- * VAT treatment of the shipping service fee must be confirmed with the shop's
- * tax advisor (see AGENTS.md). The defaults follow the common multi-purpose
- * handling.
  */
 class ReceiptService
 {
@@ -58,20 +59,28 @@ class ReceiptService
             ];
         }
 
-        // Single-purpose voucher: VAT is due at sale, so split the gross total
-        // into net + VAT for the receipt.
+        // Voucher-value VAT: only a single-purpose voucher is taxed at sale, and
+        // then only on the voucher value itself — split the (gross) face value into
+        // net + VAT. The shipping fee is a separate supply taxed at its own rate
+        // (always 19 %, see $feeVat below), so it is deliberately NOT folded into
+        // the voucher rate here. A multi-purpose voucher value carries no VAT.
         $vat = null;
         if ($isSingle) {
             // A stored 0 % is a valid rate — only fall back to 19 % when unset.
             $rate = $order->vat_rate !== null ? (float) $order->vat_rate : 19.0;
-            $net  = (int) round($totalCents / (1 + $rate / 100));
+            $net  = (int) round($faceCents / (1 + $rate / 100));
             $vat  = [
                 'rate'        => $rate,
                 'net_cents'   => $net,
-                'vat_cents'   => $totalCents - $net,
-                'gross_cents' => $totalCents,
+                'vat_cents'   => $faceCents - $net,
+                'gross_cents' => $faceCents,
             ];
         }
+
+        // Shipping fee VAT: a postage service is always standard-rated (19 %),
+        // included in the gross fee, regardless of the voucher's MPV/SPV status.
+        // Shown on every receipt that carries a fee, even a multi-purpose one.
+        $feeVat = $order->shippingFeeVat();
 
         $address = null;
         if ($order->street || $order->zip || $order->city) {
@@ -91,6 +100,7 @@ class ReceiptService
             'total_cents' => $totalCents,
             'vat_mode'    => $isSingle ? 'single_purpose' : 'multi_purpose',
             'vat'         => $vat,
+            'fee_vat'     => $feeVat,
             'note_key'    => $isSingle
                 ? 'jumplink.vouchers::lang.receipt.note_single_purpose'
                 : 'jumplink.vouchers::lang.receipt.note_multi_purpose',

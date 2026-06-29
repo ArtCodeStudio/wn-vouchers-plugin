@@ -88,6 +88,64 @@ class ReceiptServiceTest extends PluginTestCase
         $this->assertNotNull($model['buyer']['address']);
     }
 
+    public function testMultiPurposeReceiptStillTaxesTheShippingFeeAt19Percent()
+    {
+        $order = $this->order([
+            'delivery_type'     => 'physical',
+            'face_value_cents'  => 5000,
+            'service_fee_cents' => 250,
+            'total_cents'       => 5250,
+            'vat_mode'          => 'multi_purpose',
+            'street'            => 'Hauptstr. 1',
+            'zip'               => '27472',
+            'city'              => 'Cuxhaven',
+        ]);
+        $model = ReceiptService::buildModel($order);
+
+        // The voucher value stays multi-purpose → no VAT on it…
+        $this->assertNull($model['vat'], 'the multi-purpose voucher value must carry no VAT');
+        // …but the shipping fee is always 19 % VAT, included in the gross 2,50 €.
+        $this->assertNotNull($model['fee_vat']);
+        $this->assertSame(19.0, $model['fee_vat']['rate']);
+        $this->assertSame(250, $model['fee_vat']['gross_cents']);
+        $this->assertSame(210, $model['fee_vat']['net_cents']);
+        $this->assertSame(40, $model['fee_vat']['vat_cents']);
+        $this->assertSame(5250, $model['total_cents']);
+    }
+
+    public function testDigitalMultiPurposeReceiptHasNeitherVoucherNorFeeVat()
+    {
+        $model = ReceiptService::buildModel($this->order(['vat_mode' => 'multi_purpose']));
+
+        $this->assertNull($model['vat']);
+        $this->assertNull($model['fee_vat'], 'no fee → no fee VAT');
+    }
+
+    public function testSinglePurposeWithFeeTaxesVoucherAtItsRateAndFeeAt19()
+    {
+        $order = $this->order([
+            'vat_mode'          => 'single_purpose',
+            'vat_rate'          => 19,
+            'delivery_type'     => 'physical',
+            'face_value_cents'  => 5950,
+            'service_fee_cents' => 250,
+            'total_cents'       => 6200,
+            'street'            => 'Hauptstr. 1',
+            'zip'               => '27472',
+            'city'              => 'Cuxhaven',
+        ]);
+        $model = ReceiptService::buildModel($order);
+
+        // The voucher VAT now covers only the voucher value (5950), not the fee.
+        $this->assertSame(5000, $model['vat']['net_cents']);
+        $this->assertSame(950, $model['vat']['vat_cents']);
+        $this->assertSame(5950, $model['vat']['gross_cents']);
+        // The fee is taxed separately at 19 %.
+        $this->assertSame(210, $model['fee_vat']['net_cents']);
+        $this->assertSame(40, $model['fee_vat']['vat_cents']);
+        $this->assertSame(6200, $model['total_cents']);
+    }
+
     public function testBankTransferReferenceIsTheReceiptNumber()
     {
         $order = $this->order(['provider' => 'banktransfer']);
@@ -107,6 +165,27 @@ class ReceiptServiceTest extends PluginTestCase
         Settings::set('seller_tax_number', 'DE123456789');
 
         $pdf = ReceiptService::render($this->order());
+        $this->assertStringStartsWith('%PDF', $pdf);
+    }
+
+    public function testRenderProducesPdfForAFeeOrderExercisingTheFeeVatRows()
+    {
+        if (!class_exists(\Barryvdh\DomPDF\Facade\Pdf::class)) {
+            $this->markTestSkipped('dompdf is not installed in this environment.');
+        }
+        Settings::set('seller_legal_name', 'Test Gastro GmbH');
+
+        // A physical multi-purpose order: the blade must render the fee's net/VAT
+        // sub-rows and the fee-VAT note without error.
+        $pdf = ReceiptService::render($this->order([
+            'delivery_type'     => 'physical',
+            'face_value_cents'  => 5000,
+            'service_fee_cents' => 250,
+            'total_cents'       => 5250,
+            'street'            => 'Hauptstr. 1',
+            'zip'               => '27472',
+            'city'              => 'Cuxhaven',
+        ]));
         $this->assertStringStartsWith('%PDF', $pdf);
     }
 }
