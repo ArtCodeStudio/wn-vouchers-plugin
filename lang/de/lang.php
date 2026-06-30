@@ -471,6 +471,7 @@ return [
         'delivery_physical_hint'  => 'zzgl. :fee Versand (inkl. 19 % USt)',
         'recipient_optional'  => 'Empfänger (optional)',
         'message_optional'    => 'Persönliche Nachricht (optional)',
+        'message_hint'        => '(max. :max Zeichen, erscheint auf dem Gutschein)',
         'payment_legend'      => 'Zahlart',
         'submit'              => 'Weiter zur Zahlung',
         'thank_you'           => 'Vielen Dank.',

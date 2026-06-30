@@ -471,6 +471,7 @@ return [
         'delivery_physical_hint'  => 'plus :fee shipping (incl. 19% VAT)',
         'recipient_optional'  => 'Recipient (optional)',
         'message_optional'    => 'Personal message (optional)',
+        'message_hint'        => '(max :max characters, shown on the voucher)',
         'payment_legend'      => 'Payment method',
         'submit'              => 'Continue to payment',
         'thank_you'           => 'Thank you.',

@@ -15,6 +15,14 @@ use JumpLink\Vouchers\Models\Settings;
  */
 class PurchaseService
 {
+    /**
+     * Max length of the buyer's personal message. Bounds both the form (client
+     * maxlength + server rule) and what is rendered onto the voucher image, so a
+     * long note can never overflow the artwork. Exposed to the buy form via
+     * VoucherPurchase::messageMaxLength().
+     */
+    public const MESSAGE_MAX_LENGTH = 200;
+
     public static function createPendingOrder(array $input): array
     {
         // Honeypot: bots fill 'website' -> look successful, ignore.
@@ -27,6 +35,7 @@ class PurchaseService
         $rules = [
             'firstname' => 'required|min:2',
             'email'     => 'required|email',
+            'message'   => 'nullable|max:' . self::MESSAGE_MAX_LENGTH,
         ];
         if ($delivery === 'physical') {
             $rules += ['street' => 'required', 'zip' => 'required', 'city' => 'required'];
@@ -91,7 +100,7 @@ class PurchaseService
     protected static function attributeNames(): array
     {
         $names = [];
-        foreach (['firstname', 'lastname', 'email', 'phone', 'street', 'zip', 'city'] as $field) {
+        foreach (['firstname', 'lastname', 'email', 'phone', 'street', 'zip', 'city', 'message'] as $field) {
             $names[$field] = trans("jumplink.vouchers::lang.field.$field");
         }
         return $names;

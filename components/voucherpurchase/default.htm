@@ -41,7 +41,7 @@
         </div>
 
         <label>{{ 'jumplink.vouchers::lang.purchase.recipient_optional'|trans }} <input type="text" name="recipient_name"></label>
-        <label>{{ 'jumplink.vouchers::lang.purchase.message_optional'|trans }} <textarea name="message" rows="3"></textarea></label>
+        <label>{{ 'jumplink.vouchers::lang.purchase.message_optional'|trans }} {{ 'jumplink.vouchers::lang.purchase.message_hint'|trans({ max: __SELF__.messageMaxLength }) }} <textarea name="message" rows="3" maxlength="{{ __SELF__.messageMaxLength }}"></textarea></label>
 
         {% if __SELF__.showPaymentChooser %}
         <fieldset class="voucher-payment">

@@ -51,6 +51,12 @@ class VoucherPurchase extends ComponentBase
         return Settings::denominationList();
     }
 
+    /** Max length of the personal message — drives the textarea's maxlength + hint. */
+    public function messageMaxLength()
+    {
+        return PurchaseService::MESSAGE_MAX_LENGTH;
+    }
+
     /** Payment methods offered on the form ('mollie' / 'banktransfer'), gated by config. */
     public function paymentMethods()
     {

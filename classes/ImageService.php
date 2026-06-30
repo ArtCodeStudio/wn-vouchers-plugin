@@ -75,7 +75,9 @@ class ImageService
         // 1197x2048 design at ~0.44 W.
         $side = (int) round($W * 0.438);
         $qx   = (int) round(($W - $side) / 2);
-        $qy   = (int) round($H * 0.160);
+        // Shifted up from the design's 0.160 to free a band below the QR for the
+        // recipient name + personal message.
+        $qy   = (int) round($H * 0.120);
         if ($qr = self::voucherQr($voucher)) {
             imagecopyresampled($img, $qr, $qx, $qy, 0, 0, $side, $side, imagesx($qr), imagesy($qr));
             imagedestroy($qr);
@@ -83,17 +85,29 @@ class ImageService
 
         // Voucher number: rotated 90° (reads bottom-to-top), gold, vertically centred
         // on the QR and sitting a fixed gap right of the QR's right edge, so it keeps
-        // hugging the code while the QR itself stays centred.
+        // hugging the code while the QR itself stays centred (tracks the QR's y).
         $numSize = self::fitRotatedSize($voucher->code, $bold, 40, (int) round($H * 0.256));
         $numX    = $qx + $side + (int) round($W * 0.045);
-        self::verticalText($img, $numSize, $bold, self::GOLD, $numX, (int) round($H * 0.288), $voucher->code);
+        self::verticalText($img, $numSize, $bold, self::GOLD, $numX, $qy + (int) round($side / 2), $voucher->code);
 
-        // Recipient name (gift personalisation) in gold, centred in the dark sky
-        // below the QR — a nicer, personal touch for the gifted person.
+        // Personalisation in the dark sky below the QR: the recipient name (gold,
+        // bold) and the buyer's personal message (white, word-wrapped). The QR was
+        // raised to open this band; with no name the message takes that space too,
+        // so it can run longer. The message length is capped on the form
+        // (PurchaseService::MESSAGE_MAX_LENGTH) and additionally auto-fitted here.
+        $reg       = $dir . 'DejaVuSans.ttf';
         $recipient = trim((string) $voucher->recipient_name);
+        $message   = trim((string) ($voucher->order?->message ?? ''));
         if ($recipient !== '') {
             $gold = imagecolorallocate($img, self::GOLD[0], self::GOLD[1], self::GOLD[2]);
-            self::centered($img, self::fitSize($recipient, $bold, 60, (int) ($W * 0.84)), $bold, $gold, (int) round($H * 0.51), $recipient, $W);
+            self::centered($img, self::fitSize($recipient, $bold, 60, (int) ($W * 0.84)), $bold, $gold, (int) round($H * 0.44), $recipient, $W);
+        }
+        if ($message !== '') {
+            // Message box: from below the name (or, unnamed, nearer the QR) down to
+            // just above the photo strip (~0.545 H).
+            $white = imagecolorallocate($img, 255, 255, 255);
+            $top   = (int) round($H * ($recipient !== '' ? 0.475 : 0.41));
+            self::centeredParagraph($img, $reg, $white, $message, $W, (int) round($W * 0.80), $top, (int) round($H * 0.545));
         }
 
         // Value in the bottom strip: "<amount> EUR" gold + " <label>" white, centered.
@@ -196,6 +210,59 @@ class ImageService
         $width = $box[2] - $box[0];
         $x = (int) (($W - $width) / 2 - $box[0]);
         imagettftext($img, $size, 0, $x, $y, $color, $font, $text);
+    }
+
+    /**
+     * Draw $text word-wrapped + centered within the box [$top,$bottom] × $maxW.
+     * Picks the largest font size (<= 44) whose wrapped lines fit both the width
+     * and the box height, then vertically centers the block. Falls back to the
+     * smallest size and clips to the lines that fit (the form length cap normally
+     * prevents that). Newlines in the input collapse to spaces (it reflows).
+     */
+    protected static function centeredParagraph($img, string $font, int $color, string $text, int $W, int $maxW, int $top, int $bottom): void
+    {
+        $boxH = max(1, $bottom - $top);
+        $lineFactor = 1.32;
+        for ($size = 44; $size >= 18; $size -= 2) {
+            $lines  = self::wrapText($text, $size, $font, $maxW);
+            $lineH  = (int) round($size * $lineFactor);
+            $blockH = $lineH * count($lines);
+            if ($blockH <= $boxH) {
+                $baseline = $top + (int) round(($boxH - $blockH) / 2) + $size;
+                foreach ($lines as $i => $line) {
+                    self::centered($img, $size, $font, $color, $baseline + $i * $lineH, $line, $W);
+                }
+                return;
+            }
+        }
+        $size  = 18;
+        $lineH = (int) round($size * $lineFactor);
+        $lines = array_slice(self::wrapText($text, $size, $font, $maxW), 0, max(1, (int) floor($boxH / $lineH)));
+        foreach ($lines as $i => $line) {
+            self::centered($img, $size, $font, $color, $top + $size + $i * $lineH, $line, $W);
+        }
+    }
+
+    /** Greedy word-wrap $text into lines no wider than $maxWidth px at $size/$font. */
+    protected static function wrapText(string $text, int $size, string $font, int $maxWidth): array
+    {
+        $words = preg_split('/\s+/', trim($text)) ?: [];
+        $lines = [];
+        $cur = '';
+        foreach ($words as $w) {
+            $try = $cur === '' ? $w : $cur . ' ' . $w;
+            $box = imagettfbbox($size, 0, $font, $try);
+            if ($cur === '' || abs($box[2] - $box[0]) <= $maxWidth) {
+                $cur = $try;
+            } else {
+                $lines[] = $cur;
+                $cur = $w;
+            }
+        }
+        if ($cur !== '') {
+            $lines[] = $cur;
+        }
+        return $lines;
     }
 
     /** Draw "$t1$t2" centered, $t1 in $rgb1 and $t2 in $rgb2, at baseline $y. */
