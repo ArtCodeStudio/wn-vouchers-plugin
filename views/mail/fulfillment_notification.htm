@@ -15,3 +15,6 @@ subject = "{{ 'jumplink.vouchers::lang.mail.fulfillment_subject'|trans({ code: v
 {{ safe.firstname }} {{ safe.lastname }}
 {{ safe.street }}
 {{ safe.zip }} {{ safe.city }}
+
+{% if order.message %}**{{ 'jumplink.vouchers::lang.mail.label_message'|trans }}** {{ safe.message }}
+{% endif %}

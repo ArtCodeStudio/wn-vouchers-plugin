@@ -21,7 +21,7 @@ class PurchaseService
      * long note can never overflow the artwork. Exposed to the buy form via
      * VoucherPurchase::messageMaxLength().
      */
-    public const MESSAGE_MAX_LENGTH = 200;
+    public const MESSAGE_MAX_LENGTH = 100;
 
     public static function createPendingOrder(array $input): array
     {
