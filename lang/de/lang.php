@@ -370,7 +370,7 @@ return [
         'label_buyer'                => 'Käufer:',
         'label_phone'                => 'Telefon:',
         'label_address'              => 'Adresse:',
-        'label_recipient'            => 'Empfänger:',
+        'label_recipient'            => 'Beschenkte(r):',
         'label_message'              => 'Nachricht:',
 
         // shipping_notification

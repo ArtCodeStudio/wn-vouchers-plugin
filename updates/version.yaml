@@ -77,3 +77,5 @@
     - "Kasse: Der Verkaufsdialog zeigt jetzt den vollständigen Gutschein-Code (z. B. MAM-100042-K) groß zum Abschreiben auf die physische Karte — statt nur der Nummer. So ist direkt auf der Karte erkennbar, dass der Gutschein über das neue System läuft."
 1.0.27:
     - "Digitaler Gutschein: Die persönliche Nachricht aus dem Kaufformular wird jetzt auf das Gutschein-Bild gerendert (unter dem Namen, weiß, automatisch umgebrochen und in den Platz eingepasst). QR-Code und Name rücken dafür etwas nach oben; ohne Empfängernamen steht der Nachricht mehr Platz zur Verfügung. Die Nachrichtenlänge ist jetzt begrenzt (Formular-maxlength + Server-Validierung, Standard 200 Zeichen)."
+1.0.28:
+    - "Team-Mail „Versand vorbereiten“ (physische Gutscheine): nach Betreiber-Feedback aufgeräumt. Das Feld „Empfänger“ heißt jetzt „Beschenkte(r)“ (klarer: die zu beschenkende Person, nicht die Versandadresse — dieselbe Beschriftung gilt einheitlich auch in der Kauf-Benachrichtigung an das Team). Die persönliche Nachricht und die Grußformel „Herzliche Grüße / Ihr Team“ entfallen in dieser internen Mail (für die Versand-Vorbereitung eines physischen Gutscheins überflüssig)."
