@@ -469,7 +469,7 @@ return [
         'delivery_physical_short' => 'Card by post',
         'delivery_digital_hint'   => 'Image with QR code, instantly by email',
         'delivery_physical_hint'  => 'plus :fee shipping (incl. 19% VAT)',
-        'recipient_optional'  => 'Recipient (optional)',
+        'recipient_optional'  => 'Gift recipient (optional)',
         'message_optional'    => 'Personal message (optional)',
         'message_hint'        => '(max :max characters, shown on the voucher)',
         'payment_legend'      => 'Payment method',

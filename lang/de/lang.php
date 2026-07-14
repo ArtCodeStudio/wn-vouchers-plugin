@@ -469,7 +469,7 @@ return [
         'delivery_physical_short' => 'Karte per Post',
         'delivery_digital_hint'   => 'Bild mit QR-Code, sofort per E-Mail',
         'delivery_physical_hint'  => 'zzgl. :fee Versand (inkl. 19 % USt)',
-        'recipient_optional'  => 'Empfänger (optional)',
+        'recipient_optional'  => 'Empfänger:in / Beschenkte(r) (optional)',
         'message_optional'    => 'Persönliche Nachricht (optional)',
         'message_hint'        => '(max. :max Zeichen, erscheint auf dem Gutschein)',
         'payment_legend'      => 'Zahlart',
