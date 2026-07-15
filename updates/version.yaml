@@ -84,3 +84,5 @@
     - "Team-Mail „Versand vorbereiten“: Zeile „Auf die Karte schreiben (Nr.): …“ entfernt — die Nummer steckt bereits im Gutschein-Code (z. B. MAM-2474-Q) und war damit doppelt; dass die Angaben auf die Karte gehören, ist nach der Überarbeitung ohnehin klar."
 1.0.30:
     - "Team-Mail „Versand vorbereiten“: Adresse und Nachricht stehen jetzt jeweils mit der Beschriftung in eigener Zeile und der Inhalt darunter (Adresse: Name / Straße / PLZ Ort; Nachricht: Text in neuer Zeile) statt in einer durchlaufenden Zeile — so lässt sich beides beim Abschreiben auf die Karte nicht mehr durcheinanderbringen."
+1.0.31:
+    - "Kunden-Versandmail „Ihr Gutschein ist unterwegs“: Die Versandadresse steht jetzt ebenfalls auf getrennten Zeilen (Name / Straße / PLZ Ort) statt in einer Zeile — einheitlich mit der Team-Mail."

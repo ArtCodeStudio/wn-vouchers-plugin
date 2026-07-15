@@ -5,8 +5,8 @@ subject = "{{ 'jumplink.vouchers::lang.mail.shipping_subject'|trans }}"
 
 {% if brand_name %}{{ 'jumplink.vouchers::lang.mail.shipping_body_brand'|trans({ brand: brand_name }) }}{% else %}{{ 'jumplink.vouchers::lang.mail.shipping_body'|trans }}{% endif %}
 
-{{ order.firstname }} {{ order.lastname }}
-{{ order.street }}
+{{ order.firstname }} {{ order.lastname }}<br>
+{{ order.street }}<br>
 {{ order.zip }} {{ order.city }}
 
 {{ 'jumplink.vouchers::lang.mail.regards'|trans }}
