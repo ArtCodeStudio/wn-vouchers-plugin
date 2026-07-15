@@ -400,7 +400,6 @@ return [
         // fulfillment_notification (team, physical shipping)
         'fulfillment_subject'     => 'Prepare for shipping: :code · :value → :zip :city',
         'fulfillment_intro'       => 'a physical voucher has been paid for and needs to be prepared for shipping:',
-        'fulfillment_write_card'  => 'Write on the card (no.):',
 
         // receipt_copy (bookkeeping copy)
         'receipt_copy_subject' => 'Receipt :number – :brand',

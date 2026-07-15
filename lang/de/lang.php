@@ -400,7 +400,6 @@ return [
         // fulfillment_notification (Team, physischer Versand)
         'fulfillment_subject'     => 'Versand vorbereiten: :code · :value → :zip :city',
         'fulfillment_intro'       => 'ein physischer Gutschein wurde bezahlt und ist zum Versand vorzubereiten:',
-        'fulfillment_write_card'  => 'Auf die Karte schreiben (Nr.):',
 
         // receipt_copy (Belegkopie an die Buchhaltung)
         'receipt_copy_subject' => 'Beleg :number – :brand',
