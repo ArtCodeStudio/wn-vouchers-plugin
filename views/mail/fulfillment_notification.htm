@@ -10,10 +10,11 @@ subject = "{{ 'jumplink.vouchers::lang.mail.fulfillment_subject'|trans({ code: v
 {% if order.recipient_name %}- **{{ 'jumplink.vouchers::lang.mail.label_recipient'|trans }}** {{ safe.recipient_name }}
 {% endif %}
 
-**{{ 'jumplink.vouchers::lang.mail.label_address'|trans }}**
-{{ safe.firstname }} {{ safe.lastname }}
-{{ safe.street }}
+**{{ 'jumplink.vouchers::lang.mail.label_address'|trans }}**<br>
+{{ safe.firstname }} {{ safe.lastname }}<br>
+{{ safe.street }}<br>
 {{ safe.zip }} {{ safe.city }}
 
-{% if order.message %}**{{ 'jumplink.vouchers::lang.mail.label_message'|trans }}** {{ safe.message }}
+{% if order.message %}**{{ 'jumplink.vouchers::lang.mail.label_message'|trans }}**<br>
+{{ safe.message }}
 {% endif %}

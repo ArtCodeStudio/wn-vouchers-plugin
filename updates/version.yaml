@@ -82,3 +82,5 @@
     - "Kaufformular: Das optionale Empfänger-Feld heißt jetzt „Empfänger:in / Beschenkte(r) (optional)“ (vorher „Empfänger (optional)“) — klarer, dass die zu beschenkende Person gemeint ist."
 1.0.29:
     - "Team-Mail „Versand vorbereiten“: Zeile „Auf die Karte schreiben (Nr.): …“ entfernt — die Nummer steckt bereits im Gutschein-Code (z. B. MAM-2474-Q) und war damit doppelt; dass die Angaben auf die Karte gehören, ist nach der Überarbeitung ohnehin klar."
+1.0.30:
+    - "Team-Mail „Versand vorbereiten“: Adresse und Nachricht stehen jetzt jeweils mit der Beschriftung in eigener Zeile und der Inhalt darunter (Adresse: Name / Straße / PLZ Ort; Nachricht: Text in neuer Zeile) statt in einer durchlaufenden Zeile — so lässt sich beides beim Abschreiben auf die Karte nicht mehr durcheinanderbringen."
